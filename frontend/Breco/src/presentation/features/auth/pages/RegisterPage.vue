@@ -27,9 +27,9 @@ const handleRegister = async () => {
   <div class="whiteWindow">
     <h1 class="text-center">Inscription</h1>
     <form @submit.prevent="handleRegister">
-      <input v-model="firstName" type="text" placeholder="Prénom" required />
-      <input v-model="lastName" type="text" placeholder="Nom" required />
-      <input v-model="email" type="email" placeholder="Email" required />
+      <input v-model="firstName" type="text" placeholder="Prénom" aria-label="Prénom" required />
+      <input v-model="lastName" type="text" placeholder="Nom" aria-label="Nom" required />
+      <input v-model="email" type="email" placeholder="Email" aria-label="Email" required />
       <input v-model="password" type="password" placeholder="Mot de passe" required />
       <div class="pa0 ma0 text-center">
         <button type="submit" :disabled="isLoading" class="btn-action w100">

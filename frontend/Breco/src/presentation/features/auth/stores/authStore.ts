@@ -89,7 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
       try {
         const userData = await verifyTokenUseCase.execute()
         user.value = userData
-      } catch (err) {
+      } catch {
         clearAuth()
       }
     }

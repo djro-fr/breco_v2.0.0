@@ -13,10 +13,10 @@ export class AuthRemoteDataSource {
 
   // API call to log in
   async login(email: string, password: string): Promise<AuthApiResponse> {
-    const { data } = await axiosInstance.post<AuthApiResponse>(
-      `${this.API_PREFIX}/login`,
-      { email, password }
-    )
+    const { data } = await axiosInstance.post<AuthApiResponse>(`${this.API_PREFIX}/login`, {
+      email,
+      password,
+    })
     return data
   }
 
@@ -25,12 +25,14 @@ export class AuthRemoteDataSource {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
   ): Promise<AuthApiResponse> {
-    const { data } = await axiosInstance.post<AuthApiResponse>(
-      `${this.API_PREFIX}/register`,
-      { email, password, firstName, lastName }
-    )
+    const { data } = await axiosInstance.post<AuthApiResponse>(`${this.API_PREFIX}/register`, {
+      email,
+      password,
+      firstName,
+      lastName,
+    })
     return data
   }
 
@@ -43,9 +45,9 @@ export class AuthRemoteDataSource {
         {},
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+            Authorization: `Bearer ${token}`,
+          },
+        },
       )
     } catch (error) {
       console.warn('Erreur lors du logout serveur:', error)
@@ -55,14 +57,11 @@ export class AuthRemoteDataSource {
   // API call to check the token
   async verifyToken(): Promise<User> {
     const token = localStorage.getItem('token')
-    const { data } = await axiosInstance.get<UserDTO>(
-      `${this.API_PREFIX}/verify`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    )
+    const { data } = await axiosInstance.get<UserDTO>(`${this.API_PREFIX}/verify`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     // Convert DTO to Entity User
     return UserModel.fromJson(data)
   }

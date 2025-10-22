@@ -7,8 +7,8 @@ export const authRoutes: RouteRecordRaw[] = [
     component: () => import('../pages/LoginPage.vue'),
     meta: {
       requiresGuest: true,
-      title: 'Connexion'
-    }
+      title: 'Connexion',
+    },
   },
   {
     path: '/register',
@@ -16,7 +16,7 @@ export const authRoutes: RouteRecordRaw[] = [
     component: () => import('../pages/RegisterPage.vue'),
     meta: {
       requiresGuest: true,
-      title: 'Inscription'
-    }
-  }
+      title: 'Inscription',
+    },
+  },
 ]

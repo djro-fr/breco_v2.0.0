@@ -4,9 +4,9 @@ import type { AxiosInstance } from 'axios'
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
-  timeout: 10000
+  timeout: 10000,
 })
 
 // Adds token
@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // Handle errors
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
       window.location.href = '/login'
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 export default axiosInstance

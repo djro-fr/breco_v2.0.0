@@ -1,4 +1,9 @@
-import type { IAuthRepository, LoginInput, RegisterInput, AuthOutput } from '@/domain/repositories/IAuthRepository'
+import type {
+  IAuthRepository,
+  LoginInput,
+  RegisterInput,
+  AuthOutput,
+} from '@/domain/repositories/IAuthRepository'
 import type { User } from '@/domain/entities/User'
 import { AuthRemoteDataSource } from '@/data/datasources/remote/AuthRemoteDataSource'
 import { UserModel } from '@/data/models/UserModel'
@@ -20,7 +25,7 @@ export class AuthRepositoryImpl implements IAuthRepository {
     // Return the result to the Use Case
     return {
       token: response.token,
-      user
+      user,
     }
   }
 
@@ -31,16 +36,15 @@ export class AuthRepositoryImpl implements IAuthRepository {
       input.email,
       input.password,
       input.firstName,
-      input.lastName
+      input.lastName,
     )
-
 
     const user = UserModel.fromJson(response.user)
 
     // Return the result to the Use Case
     return {
       token: response.token,
-      user
+      user,
     }
   }
 

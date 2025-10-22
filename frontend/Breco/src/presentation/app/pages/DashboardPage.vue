@@ -11,4 +11,3 @@ const authStore = useAuthStore()
     <p>Nom complet: {{ authStore.user?.getFullName() }}</p>
   </div>
 </template>
-

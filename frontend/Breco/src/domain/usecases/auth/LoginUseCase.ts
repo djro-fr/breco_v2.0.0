@@ -7,7 +7,7 @@ export class LoginUseCase {
   async execute(input: LoginInput): Promise<AuthOutput> {
     // email not empty
     if (!input.email || input.email.trim().length === 0) {
-      throw new ValidationException('L\'email est requis')
+      throw new ValidationException("L'email est requis")
     }
     // email must contain an @
     if (!input.email.includes('@')) {

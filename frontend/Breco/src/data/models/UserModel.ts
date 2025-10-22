@@ -11,12 +11,7 @@ export interface UserDTO {
 export class UserModel {
   // Converts UserDTO into Entity Domain
   static fromJson(json: UserDTO): User {
-    return new User(
-      json.id,
-      json.email,
-      json.firstName,
-      json.lastName
-    )
+    return new User(json.id, json.email, json.firstName, json.lastName)
   }
   // Converts Entity Domain into JSON for API
   static toJson(user: User): UserDTO {
@@ -24,7 +19,7 @@ export class UserModel {
       id: user.id,
       email: user.email,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
     }
   }
 }

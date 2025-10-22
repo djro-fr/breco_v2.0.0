@@ -35,4 +35,3 @@ const handleLogin = async () => {
     <router-link to="/register">S'inscrire</router-link>
   </div>
 </template>
-

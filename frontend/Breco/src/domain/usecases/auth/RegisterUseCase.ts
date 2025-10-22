@@ -1,4 +1,8 @@
-import type { IAuthRepository, RegisterInput, AuthOutput } from '@/domain/repositories/IAuthRepository'
+import type {
+  IAuthRepository,
+  RegisterInput,
+  AuthOutput,
+} from '@/domain/repositories/IAuthRepository'
 import { ValidationException } from '@/domain/exceptions/AppException'
 
 export class RegisterUseCase {
@@ -12,7 +16,7 @@ export class RegisterUseCase {
       throw new ValidationException('Le nom est requis')
     }
     if (!input.email || input.email.trim().length === 0) {
-      throw new ValidationException('L\'email est requis')
+      throw new ValidationException("L'email est requis")
     }
     if (!input.email.includes('@')) {
       throw new ValidationException('Email invalide')

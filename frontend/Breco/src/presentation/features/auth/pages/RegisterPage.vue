@@ -32,7 +32,7 @@ const handleRegister = async () => {
       <input v-model="email" type="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Mot de passe" required />
       <button type="submit" :disabled="isLoading">
-        {{ isLoading ? 'Inscription...' : 'S\'inscrire' }}
+        {{ isLoading ? 'Inscription...' : "S'inscrire" }}
       </button>
     </form>
     <p v-if="error" style="color: red">{{ error }}</p>

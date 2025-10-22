@@ -8,7 +8,7 @@ const publicRoutes: RouteRecordRaw[] = [
     path: '/',
     name: 'Home',
     component: () => import('@/presentation/app/pages/HomePage.vue'),
-    meta: { title: 'Accueil' }
+    meta: { title: 'Accueil' },
   },
   {
     path: '/dashboard',
@@ -16,9 +16,9 @@ const publicRoutes: RouteRecordRaw[] = [
     component: () => import('@/presentation/app/pages/DashboardPage.vue'),
     meta: {
       requiresAuth: true,
-      title: 'Tableau de bord'
-    }
-  }
+      title: 'Tableau de bord',
+    },
+  },
 ]
 
 // Combine all routes
@@ -29,13 +29,13 @@ const routes: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/presentation/app/pages/NotFoundPage.vue'),
-    meta: { title: '404 - Page non trouvée' }
-  }
+    meta: { title: '404 - Page non trouvée' },
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
 })
 
 // Global guard - Check authentication at first load
@@ -51,14 +51,13 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({
       name: 'Login',
-      query: { redirect: to.fullPath }
+      query: { redirect: to.fullPath },
     })
   }
   // Redirection if authenticated and goes to  login/register
   else if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next({ name: 'Dashboard' })
-  }
-  else {
+  } else {
     next()
   }
 })

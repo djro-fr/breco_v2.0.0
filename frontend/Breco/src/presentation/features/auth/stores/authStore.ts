@@ -23,9 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
   const error: Ref<string | null> = ref(null)
 
   // Computed
-  const isAuthenticated: ComputedRef<boolean> = computed(
-    () => !!token.value && !!user.value
-  )
+  const isAuthenticated: ComputedRef<boolean> = computed(() => !!token.value && !!user.value)
 
   // Action: Login
   const login = async (email: string, password: string): Promise<void> => {
@@ -49,7 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
   ): Promise<void> => {
     isLoading.value = true
     error.value = null
@@ -58,14 +56,14 @@ export const useAuthStore = defineStore('auth', () => {
         email,
         password,
         firstName,
-        lastName
+        lastName,
       })
       token.value = result.token
       user.value = result.user
       localStorage.setItem('token', result.token)
     } catch (err) {
       const exception = err as AppException
-      error.value = exception.message || 'Erreur d\'inscription'
+      error.value = exception.message || "Erreur d'inscription"
       throw err
     } finally {
       isLoading.value = false
@@ -115,6 +113,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     checkAuth,
-    clearAuth
+    clearAuth,
   }
 })

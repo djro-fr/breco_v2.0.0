@@ -1,5 +1,4 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div>
@@ -8,4 +7,3 @@
     <router-link to="/">Retour à l'accueil</router-link>
   </div>
 </template>
-

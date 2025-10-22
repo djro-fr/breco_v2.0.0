@@ -71,7 +71,7 @@ h3 {
 }
 h1 {
   color: white;
-  margin-top: 40px;
+  margin-top: 0px;
   line-height: 1.5;
   font-weight: 800;
 }
@@ -82,12 +82,12 @@ h2 {
 }
 h3 {
   padding-bottom: 16px;
-  font-size: var(--fontM);
+  font-size: var(--fontL);
 }
 
 div.whiteWindow {
-  margin-top: 30px;
-  padding: 16px;
+  margin-top: 40px;
+  padding: 30px 16px;
 }
 div.whiteWindow input {
   width: calc(100% - 10px);
@@ -100,7 +100,7 @@ div.whiteWindow input {
 }
 
 button.btn-action {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 button.btn-secondary {
@@ -110,5 +110,6 @@ button.btn-secondary {
 div.forget {
   margin-top: -8px;
   margin-bottom: 16px;
+  font-size: var(--fontXXS);
 }
 </style>

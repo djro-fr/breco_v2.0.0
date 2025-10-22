@@ -68,6 +68,11 @@ const handleLogout = async (): Promise<void> => {
 </template>
 
 <style scoped>
+div.nav-brand a:hover{
+  border: none;
+  opacity: .8;
+}
+
 div.content {
   margin: 0;
   min-height: 100vh;

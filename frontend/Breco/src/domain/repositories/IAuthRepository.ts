@@ -7,9 +7,17 @@ export interface LoginInput {
 
 export interface RegisterInput {
   email: string
+  phone: string
   password: string
   firstName: string
   lastName: string
+  driver?: boolean
+  gender?: string
+  zipCode?: string
+  town?: string
+  carModel?: string
+  carColor?: string
+  carSeatNb?: number
 }
 
 export interface AuthOutput {

@@ -25,6 +25,11 @@ class UsersTable extends Table
             ->notEmptyString('email');
 
         $validator
+            ->scalar('phone')
+            ->requirePresence('phone', 'create')
+            ->notEmptyString('phone');
+
+        $validator
             ->scalar('password')
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
@@ -38,6 +43,34 @@ class UsersTable extends Table
             ->scalar('lastName')
             ->requirePresence('lastName', 'create')
             ->notEmptyString('lastName');
+
+        $validator
+            ->boolean('driver')
+            ->allowEmptyString('driver');
+
+        $validator
+            ->scalar('gender')
+            ->allowEmptyString('gender');
+
+        $validator
+            ->scalar('zipCode')
+            ->allowEmptyString('zipCode');
+
+        $validator
+            ->scalar('town')
+            ->allowEmptyString('town');
+
+        $validator
+            ->scalar('carModel')
+            ->allowEmptyString('carModel');
+
+        $validator
+            ->scalar('carColor')
+            ->allowEmptyString('carColor');
+
+        $validator
+            ->integer('carSeatNb')
+            ->allowEmptyString('carSeatNb');
 
         return $validator;
     }

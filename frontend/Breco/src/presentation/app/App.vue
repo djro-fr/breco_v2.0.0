@@ -48,10 +48,12 @@ const handleLogout = async (): Promise<void> => {
             <router-link to="/register" @click="isMenuOpen = false">Inscription</router-link>
           </div>
 
-          <div v-if="isAuthenticated">
+          <div v-if="isAuthenticated" class="logout">
             <router-link to="/dashboard" @click="isMenuOpen = false">Dashboard</router-link>
-            <span>{{ authStore.user?.firstName }}</span>
-            <button @click="handleLogout">Déconnexion</button>
+            <span
+              >&nbsp;de&nbsp;<strong>{{ authStore.user?.firstName }}</strong>
+            </span>
+            <button @click="handleLogout" class="btn-secondary btn-logout">Déconnexion</button>
           </div>
         </div>
       </nav>
@@ -68,9 +70,35 @@ const handleLogout = async (): Promise<void> => {
 </template>
 
 <style scoped>
-div.nav-brand a:hover{
+div.logout {
+  display: flex;
+  flex-direction: row !important;
+  width: fit-content !important;
+}
+
+div.logout a {
+  width: fit-content !important;
+  display: flex;
+  align-self: center;
+  font-weight: 400;
+  margin-bottom: 6px;
+  font-size: var(--fontS);
+}
+div.logout span {
+  font-weight: 400;
+  font-size: var(--fontS);
+  display: flex;
+  align-self: center;
+  margin-bottom: 6px;
+}
+.btn-logout {
+  margin-left: 20px;
+  margin-bottom: 6px;
+}
+
+div.nav-brand a:hover {
   border: none;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 div.content {
@@ -215,6 +243,10 @@ footer p {
 
 /* Mobile */
 @media (max-width: 768px) {
+  div.logout {
+    display: flex;
+  }
+
   .menu-toggle {
     display: block;
   }

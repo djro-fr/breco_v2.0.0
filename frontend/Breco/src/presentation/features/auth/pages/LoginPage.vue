@@ -26,7 +26,13 @@ const handleLogin = async () => {
     <h1 class="text-center pa0 ma0">Connexion</h1>
     <form @submit.prevent="handleLogin">
       <input v-model="email" type="email" placeholder="Email" aria-label="Email" required />
-      <input v-model="password" type="password" placeholder="Mot de passe" aria-label="Mot de passe" required />
+      <input
+        v-model="password"
+        type="password"
+        placeholder="Mot de passe"
+        aria-label="Mot de passe"
+        required
+      />
 
       <div class="text-center forget">
         <a href="#">Mot de passe oublié ?</a>

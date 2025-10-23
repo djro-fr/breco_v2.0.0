@@ -2,9 +2,17 @@ export class User {
   constructor(
     public id: number,
     public email: string,
+    public phone: string,
     public firstName: string,
     public lastName: string,
-    public createdAt?: string
+    public driver: boolean = false,
+    public createdAt?: string,
+    public gender?: string,
+    public zipCode?: string,
+    public town?: string,
+    public carModel?: string,
+    public carColor?: string,
+    public carSeatNb?: number,
   ) {}
 
   getFullName(): string {

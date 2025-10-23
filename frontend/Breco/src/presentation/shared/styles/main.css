@@ -55,6 +55,14 @@ main {
 .pa0 {
   padding: 0;
 }
+
+.pa1 {
+  padding: 16px;
+}
+.pa2 {
+  padding: 32px;
+}
+
 .ma0 {
   margin: 0 auto;
 }
@@ -120,8 +128,7 @@ a:hover {
   border-bottom: 1px solid var(--primary-color);
 }
 
-
-main.main-content{
+main.main-content {
   display: flex;
   flex-direction: column;
   justify-content: center;

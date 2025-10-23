@@ -45,18 +45,35 @@ export const useAuthStore = defineStore('auth', () => {
   // Action: Register
   const register = async (
     email: string,
+    phone: string,
     password: string,
     firstName: string,
     lastName: string,
+    driver: boolean = false,
+    gender?: string,
+    zipCode?: string,
+    town?: string,
+    carModel?: string,
+    carColor?: string,
+    carSeatNb?: number,
   ): Promise<void> => {
+
     isLoading.value = true
     error.value = null
     try {
       const result = await registerUseCase.execute({
         email,
+        phone,
         password,
         firstName,
         lastName,
+        driver,
+        gender,
+        zipCode,
+        town,
+        carModel,
+        carColor,
+        carSeatNb,
       })
       token.value = result.token
       user.value = result.user

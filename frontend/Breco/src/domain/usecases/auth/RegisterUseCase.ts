@@ -18,14 +18,17 @@ export class RegisterUseCase {
     if (!input.email || input.email.trim().length === 0) {
       throw new ValidationException("L'email est requis")
     }
+    if (!input.phone || input.phone.trim().length === 0) {
+      throw new ValidationException('Le n° de téléphone est requis')
+    }
     if (!input.email.includes('@')) {
       throw new ValidationException('Email invalide')
     }
     if (!input.password || input.password.trim().length === 0) {
       throw new ValidationException('Le mot de passe est requis')
     }
-    if (input.password.length < 6) {
-      throw new ValidationException('Le mot de passe doit avoir au moins 6 caractères')
+    if (input.password.length < 8) {
+      throw new ValidationException('Le mot de passe doit avoir au moins 8 caractères')
     }
     return await this.authRepository.register(input)
   }

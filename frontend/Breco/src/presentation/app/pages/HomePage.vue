@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/presentation/features/auth/stores/authStore'
+import DashboardPage from './DashboardPage.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -54,9 +55,8 @@ const handleLogin = async () => {
       </div>
     </div>
 
-    <div v-else>
-      <p>Bienvenue {{ authStore.user?.firstName }} !</p>
-      <router-link to="/dashboard">Aller au dashboard</router-link>
+    <div v-else class="whiteWindow text-center">
+      <DashboardPage />
     </div>
   </div>
 </template>

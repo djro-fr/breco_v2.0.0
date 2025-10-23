@@ -23,15 +23,31 @@ export class AuthRemoteDataSource {
   // API call to register
   async register(
     email: string,
+    phone: string,
     password: string,
     firstName: string,
     lastName: string,
+    driver?: boolean,
+    gender?: string,
+    zipCode?: string,
+    town?: string,
+    carModel?: string,
+    carColor?: string,
+    carSeatNb?: number
   ): Promise<AuthApiResponse> {
     const { data } = await axiosInstance.post<AuthApiResponse>(`${this.API_PREFIX}/register`, {
       email,
+      phone,
       password,
       firstName,
       lastName,
+      driver,
+      gender,
+      zipCode,
+      town,
+      carModel,
+      carColor,
+      carSeatNb,
     })
     return data
   }

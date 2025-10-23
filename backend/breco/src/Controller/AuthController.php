@@ -69,7 +69,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'firstName' => $user->firstName,
                 'lastName' => $user->lastName,
-                'createdAt' => $user->createdAt->format('Y-m-d H:i:s')
+                'createdAt' => $user->createdAt ? $user->createdAt->format('Y-m-d H:i:s') : null,
             ]
         ]));
     }
@@ -84,7 +84,8 @@ class AuthController extends Controller
 
         // Validate data
         if (empty($data['email']) || empty($data['password']) ||
-            empty($data['firstName']) || empty($data['lastName'])) {
+            empty($data['firstName']) || empty($data['lastName']) ||
+            empty($data['phone'])) {
             return $this->response
                 ->withStatus(422)
                 ->withStringBody(json_encode([
@@ -110,9 +111,17 @@ class AuthController extends Controller
         // Create a new user
         $user = $usersTable->newEntity([
             'email' => $data['email'],
+            'phone' => $data['phone'],
             'password' => password_hash($data['password'], PASSWORD_BCRYPT),
             'firstName' => $data['firstName'],
-            'lastName' => $data['lastName']
+            'lastName' => $data['lastName'],
+            'driver' => $data['driver'] ?? false,
+            'gender' => $data['gender'] ?? null,
+            'zipCode' => $data['zipCode'] ?? null,
+            'town' => $data['town'] ?? null,
+            'carModel' => $data['carModel'] ?? null,
+            'carColor' => $data['carColor'] ?? null,
+            'carSeatNb' => $data['carSeatNb'] ?? null
         ]);
 
         if (!$usersTable->save($user)) {
@@ -140,9 +149,17 @@ class AuthController extends Controller
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
+                'phone' => $user->phone,
                 'firstName' => $user->firstName,
                 'lastName' => $user->lastName,
-                'createdAt' => $user->createdAt ? $user->createdAt->format('Y-m-d H:i:s') : null
+                'driver' => $user->driver,
+                'createdAt' => $user->createdAt ? $user->createdAt->format('Y-m-d H:i:s') : null,
+                'gender' => $user->gender,
+                'zipCode' => $user->zipCode,
+                'town' => $user->town,
+                'carModel' => $user->carModel,
+                'carColor' => $user->carColor,
+                'carSeatNb' => $user->carSeatNb,
             ]
         ]));
     }
@@ -175,9 +192,17 @@ class AuthController extends Controller
             return $this->response->withStringBody(json_encode([
                 'id' => $user->id,
                 'email' => $user->email,
+                'phone' => $user->phone,
                 'firstName' => $user->firstName,
+                'driver' => $user->driver,
                 'lastName' => $user->lastName,
-                'createdAt' => $user->createdAt->format('Y-m-d H:i:s')
+                'createdAt' => $user->createdAt->format('Y-m-d H:i:s'),
+                'gender' => $user->gender,
+                'zipCode' => $user->zipCode,
+                'town' => $user->town,
+                'carModel' => $user->carModel,
+                'carColor' => $user->carColor,
+                'carSeatNb' => $user->carSeatNb,
             ]));
         } catch (\Exception $e) {
             return $this->response

@@ -6,12 +6,13 @@ export interface UserDTO {
   email: string
   firstName: string
   lastName: string
+  createdAt?: string
 }
 
 export class UserModel {
   // Converts UserDTO into Entity Domain
   static fromJson(json: UserDTO): User {
-    return new User(json.id, json.email, json.firstName, json.lastName)
+    return new User(json.id, json.email, json.firstName, json.lastName, json.createdAt)
   }
   // Converts Entity Domain into JSON for API
   static toJson(user: User): UserDTO {
@@ -20,6 +21,7 @@ export class UserModel {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      createdAt: user.createdAt
     }
   }
 }

@@ -6,7 +6,7 @@
     { "path": "./tsconfig.vitest.json" }
   ],
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "",
     "paths": {
       "@/*": ["src/*"]
     }

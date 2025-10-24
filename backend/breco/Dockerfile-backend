@@ -1,0 +1,87 @@
+# Stage 1: Build dependencies
+FROM php:8.2-fpm AS builder
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    libpq-dev \
+    libzip-dev \
+    libicu-dev \
+    zip \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    zip \
+    intl
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /app
+
+# Copy composer files
+COPY composer.json composer.lock ./
+
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Stage 2: Runtime
+FROM php:8.2-fpm
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    libzip-dev \
+    libicu-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    zip \
+    intl
+
+# Configure PHP-FPM
+RUN echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.conf
+RUN echo "pm.start_servers = 5" >> /usr/local/etc/php-fpm.conf
+RUN echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.conf
+RUN echo "pm.max_spare_servers = 10" >> /usr/local/etc/php-fpm.conf
+
+# Set working directory
+WORKDIR /app
+
+# Copy from builder
+COPY --from=builder /app /app
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p logs tmp cache && \
+    chmod -R 755 logs tmp cache
+
+# Create .env file with default values
+RUN echo "DEBUG=false" > .env && \
+    echo "APP_NAME=Breco" >> .env && \
+    echo "APP_ENCODING=UTF-8" >> .env && \
+    echo "APP_DEFAULT_LOCALE=en_US" >> .env && \
+    echo "APP_DEFAULT_TIMEZONE=UTC" >> .env
+
+# Expose port
+EXPOSE 9000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD php -r "exit(file_exists('/app/logs') ? 0 : 1);"
+
+# Start PHP-FPM
+CMD ["php-fpm"]

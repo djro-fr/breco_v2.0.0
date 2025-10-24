@@ -1,0 +1,47 @@
+# Stage 1: Build
+FROM node:25-alpine3.21 AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock ./
+
+# Install dependencies with bun
+RUN npm install -g bun && \
+    bun install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build the app
+RUN bun run build
+
+# DEBUG: Vérifier que dist a été créé
+RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
+
+# Stage 2: Production
+FROM node:25-alpine3.21
+
+WORKDIR /app
+
+# Install serve to run the app
+RUN npm install -g serve
+
+# Copy built app from builder
+COPY --from=builder /app/dist ./dist
+
+# DEBUG: Vérifier que dist existe
+RUN ls -la /app/dist || echo "dist folder not found!"
+
+# Create .env file with default values
+RUN echo "VITE_API_URL=http://localhost:8765/api" > .env.production
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
+
+# Start the app
+CMD ["serve", "-s", "/app/dist", "-l", "3000"]

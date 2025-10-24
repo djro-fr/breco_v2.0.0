@@ -11,7 +11,19 @@ class AuthController extends Controller
     {
         parent::beforeFilter($event);
 
-        // Parse JSON
+        // CORS Headers
+        $this->response = $this->response
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH')
+            ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            ->withType('application/json');
+
+        // Handle OPTIONS
+        if ($this->request->getMethod() === 'OPTIONS') {
+            $this->autoRender = false;
+            return;
+        }
+
         if ($this->request->is('json')) {
             $this->request = $this->request->withParsedBody(
                 json_decode((string)$this->request->getBody(), true) ?? []
@@ -231,4 +243,11 @@ class AuthController extends Controller
         $this->response = $this->response->withType('application/json');
         return $this->response->withStringBody(json_encode(['message' => 'OK']));
     }
+
+    public function options()
+    {
+        $this->autoRender = false;
+        return $this->response->withStatus(200)->withStringBody('');
+    }
+
 }

@@ -83,28 +83,13 @@ class Application extends BaseApplication
             // https://book.cakephp.org/5/en/controllers/middleware.html#body-parser-middleware
             ->add(new BodyParserMiddleware())
 
-            // Cross Site Request Forgery (CSRF) Protection Middleware
-            // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             // ->add(new CsrfProtectionMiddleware([
-            //     'httponly' => true,
-            // ]));
-            // ->add(new CsrfProtectionMiddleware([
-            //     'unlockedPaths' => ['/api/*'],
+            //     'httpOnly' => true,
+            //     'secure' => false,
+            //     'samesite' => 'Lax',
+            //     'skip' => ['/api/*', '/health']  // ← Skip API routes
             // ]))
-            ->add(function ($request, $handler) {
-                // Répondre aux OPTIONS requests
-                if ($request->getMethod() === 'OPTIONS') {
-                    $response = new \Cake\Http\Response();
-                } else {
-                    $response = $handler->handle($request);
-                }
-
-                return $response
-                    ->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-                    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH')
-                    ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-                    ->withHeader('Access-Control-Max-Age', '3600');
-            });
+            ;
 
         return $middlewareQueue;
     }

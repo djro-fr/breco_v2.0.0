@@ -96,14 +96,17 @@ return function (RouteBuilder $routes): void {
     $routes->scope('/api', function (RouteBuilder $routes) {
         $routes->setExtensions(['json']);
 
-        // Test route
-        $routes->get('/test', ['controller' => 'Auth', 'action' => 'test']);
+        // Handle OPTIONS for all API routes (preflight)
+        $routes->connect('/:controller/:action',
+            ['action' => 'options'],
+            ['_method' => 'OPTIONS']
+        );
 
-        // Authentification routes
+        // Real routes
         $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
         $routes->post('/auth/register', ['controller' => 'Auth', 'action' => 'register']);
-        $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
         $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
+        $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
     });
 };
 

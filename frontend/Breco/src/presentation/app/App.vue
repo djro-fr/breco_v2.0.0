@@ -106,7 +106,7 @@ div.content {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-image: url('sebastian-Vc5XMryq8JM-unsplash.jpg');
+  background-image: url('/sebastian-Vc5XMryq8JM-unsplash.jpg');
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;

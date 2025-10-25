@@ -29,7 +29,7 @@ pipeline {
                 echo "Redéploiement..."
                 sh '''
                     set -a
-                    source .env
+                    . .env
                     set +a
                     docker-compose down
                     docker-compose up -d

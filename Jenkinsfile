@@ -37,7 +37,7 @@ pipeline {
                     cd frontend/breco
                     bun add -D @pinia/testing
                     bun install --frozen-lockfile
-                    bun run test:unit
+                    VITEST=true VITE_API_URL=${VITE_API_URL} bun run test:unit
                 '''
             }
         }

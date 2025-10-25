@@ -8,6 +8,41 @@ import { createRouter, createMemoryHistory } from 'vue-router'
 const fetchMocker = createFetchMock(vi)
 fetchMocker.enableMocks()
 
+// Mocks API calls
+const apiUrl = process.env.VITE_API_URL || 'http://localhost:8081/api'
+fetchMocker.mockResponse(
+  (req) => {
+    if (req.url.includes(apiUrl)) {
+      return {
+        status: 200,
+        body: JSON.stringify({ success: true, data: 'mocked response' }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    }
+    return { status: 404, body: 'Not Found' }
+  }
+)
+
+// Mocks localStorage for jsdom
+const localStorageMock = (() => {
+  let store: Record<string, string> = {}
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => {
+      store[key] = value.toString()
+    },
+    removeItem: (key: string) => {
+      delete store[key]
+    },
+    clear: () => {
+      store = {}
+    },
+  }
+})()
+
+// @ts-ignore
+globalThis.localStorage = localStorageMock
+
 // Creates a Pinia instance
 const pinia = createPinia()
 

@@ -24,6 +24,11 @@ pipeline {
             }
         }
         stage('Test: Unit Tests') {
+            agent {
+                docker {
+                    image 'node:25-alpine3.21'
+                }
+            }
             steps {
                 echo "Tests unitaires Vitest..."
                 sh '''

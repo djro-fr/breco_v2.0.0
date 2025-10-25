@@ -27,6 +27,7 @@ pipeline {
             steps {
                 echo "Tests unitaires Vitest..."
                 sh '''
+                    npm install -g bun
                     cd frontend/breco
                     bun install
                     bun run test:unit

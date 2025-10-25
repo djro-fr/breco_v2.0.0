@@ -1,6 +1,5 @@
 # Stage 1: Build dependencies
 FROM php:8.2-fpm AS builder
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -61,9 +60,6 @@ WORKDIR /app
 
 # Copy from builder
 COPY --from=builder /app /app
-
-# Copy application code
-COPY . .
 
 # Create necessary directories
 RUN mkdir -p logs tmp cache && \

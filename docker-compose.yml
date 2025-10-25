@@ -33,7 +33,12 @@ services:
     ports:
       - "8765:9000"
     volumes:
-      - ./backend/breco:/app
+      - ./backend/breco/src:/app/src
+      - ./backend/breco/config:/app/config
+      - ./backend/breco/webroot:/app/webroot
+      - ./backend/breco/bin:/app/bin
+      - ./backend/breco/templates:/app/templates
+      - ./backend/breco/resources:/app/resources
     depends_on:
       mysql:
         condition: service_healthy
@@ -57,15 +62,15 @@ services:
   # Frontend Vue 3
   frontend:
     build:
-      context: ./frontend/Breco 
+      context: ./frontend/breco
       dockerfile: Dockerfile-frontend
     container_name: breco_frontend
     environment:
       VITE_API_URL: ${VITE_API_URL} # e.g., http://localhost:8081/api
     ports:
       - "3001:3000"    # Expose Frontend on host port 3001 instead of default 3000
-    volumes:
-      - ./frontend/Breco:/app
+    #volumes:
+    #  - ./frontend/breco:/app
     depends_on:
       - backend
     networks:

@@ -34,4 +34,4 @@ vi.mock('@vue/devtools-api', () => ({
   setupDevToolsPlugin: vi.fn(),
 }))
 
-console.log('localStorage est-il une fonction ?', typeof globalThis.localStorage.getItem === 'function')
+//console.log('localStorage est-il une fonction ?', typeof globalThis.localStorage.getItem === 'function')

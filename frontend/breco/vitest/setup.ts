@@ -39,4 +39,4 @@ config.global.stubs = {
   'router-view': true,
 }
 
-console.log('✅ Setup Vitest terminé')
+//console.log('✅ Setup Vitest terminé')

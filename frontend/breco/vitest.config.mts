@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, mergeConfig } from 'vitest/config'
 import viteConfig from './vite.config.mjs'
 
+
 export default mergeConfig(
   viteConfig,
   defineConfig({
@@ -14,7 +15,7 @@ export default mergeConfig(
       environment: 'jsdom',
       environmentOptions: {
         jsdom: {
-          url: 'http://localhost/',
+          url: process.env.VITE_API_URL || 'http://localhost/',
         },
       },
       exclude: ['**/node_modules/**', '**/e2e/**'],

@@ -13,7 +13,7 @@ class AuthController extends Controller
 
         // CORS Headers
         $this->response = $this->response
-            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ->withHeader('Access-Control-Allow-Origin', env('CORS_ORIGIN','http://localhost:3001'))
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH')
             ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
             ->withType('application/json');

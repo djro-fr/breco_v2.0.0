@@ -8,7 +8,7 @@ const apiUrl = process.env.VITE_API_URL || 'http://localhost:8081'
 export default defineConfig({
   plugins: [
     vue(),
-    process.env.VITEST !== 'true' ? vueDevTools() : null,
+    process.env.VITEST === 'true' ? null : vueDevTools(),
   ].filter(Boolean),
   resolve: {
     alias: {

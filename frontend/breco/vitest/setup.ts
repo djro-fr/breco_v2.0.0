@@ -4,25 +4,6 @@ import createFetchMock from 'vitest-fetch-mock'
 import { vi } from 'vitest'
 import { createRouter, createMemoryHistory } from 'vue-router'
 
-// Activates fetchMock
-const fetchMocker = createFetchMock(vi)
-fetchMocker.enableMocks()
-
-// Mocks API calls
-const apiUrl = process.env.VITE_API_URL || 'http://localhost:8081/api'
-fetchMocker.mockResponse(
-  (req) => {
-    if (req.url.includes(apiUrl)) {
-      return {
-        status: 200,
-        body: JSON.stringify({ success: true, data: 'mocked response' }),
-        headers: { 'Content-Type': 'application/json' },
-      }
-    }
-    return { status: 404, body: 'Not Found' }
-  }
-)
-
 // Mocks localStorage for jsdom
 const localStorageMock = (() => {
   let store: Record<string, string> = {}
@@ -42,6 +23,25 @@ const localStorageMock = (() => {
 
 // @ts-ignore
 globalThis.localStorage = localStorageMock
+
+// Activates fetchMock
+const fetchMocker = createFetchMock(vi)
+fetchMocker.enableMocks()
+
+// Mocks API calls
+const apiUrl = process.env.VITE_API_URL || 'http://localhost:8081/api'
+fetchMocker.mockResponse(
+  (req) => {
+    if (req.url.includes(apiUrl)) {
+      return {
+        status: 200,
+        body: JSON.stringify({ success: true, data: 'mocked response' }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    }
+    return { status: 404, body: 'Not Found' }
+  }
+)
 
 // Creates a Pinia instance
 const pinia = createPinia()

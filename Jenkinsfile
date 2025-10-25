@@ -23,6 +23,16 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Test: Unit Tests') {
+            steps {
+                echo "Tests unitaires Vitest..."
+                sh '''
+                    cd frontend/breco
+                    bun install
+                    bun run test:unit
+                '''
+            }
+        }
         stage('Build') {
             steps {
                 echo "Build des images Docker..."

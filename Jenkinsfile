@@ -54,6 +54,8 @@ pipeline {
                     echo "✅ OK !"
                 '''
                 }
+            }
+        }
     }
 
     post {

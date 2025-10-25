@@ -1,4 +1,7 @@
-// Mock localStorage for devtools
+import { createTestingPinia } from '@pinia/testing'
+import { setActivePinia } from 'pinia'
+
+// Mock localStorage
 Object.defineProperty(window, 'localStorage', {
   value: {
     getItem: () => null,
@@ -9,3 +12,6 @@ Object.defineProperty(window, 'localStorage', {
     length: 0,
   },
 })
+
+// Initialise Pinia pour les tests
+setActivePinia(createTestingPinia())

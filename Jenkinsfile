@@ -20,8 +20,13 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
-                sh 'docker-compose build'
-            }
+                sh '''
+                    set -a
+                    . .env
+                    set +a
+                    docker-compose build
+                '''
+                    }
         }
 
         stage('Deploy') {
@@ -40,11 +45,15 @@ pipeline {
         stage('Verify') {
             steps {
                 echo "Vérification du déploiement..."
-                sh 'sleep 10'
-                sh 'curl -f http://37.59.101.232:8081/auth/test || exit 1'
-                echo "✅ Déploiement réussi !"
-            }
-        }
+                sh '''
+                    set -a
+                    . .env
+                    set +a
+                    sleep 10
+                    curl -f http://37.59.101.232:8081/auth/test || exit 1
+                    echo "✅ OK !"
+                '''
+                }
     }
 
     post {

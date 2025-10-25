@@ -27,8 +27,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Redéploiement..."
-                sh 'docker-compose down'
-                sh 'docker-compose up -d'
+                sh '''
+                    set -a
+                    source .env
+                    set +a
+                    docker-compose down
+                    docker-compose up -d
+                '''
             }
         }
 

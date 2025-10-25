@@ -4,6 +4,13 @@ pipeline {
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         VPS_IP = '37.59.101.232'
+        MYSQL_ROOT_PASSWORD = credentials('mysql_root_password')
+        MYSQL_DB = credentials('mysql_db')
+        MYSQL_USER = credentials('mysql_user')
+        MYSQL_PASSWORD = credentials('mysql_password')
+        JWT_SECRET = credentials('jwt_secret')
+        VITE_API_URL = credentials('vite_api_url')
+        CORS_ORIGIN = credentials('cors_origin')
     }
 
     stages {
@@ -16,39 +23,25 @@ pipeline {
                 checkout scm
             }
         }
-
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
-                sh '''
-                    set -a
-                    . .env
-                    set +a
-                    docker-compose build
-                '''
-                    }
+                sh 'docker-compose build'
+            }
         }
-
         stage('Deploy') {
             steps {
                 echo "Redéploiement..."
                 sh '''
-                    set -a
-                    . .env
-                    set +a
                     docker-compose down
                     docker-compose up -d
                 '''
             }
         }
-
         stage('Verify') {
             steps {
                 echo "Vérification du déploiement..."
                 sh '''
-                    set -a
-                    . .env
-                    set +a
                     sleep 10
                     curl -f http://37.59.101.232:8081/auth/test || exit 1
                     echo "✅ OK !"
@@ -56,7 +49,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             echo "Pipeline terminé"

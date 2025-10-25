@@ -52,8 +52,7 @@ pipeline {
                     sleep 10
                     curl -f http://37.59.101.232:8081/auth/test || exit 1
                     echo "✅ OK !"
-                '''
-                }
+                '''                
             }
         }
     }

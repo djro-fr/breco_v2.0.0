@@ -35,7 +35,8 @@ pipeline {
                 sh '''
                     npm install -g bun
                     cd frontend/breco
-                    bun install --frozen-lockfile
+                    rm -rf bun.lock node_modules
+                    bun install
                     bun run test:unit
                 '''
             }

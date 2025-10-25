@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { configDefaults, defineConfig, mergeConfig } from 'vitest/config'
-import viteConfig from './vite.config.mjs'
+import viteConfig from './vite.config'
 
 export default mergeConfig(
   (viteConfig as ({ mode }: { mode: string }) => Record<string, any>)({ mode: 'test' }),

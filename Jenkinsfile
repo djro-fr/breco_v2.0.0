@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-        VPS_DIR = '/home/ubuntu/breco_v2.0.0'
+        VPS_IP = '37.59.101.232'
     }
 
     stages {
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 echo "Vérification du déploiement..."
                 sh 'sleep 10'
-                sh 'curl -f http://localhost:8081/auth/test || exit 1'
+                sh 'curl -f http://37.59.101.232:8081/auth/test || exit 1'
                 echo "✅ Déploiement réussi !"
             }
         }

@@ -1,20 +1,30 @@
+// vitest/setup.ts
+import { config } from '@vue/test-utils'
+import { createPinia } from 'pinia'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import createFetchMock from 'vitest-fetch-mock'
 import { vi } from 'vitest'
 
-/**
-* Vitest setup function
-*/
-export function setup() {
-  console.log('📝 vitest globalSetup')
-  const fetchMocker = createFetchMock(vi)
+// Activates fetchMock
+const fetchMocker = createFetchMock(vi)
+fetchMocker.enableMocks()
 
-  // sets globalThis.fetch and globalThis.fetchMock to our mocked version
-  fetchMocker.enableMocks()
+// Creates a Pinia instance
+const pinia = createPinia()
+
+// Creates a test router
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    { path: '/', component: { template: '<div>You did it!</div>' } }
+  ],
+})
+
+// Global config for Vue Test Utils
+config.global.plugins = [pinia, router]
+config.global.stubs = {
+  'router-link': true,
+  'router-view': true,
 }
 
-/**
-* Vitest Teardown function
-*/
-export function teardown() {
-  console.log('📝 vitest globalTeardown')
-}
+console.log('📝 vitest globalSetup - Pinia et Router configurés')

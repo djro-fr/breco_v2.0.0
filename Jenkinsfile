@@ -27,6 +27,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:25-alpine3.21'
+                    args '-u root'
                 }
             }
             steps {

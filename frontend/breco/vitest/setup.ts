@@ -4,7 +4,26 @@ import createFetchMock from 'vitest-fetch-mock'
 import { vi } from 'vitest'
 import { createRouter, createMemoryHistory } from 'vue-router'
 
-// Mocks localStorage for jsdom
+// Mock sessionStorage
+const sessionStorageMock = (() => {
+  let store: Record<string, string> = {}
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => {
+      store[key] = String(value)
+    },
+    removeItem: (key: string) => {
+      delete store[key]
+    },
+    clear: () => {
+      store = {}
+    },
+  }
+})
+// @ts-ignore
+globalThis.sessionStorage = sessionStorageMock
+
+// Mock localStorage for jsdom
 const localStorageMock = (() => {
   let store: Record<string, string> = {}
   return {
@@ -20,15 +39,14 @@ const localStorageMock = (() => {
     },
   }
 })()
-
 // @ts-ignore
 globalThis.localStorage = localStorageMock
 
-// Activates fetchMock
+// Activate fetchMock
 const fetchMocker = createFetchMock(vi)
 fetchMocker.enableMocks()
 
-// Mocks API calls
+// Mock API calls
 const apiUrl = process.env.VITE_API_URL || 'http://localhost:8081/api'
 fetchMocker.mockResponse(
   (req) => {
@@ -43,10 +61,10 @@ fetchMocker.mockResponse(
   }
 )
 
-// Creates a Pinia instance
+// Create a Pinia instance
 const pinia = createPinia()
 
-// Creates a minimal router to avoid injection errors with an empty route
+// Create a minimal router to avoid injection errors with an empty route
 const router = createRouter({
   history: createMemoryHistory(),
   routes: [{ path: '/', component: { template: '<div></div>' } } ],

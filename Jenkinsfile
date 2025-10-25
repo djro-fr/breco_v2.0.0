@@ -9,7 +9,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo "Clonage du repo..."
+                sh '''
+                    mkdir -p ~/.ssh
+                    ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null || true
+                '''
                 checkout scm
             }
         }

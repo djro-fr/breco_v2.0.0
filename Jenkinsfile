@@ -101,7 +101,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
-                sh 'docker-compose build --no-cache'
+                sh 'docker-compose build'
             }
         }
         stage('Deploy') {

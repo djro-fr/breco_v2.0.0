@@ -140,11 +140,11 @@ pipeline {
                     wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
                     unzip -q apache-jmeter-5.6.3.zip
                     
-                    # Lance le test
-                    ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t jmeter/test-plan.jmx -l jmeter/results.jtl -j jmeter/jmeter.log
+                    # Lance le test (chemin complet)
+                    ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test-plan.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
                     # Génère le rapport
-                    ./apache-jmeter-5.6.3/bin/jmeter.sh -g jmeter/results.jtl -o jmeter/report
+                    ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
                 '''
             }
         }

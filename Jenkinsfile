@@ -73,6 +73,12 @@ pipeline {
             }
         }
         stage('Test: E2E Tests') {
+            agent {
+                docker {
+                    image 'node:25-alpine3.21'
+                    args '-u root'
+                }
+            }
             steps {
                 echo "Tests E2E (Selenium)..."
                 sh '''

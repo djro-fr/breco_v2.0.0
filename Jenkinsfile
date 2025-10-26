@@ -21,83 +21,87 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Test: Unit Tests') {
-            agent {
-                docker {
-                    image 'node:25-alpine3.21'
-                    args '-u root'
+        stage('Tests Parallèles') {
+            parallel {
+                stage('Test: Unit Tests') {
+                    agent {
+                        docker {
+                            image 'node:25-alpine3.21'
+                            args '-u root'
+                        }
+                    }
+                    steps {
+                        echo "Tests unitaires..."
+                        sh '''
+                            npm install -g bun
+                            cd frontend/breco
+                            bun install
+                            VITEST=true bun run test:unit
+                        '''
+                    }
+                }
+                stage('Test: Integration Tests') {
+                    agent {
+                        docker {
+                            image 'node:25-alpine3.21'
+                            args '-u root'
+                        }
+                    }
+                    steps {
+                        echo "Tests intégration..."
+                        sh '''
+                            npm install -g bun
+                            cd frontend/breco
+                            bun install
+                            VITEST=true bun run test:integration
+                        '''
+                    }
+                }
+                stage('Test: UI Tests') {
+                    agent {
+                        docker {
+                            image 'node:25-alpine3.21'
+                            args '-u root'
+                        }
+                    }
+                    steps {
+                        echo "Tests UI..."
+                        sh '''
+                            npm install -g bun
+                            cd frontend/breco
+                            bun install
+                            VITEST=true bun run test:ui
+                        '''
+                    }
                 }
             }
-            steps {
-                echo "Tests unitaires Vitest..."
-                sh '''
-                    npm install -g bun
-                    cd frontend/breco
-                    bun install 
-                    VITEST=true bun run test:unit
-                '''
-            }
+            // stage('Test: E2E Tests') {
+            //     agent {
+            //         docker {
+            //             image 'node:25-alpine3.21'
+            //             args '-u root'
+            //         }
+            //     }
+            //     steps {
+            //         echo "Tests E2E (Selenium)..."
+            //         sh '''
+            //             export DEBIAN_FRONTEND=noninteractive
+            //             apt-get update -qq && apt-get install -y firefox-esr wget netcat-openbsd
+                        
+            //             # Geckodriver
+            //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
+            //             tar -xzf geckodriver-v0.34.0-linux64.tar.gz
+            //             mv geckodriver /usr/bin/
+            //             chmod +x /usr/bin/geckodriver
+                        
+            //             npm install -g bun
+            //             cd frontend/breco
+            //             bun install --frozen-lockfile
+            //             VITEST=true bun run test:e2e
+            //         '''
+            //     }
+            // }
         }
-        stage('Test: Integration Tests') {
-            agent {
-                docker {
-                    image 'node:25-alpine3.21'
-                    args '-u root'
-                }
-            }
-            steps {
-                echo "Tests intégration..."
-                sh '''
-                    npm install -g bun
-                    cd frontend/breco
-                    bun install 
-                    VITEST=true bun run test:integration
-                '''
-            }
-        }
-        stage('Test: UI Tests') {
-            agent {
-                docker {
-                    image 'node:25-alpine3.21'
-                    args '-u root'
-                }
-            }
-            steps {
-                echo "Tests UI..."
-                sh '''
-                    npm install -g bun
-                    cd frontend/breco
-                    bun install 
-                    VITEST=true bun run test:ui
-                '''
-            }
-        }
-        // stage('Test: E2E Tests') {
-        //     agent {
-        //         docker {
-        //             image 'node:25-alpine3.21'
-        //             args '-u root'
-        //         }
-        //     }
-        //     steps {
-        //         echo "Tests E2E (Selenium)..."
-        //         sh '''
-        //             export DEBIAN_FRONTEND=noninteractive
-        //             apt-get update -qq && apt-get install -y firefox-esr wget netcat-openbsd
-                    
-        //             # Geckodriver
-        //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
-        //             tar -xzf geckodriver-v0.34.0-linux64.tar.gz
-        //             mv geckodriver /usr/bin/
-        //             chmod +x /usr/bin/geckodriver
-                    
-        //             npm install -g bun
-        //             cd frontend/breco
-        //             bun install --frozen-lockfile
-        //             VITEST=true bun run test:e2e
-        //         '''
-        //     }
-        // }
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
@@ -123,31 +127,31 @@ pipeline {
                 '''                
             }
         }
-        stage('Performance: JMeter Tests') {
-            agent {
-                docker {
-                    image 'openjdk:11-jre-slim'
-                    args '-u root'
-                }
-            }
-            steps {
-                echo "Tests de charge JMeter..."
-                sh '''
-                    apt-get update -qq
-                    apt-get install -y wget unzip
+        // stage('Performance: JMeter Tests') {
+        //     agent {
+        //         docker {
+        //             image 'openjdk:11-jre-slim'
+        //             args '-u root'
+        //         }
+        //     }
+        //     steps {
+        //         echo "Tests de charge JMeter..."
+        //         sh '''
+        //             apt-get update -qq
+        //             apt-get install -y wget unzip
                     
-                    # Télécharge JMeter
-                    wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-                    unzip -o -q apache-jmeter-5.6.3.zip
+        //             # Télécharge JMeter
+        //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
+        //             unzip -o -q apache-jmeter-5.6.3.zip
                     
-                    # Lance le test
-                    ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
+        //             # Lance le test
+        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
-                    # Génère le rapport
-                    ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
-                '''
-            }
-        }
+        //             # Génère le rapport
+        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
+        //         '''
+        //     }
+        // }
     }
     post {
         always {

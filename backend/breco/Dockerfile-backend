@@ -62,9 +62,9 @@ WORKDIR /app
 # Copy from builder
 COPY --from=builder /app /app
 
-# Create necessary directories with correct permissions
+# Create necessary directories
 RUN mkdir -p logs tmp cache && \
-    chmod -R 777 logs tmp cache
+    chmod -R 755 logs tmp cache
 
 # Create .env file with default values
 RUN echo "DEBUG=false" > .env && \

@@ -41,29 +41,32 @@ pipeline {
         stage('Tests') {
             parallel {
                 stage('Test: Unit Tests') {
-                    agent {
-                        docker {
-                            image 'node:25-alpine3.21'
-                            args '''
-                                -u root
-                                -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
-                                -w /app
-                            '''
-                        }
-                    }
                     steps {
-                        echo "Tests unitaires..."
-                        sh '''
-                            cd frontend/breco
-                            npm ci
-                            npm run test:unit
-                            ls -la test-results/ 
-                        '''
+                        // 1. Crée le répertoire sur l'hôte AVANT de lancer le conteneur
+                        sh 'mkdir -p ${WORKSPACE}/frontend/breco/test-results'
+                        sh 'chmod -R 777 ${WORKSPACE}/frontend/breco/test-results'  // Permissions ouvertes pour test
+
+                        // 2. Lance le conteneur avec le volume monté
+                        script {
+                            docker.image('node:25-alpine3.21').inside(
+                                "-u root -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z -w /app/frontend/breco"
+                            ) {
+                                sh '''
+                                    pwd  # Affiche le répertoire courant dans le conteneur
+                                    ls -la  # Liste les fichiers dans le répertoire courant
+                                    npm ci
+                                    mkdir -p test-results
+                                    npm run test:unit
+                                    ls -la test-results/  # Vérifie que le fichier XML est généré
+                                '''
+                            }
+                        }
                     }
                     post {
                         always {
-                            sh 'ls -la frontend/breco/test-results/'
-                            junit 'frontend/breco/test-results/unit-results.xml'
+                            // 3. Vérifie que le fichier est présent sur l'hôte
+                            sh 'ls -la ${WORKSPACE}/frontend/breco/test-results/'
+                            junit "${WORKSPACE}/frontend/breco/test-results/unit-results.xml"
                         }
                     }
                 }

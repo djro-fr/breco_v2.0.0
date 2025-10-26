@@ -42,89 +42,77 @@ pipeline {
             parallel {
                 stage('Test: Unit Tests') {
                     steps {
-                        // 1. Crée le répertoire pour les rapports sur l'hôte
-                        sh 'mkdir -p ${WORKSPACE}/frontend/breco/test-results'
-                        sh 'chmod -R 777 ${WORKSPACE}/frontend/breco/test-results'
-
-                        // 2. Lance le conteneur avec le bon répertoire de travail et le volume monté
                         script {
+                            // Monte tout le répertoire frontend/breco dans /app
                             docker.image('node:25-alpine3.21').inside(
                                 "-u root -v ${WORKSPACE}/frontend/breco:/app:rw,z -w /app"
                             ) {
                                 sh '''
-                                    pwd  # Doit afficher /app
-                                    ls -la  # Doit lister le contenu de frontend/breco
                                     npm ci
                                     mkdir -p test-results
                                     npm run test:unit
-                                    ls -la test-results/  # Vérifie que unit-results.xml est généré
+                                    ls -la test-results/
                                 '''
                             }
                         }
                     }
                     post {
                         always {
-                            // 3. Vérifie que le fichier est présent sur l'hôte
                             sh 'ls -la ${WORKSPACE}/frontend/breco/test-results/'
                             junit "${WORKSPACE}/frontend/breco/test-results/unit-results.xml"
                         }
                     }
                 }
+
                 stage('Test: Integration Tests') {
-                    agent {
-                        docker {
-                            image 'node:25-alpine3.21'
-                            args '''
-                                -u root
-                                -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
-                                -w /app
-                            '''
-                        }
-                    }
                     steps {
-                        echo "Tests intégration..."
-                        sh '''
-                            cd frontend/breco
-                            npm ci
-                            npm run test:integration
-                            ls -la test-results/ 
-                        '''
+                        script {
+                            // Même approche que pour les Unit Tests
+                            docker.image('node:25-alpine3.21').inside(
+                                "-u root -v ${WORKSPACE}/frontend/breco:/app:rw,z -w /app"
+                            ) {
+                                sh '''
+                                    npm ci
+                                    mkdir -p test-results
+                                    npm run test:integration
+                                    ls -la test-results/
+                                '''
+                            }
+                        }
                     }
                     post {
                         always {
-                            sh 'ls -la frontend/breco/test-results/'
-                            junit 'frontend/breco/test-results/integration-results.xml'
+                            sh 'ls -la ${WORKSPACE}/frontend/breco/test-results/'
+                            junit "${WORKSPACE}/frontend/breco/test-results/integration-results.xml"
                         }
                     }
                 }
+
                 stage('Test: UI Tests') {
-                    agent {
-                        docker {
-                            image 'node:25-alpine3.21'
-                            args '''
-                                -u root
-                                -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
-                                -w /app
-                            '''
-                        }
-                    }
                     steps {
-                        echo "Tests UI..."
-                        sh '''
-                            cd frontend/breco
-                            npm ci
-                            npm run test:ui
-                            ls -la test-results/ 
-                        '''
+                        script {
+                            // Même approche que pour les Unit Tests
+                            docker.image('node:25-alpine3.21').inside(
+                                "-u root -v ${WORKSPACE}/frontend/breco:/app:rw,z -w /app"
+                            ) {
+                                sh '''
+                                    npm ci
+                                    mkdir -p test-results
+                                    npm run test:ui
+                                    ls -la test-results/
+                                '''
+                            }
+                        }
                     }
                     post {
                         always {
-                            sh 'ls -la frontend/breco/test-results/'
-                            junit 'frontend/breco/test-results/ui-results.xml'
+                            sh 'ls -la ${WORKSPACE}/frontend/breco/test-results/'
+                            junit "${WORKSPACE}/frontend/breco/test-results/ui-results.xml"
                         }
                     }
                 }
             }
+        
             // stage('Test: E2E Tests') {
             //     agent {
             //         docker {

@@ -44,7 +44,11 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm'
+                            args '''
+                                -u root
+                                -v npm-cache:/root/.npm
+                                -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
+                            '''
                         }
                     }
                     steps {
@@ -57,7 +61,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit '**/breco/test-results/unit-results.xml'
+                            junit 'frontend/breco/test-results/unit-results.xml'
                         }
                     }
                 }
@@ -65,7 +69,11 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm'
+                            args '''
+                                -u root
+                                -v npm-cache:/root/.npm
+                                -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
+                            '''
                         }
                     }
                     steps {
@@ -78,7 +86,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit '**/breco/test-results/integration-results.xml'
+                            junit 'frontend/breco/test-results/integration-results.xml'
                         }
                     }
                 }
@@ -86,7 +94,11 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm'
+                            args '''
+                                -u root
+                                -v npm-cache:/root/.npm
+                                -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
+                            '''
                         }
                     }
                     steps {
@@ -99,7 +111,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit '**/breco/test-results/ui-results.xml'
+                            junit 'frontend/breco/test-results/ui-results.xml'
                         }
                     }
                 }

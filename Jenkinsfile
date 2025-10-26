@@ -33,10 +33,9 @@ pipeline {
                     steps {
                         echo "Tests unitaires..."
                         sh '''
-                            npm install -g bun
                             cd frontend/breco
-                            bun install
-                            VITEST=true bun run test:unit
+                            npm ci
+                            npm run test:unit
                         '''
                     }
                 }
@@ -50,10 +49,9 @@ pipeline {
                     steps {
                         echo "Tests intégration..."
                         sh '''
-                            npm install -g bun
                             cd frontend/breco
-                            bun install
-                            VITEST=true bun run test:integration
+                            npm ci
+                            npm run test:integration
                         '''
                     }
                 }
@@ -67,10 +65,9 @@ pipeline {
                     steps {
                         echo "Tests UI..."
                         sh '''
-                            npm install -g bun
                             cd frontend/breco
-                            bun install
-                            VITEST=true bun run test:ui
+                            npm ci
+                            npm run test:ui
                         '''
                     }
                 }

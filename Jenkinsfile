@@ -44,7 +44,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root'
+                            args '-u root -v ${WORKSPACE}/frontend/breco/test-results:/test-results:rw'
                         }
                     }
                     steps {
@@ -52,6 +52,7 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:unit
+                            cp test-results/unit-results.xml /test-results/
                         '''
                     }
                     post {
@@ -131,19 +132,19 @@ pipeline {
             //     }
             // }
         }
-        stage('Copy Test Results to Frontend') {
-            // http://37.59.101.232:3001/test-results/unit-results.xml
-            // http://37.59.101.232:3001/test-results/integration-results.xml
-            // http://37.59.101.232:3001/test-results/ui-results.xml
-            steps {
-                sh '''
-                    echo "Copie des résultats de tests dans le code..."
-                    mkdir -p frontend/breco/public/test-results
-                    cp frontend/breco/test-results/*.xml frontend/breco/public/test-results/ || true
-                    ls -la frontend/breco/public/test-results/
-                '''
-            }
-        }       
+        // stage('Copy Test Results to Frontend') {
+        //     // http://37.59.101.232:3001/test-results/unit-results.xml
+        //     // http://37.59.101.232:3001/test-results/integration-results.xml
+        //     // http://37.59.101.232:3001/test-results/ui-results.xml
+        //     steps {
+        //         sh '''
+        //             echo "Copie des résultats de tests dans le code..."
+        //             mkdir -p frontend/breco/public/test-results
+        //             cp frontend/breco/test-results/*.xml frontend/breco/public/test-results/ || true
+        //             ls -la frontend/breco/public/test-results/
+        //         '''
+        //     }
+        // }       
 
         stage('Build') {
             steps {

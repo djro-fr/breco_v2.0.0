@@ -35,7 +35,7 @@ stage('Tests Parallèles') {
                         sh '''
                             cd frontend/breco
                             npm ci
-                            npm run test:unit
+                            npm run test:unit -- --reporter=junit --outputFile=../../test-results/unit-results.xml
                         '''
                     }
                 }
@@ -51,7 +51,7 @@ stage('Tests Parallèles') {
                         sh '''
                             cd frontend/breco
                             npm ci
-                            npm run test:integration
+                            npm run test:integration -- --reporter=junit --outputFile=../../test-results/integration-results.xml
                         '''
                     }
                 }
@@ -67,7 +67,7 @@ stage('Tests Parallèles') {
                         sh '''
                             cd frontend/breco
                             npm ci
-                            npm run test:ui
+                            npm run test:ui -- --reporter=junit --outputFile=../../test-results/ui-results.xml
                         '''
                     }
                 }
@@ -152,6 +152,7 @@ stage('Tests Parallèles') {
     }
     post {
         always {
+            junit 'test-results/*.xml'
             echo "Pipeline terminé"
         }
         failure {

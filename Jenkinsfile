@@ -53,6 +53,7 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:unit
+                            cp -r test-results ${WORKSPACE}/frontend/breco/
                         '''
                     }
                 }
@@ -69,6 +70,7 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:integration
+                            cp -r test-results ${WORKSPACE}/frontend/breco/
                         '''
                     }
                 }
@@ -85,6 +87,7 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:ui
+                            cp -r test-results ${WORKSPACE}/frontend/breco/
                         '''
                     }
                 }

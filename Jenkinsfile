@@ -138,7 +138,7 @@ pipeline {
                     
                     # Télécharge JMeter
                     wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-                    unzip -q apache-jmeter-5.6.3.zip
+                    unzip -o -q apache-jmeter-5.6.3.zip
                     
                     # Lance le test (chemin complet)
                     ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test-plan.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log

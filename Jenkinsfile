@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         VPS_IP = '37.59.101.232'
@@ -12,7 +11,6 @@ pipeline {
         VITE_API_URL = credentials('vite_api_url')
         CORS_ORIGIN = credentials('cors_origin')
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -36,35 +34,69 @@ pipeline {
                     npm install -g bun
                     cd frontend/breco
                     bun install --frozen-lockfile
-                    VITEST=true bun run test:unit 
+                    VITEST=true bun run test:unit
                 '''
             }
         }
-        stage('Build') {
-            steps {
-                echo "Build des images Docker..."
-                sh 'docker-compose build'
+        stage('Test: Integration Tests') {
+            agent {
+                docker {
+                    image 'node:25-alpine3.21'
+                    args '-u root'
+                }
             }
-        }
-        stage('Deploy') {
             steps {
-                echo "Redéploiement..."
+                echo "Tests intégration..."
                 sh '''
-                    docker-compose down
-                    docker-compose up -d
+                    npm install -g bun
+                    cd frontend/breco
+                    bun install --frozen-lockfile
+                    VITEST=true bun run test:integration
                 '''
             }
         }
-        stage('Verify') {
+        stage('Test: UI Tests') {
+            agent {
+                docker {
+                    image 'node:25-alpine3.21'
+                    args '-u root'
+                }
+            }
             steps {
-                echo "Vérification du déploiement..."
+                echo "Tests UI..."
                 sh '''
-                    sleep 10
-                    curl -f http://37.59.101.232:8081/auth/test || exit 1
-                    echo "✅ OK !"
-                '''                
+                    npm install -g bun
+                    cd frontend/breco
+                    bun install --frozen-lockfile
+                    VITEST=true bun run test:ui
+                '''
             }
         }
+        // stage('Build') {
+        //     steps {
+        //         echo "Build des images Docker..."
+        //         sh 'docker-compose build'
+        //     }
+        // }
+        // stage('Deploy') {
+        //     steps {
+        //         echo "Redéploiement..."
+        //         sh '''
+        //             docker-compose down
+        //             docker-compose up -d
+        //         '''
+        //     }
+        // }
+        // stage('Verify') {
+        //     steps {
+        //         echo "Vérification du déploiement..."
+        //         sh '''
+        //             sleep 10
+        //             curl -f http://37.59.101.232:8081/health || exit 1
+        //             echo "✅ OK !"
+        //         '''                
+        //     }
+        // }
     }
     post {
         always {

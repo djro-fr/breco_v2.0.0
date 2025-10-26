@@ -124,19 +124,23 @@ pipeline {
             }
         }
         stage('Performance: JMeter Tests') {
+            agent {
+                docker {
+                    image 'openjdk:11-jre-slim'
+                    args '-u root'
+                }
+            }
             steps {
                 echo "Tests de charge JMeter..."
                 sh '''
-                    apt-get update -qq
-                    apt-get install -y wget
-                    # Download JMeter
+                    # Télécharge JMeter
                     wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
                     unzip -q apache-jmeter-5.6.3.zip
                     
-                    # Run JMeter tests
+                    # Lance le test
                     ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t jmeter/test-plan.jmx -l jmeter/results.jtl -j jmeter/jmeter.log
                     
-                    # Report generation
+                    # Génère le rapport
                     ./apache-jmeter-5.6.3/bin/jmeter.sh -g jmeter/results.jtl -o jmeter/report
                 '''
             }

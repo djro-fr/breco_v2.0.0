@@ -56,7 +56,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'test-results/unit-results.xml'
+                            junit 'frontend/breco/test-results/unit-results.xml'                                                       
                         }
                     }
                 }
@@ -77,7 +77,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'test-results/integration-results.xml'
+                            junit 'frontend/breco/test-results/integration-results.xml'                                                       
                         }
                     }
                 }
@@ -98,7 +98,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'test-results/ui-results.xml'
+                            junit 'frontend/breco/test-results/ui-results.xml'                                                       
                         }
                     }
                 }
@@ -130,7 +130,19 @@ pipeline {
             //         '''
             //     }
             // }
+            stage('Copy Test Results to Frontend') {
+                steps {
+                    sh '''
+                        echo "Copie des résultats de tests dans le code..."
+                        mkdir -p frontend/breco/public/test-results
+                        cp frontend/breco/test-results/*.xml frontend/breco/public/test-results/ || true
+                        ls -la frontend/breco/public/test-results/
+                    '''
+                }
+            }   
         }
+        
+
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
@@ -146,6 +158,7 @@ pipeline {
                 '''
             }
         }
+        
         stage('Verify') {
             steps {
                 echo "Vérification du déploiement..."
@@ -156,6 +169,7 @@ pipeline {
                 '''                
             }
         }
+        
         // stage('Performance: JMeter Tests') {
         //     agent {
         //         docker {
@@ -181,7 +195,7 @@ pipeline {
         //         '''
         //     }
         // }
-        
+
     }
     post {
         failure {

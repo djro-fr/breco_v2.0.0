@@ -21,13 +21,13 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Tests Parallèles') {
+stage('Tests Parallèles') {
             parallel {
                 stage('Test: Unit Tests') {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root'
+                            args '-u root -v npm-cache:/root/.npm'
                         }
                     }
                     steps {
@@ -43,7 +43,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root'
+                            args '-u root -v npm-cache:/root/.npm'
                         }
                     }
                     steps {
@@ -59,7 +59,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root'
+                            args '-u root -v npm-cache:/root/.npm'
                         }
                     }
                     steps {
@@ -76,7 +76,7 @@ pipeline {
             //     agent {
             //         docker {
             //             image 'node:25-alpine3.21'
-            //             args '-u root'
+            //             args '-u root -v npm-cache:/root/.npm'
             //         }
             //     }
             //     steps {

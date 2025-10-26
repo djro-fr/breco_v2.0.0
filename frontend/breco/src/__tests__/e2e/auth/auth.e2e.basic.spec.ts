@@ -5,18 +5,19 @@ import path from 'path'
 import os from 'os'
 
 let driver
-const isWindows = os.platform() === 'win32'
+let chromedriverPath: string
 
 describe('E2E Basic Test', () => {
   beforeAll(async () => {
-    const chromedriverPath = path.join(
-      process.cwd(),
-      'node_modules',
-      'chromedriver',
-      'lib',
-      'chromedriver',
-      isWindows ? 'chromedriver.exe' : 'chromedriver'
-    )
+    try {
+      chromedriverPath = require.resolve('chromedriver/lib/chromedriver')
+    } catch (e) {
+      try {
+        chromedriverPath = require.resolve('chromedriver')
+      } catch (e2) {
+        chromedriverPath = path.join(process.cwd(), 'node_modules', '.bin', 'chromedriver')
+      }
+    }
 
     const options = new chrome.Options()
     const serviceBuilder = new chrome.ServiceBuilder(chromedriverPath)

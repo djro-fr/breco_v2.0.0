@@ -148,6 +148,7 @@ pipeline {
                 '''
             }
         }
+    }
     post {
         always {
             echo "Pipeline terminé"

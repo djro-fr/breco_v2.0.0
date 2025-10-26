@@ -46,8 +46,8 @@ pipeline {
                             image 'node:25-alpine3.21'
                             args '''
                                 -u root
-                                -v npm-cache:/root/.npm
                                 -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
+                                -w /app
                             '''
                         }
                     }
@@ -57,10 +57,12 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:unit
+                            ls -la test-results/ 
                         '''
                     }
                     post {
                         always {
+                            sh 'ls -la frontend/breco/test-results/'
                             junit 'frontend/breco/test-results/unit-results.xml'
                         }
                     }
@@ -71,8 +73,8 @@ pipeline {
                             image 'node:25-alpine3.21'
                             args '''
                                 -u root
-                                -v npm-cache:/root/.npm
                                 -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
+                                -w /app
                             '''
                         }
                     }
@@ -82,10 +84,12 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:integration
+                            ls -la test-results/ 
                         '''
                     }
                     post {
                         always {
+                            sh 'ls -la frontend/breco/test-results/'
                             junit 'frontend/breco/test-results/integration-results.xml'
                         }
                     }
@@ -96,8 +100,8 @@ pipeline {
                             image 'node:25-alpine3.21'
                             args '''
                                 -u root
-                                -v npm-cache:/root/.npm
                                 -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z
+                                -w /app
                             '''
                         }
                     }
@@ -107,10 +111,12 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:ui
+                            ls -la test-results/ 
                         '''
                     }
                     post {
                         always {
+                            sh 'ls -la frontend/breco/test-results/'
                             junit 'frontend/breco/test-results/ui-results.xml'
                         }
                     }

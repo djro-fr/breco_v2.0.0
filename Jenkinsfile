@@ -42,22 +42,22 @@ pipeline {
             parallel {
                 stage('Test: Unit Tests') {
                     steps {
-                        // 1. Crée le répertoire sur l'hôte AVANT de lancer le conteneur
+                        // 1. Crée le répertoire pour les rapports sur l'hôte
                         sh 'mkdir -p ${WORKSPACE}/frontend/breco/test-results'
-                        sh 'chmod -R 777 ${WORKSPACE}/frontend/breco/test-results'  // Permissions ouvertes pour test
+                        sh 'chmod -R 777 ${WORKSPACE}/frontend/breco/test-results'
 
-                        // 2. Lance le conteneur avec le volume monté
+                        // 2. Lance le conteneur avec le bon répertoire de travail et le volume monté
                         script {
                             docker.image('node:25-alpine3.21').inside(
-                                "-u root -v ${WORKSPACE}/frontend/breco/test-results:/app/frontend/breco/test-results:rw,z -w /app/frontend/breco"
+                                "-u root -v ${WORKSPACE}/frontend/breco:/app:rw,z -w /app"
                             ) {
                                 sh '''
-                                    pwd  # Affiche le répertoire courant dans le conteneur
-                                    ls -la  # Liste les fichiers dans le répertoire courant
+                                    pwd  # Doit afficher /app
+                                    ls -la  # Doit lister le contenu de frontend/breco
                                     npm ci
                                     mkdir -p test-results
                                     npm run test:unit
-                                    ls -la test-results/  # Vérifie que le fichier XML est généré
+                                    ls -la test-results/  # Vérifie que unit-results.xml est généré
                                 '''
                             }
                         }

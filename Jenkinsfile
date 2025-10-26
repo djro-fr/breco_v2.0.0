@@ -155,8 +155,8 @@ pipeline {
                     echo "Copie des résultats de tests dans dist/..."
                     mkdir -p ${WORKSPACE}/frontend/breco/dist/test-results
                     
-                    # Copie avec le chemin complet
-                    cp ${WORKSPACE}/frontend/breco/test-results/*.xml ${WORKSPACE}/frontend/breco/dist/test-results/ 2>/dev/null || true
+                    # Le workspace des tests Docker est breco@2
+                    cp /var/jenkins_home/workspace/breco@2/frontend/breco/test-results/*.xml ${WORKSPACE}/frontend/breco/dist/test-results/ 2>/dev/null || true
                     
                     echo "Vérification :"
                     ls -la ${WORKSPACE}/frontend/breco/dist/test-results/

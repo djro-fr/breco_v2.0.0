@@ -18,11 +18,22 @@ export default mergeConfig(
           url: process.env.VITE_API_URL || 'http://localhost/',
         },
       },
-      exclude: ['**/node_modules/**', '**/e2e/**'],
+      include: [
+        'src/**/__tests__/unit/**/*.spec.ts',
+        'src/**/__tests__/ui/**/*.spec.ts',
+        'src/**/__tests__/integration/**/*.spec.ts',
+        'src/**/__tests__/e2e/**/*.spec.ts',
+      ],
+      exclude: ['**/node_modules/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         provider: 'v8',
-      },
+        reporter: ['text', 'json', 'html', 'lcov'],
+        exclude: [
+          'node_modules/',
+          'src/**/__tests__/',
+        ]
+      }
     },
   })
 )

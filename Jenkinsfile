@@ -51,8 +51,7 @@ pipeline {
                         sh '''
                             cd /app
                             npm ci
-                            mkdir -p test-results
-                            npm run test:unit -- --reporter=junit --outputFile=test-results/unit-results.xml
+                            npm run test:unit
                         '''
                     }
                     post {
@@ -73,8 +72,7 @@ pipeline {
                         sh '''
                             cd /app
                             npm ci
-                            mkdir -p test-results
-                            npm run test:integration -- --reporter=junit --outputFile=test-results/integration-results.xml
+                            npm run test:integration
                         '''
                     }
                     post {
@@ -95,8 +93,7 @@ pipeline {
                         sh '''
                             cd /app
                             npm ci
-                            mkdir -p test-results
-                            npm run test:ui -- --reporter=junit --outputFile=test-results/ui-results.xml
+                            npm run test:ui
                         '''
                     }
                     post {

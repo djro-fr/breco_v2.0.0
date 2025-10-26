@@ -22,17 +22,6 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Debug') {
-            steps {
-                sh '''
-                    echo "=== DEBUG INFO ==="
-                    pwd
-                    ls -la
-                    ls -la frontend/breco/ || echo "frontend/breco n'existe pas"
-                    ls -la frontend/breco/package.json || echo "package.json n'existe pas"
-                '''
-            }
-        }
         stage('Lint') {
             agent {
                 docker {
@@ -42,9 +31,7 @@ pipeline {
             }
             steps {
                 echo "Linting..."
-                sh '''
-                    echo "PWD in Docker: $(pwd)"
-                    ls -la
+                sh '''                    
                     cd frontend/breco
                     npm ci
                     npm run lint
@@ -62,14 +49,9 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            echo "=== Unit Tests Debug ==="
-                            echo "PWD: $(pwd)"
-                            ls -la
                             cd frontend/breco
-                            npm install
-                            mkdir -p test-results
-                            npm run test:unit || true
-                            ls -la test-results/
+                            npm ci
+                            npm run test:unit
                         '''
                     }
                     post {
@@ -88,8 +70,8 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            npm install
-                            mkdir -p test-results
+                            cd frontend/breco
+                            npm ci
                             npm run test:integration
                         '''
                     }
@@ -109,8 +91,8 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            npm install
-                            mkdir -p test-results
+                            cd frontend/breco
+                            npm ci
                             npm run test:ui
                         '''
                     }

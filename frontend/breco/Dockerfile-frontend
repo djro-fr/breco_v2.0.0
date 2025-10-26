@@ -10,7 +10,8 @@ COPY package.json bun.lock ./
 
 # Install dependencies with bun
 RUN npm install -g bun && \
-    bun install
+    bun install && \
+    npm rebuild
 
 # Copy source code
 COPY . .

@@ -49,9 +49,24 @@ pipeline {
                     }
                     steps {
                         sh '''
+                            echo "=== DEBUG START ==="
+                            echo "PWD: $(pwd)"
+                            echo "WORKSPACE: ${WORKSPACE}"
+                            echo "Contenu de /app :"
+                            ls -la /app
+                            
                             cd /app
                             npm ci
                             npm run test:unit
+                            
+                            echo "=== APRÈS TEST ==="
+                            echo "Contenu de test-results/ :"
+                            ls -la test-results/
+                            
+                            echo "Contenu complet :"
+                            find . -name "*.xml" -type f
+                            
+                            echo "=== DEBUG END ==="
                         '''
                     }
                     post {

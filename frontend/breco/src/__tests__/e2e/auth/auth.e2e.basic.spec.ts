@@ -7,9 +7,9 @@ describe('UI - Test Selenium avec Firefox', function() {
   let driver;
 
   before(async function() {
-    let options = new firefox.Options();
+    const options = new firefox.Options();
     options.addArguments('--headless');
-    let serviceBuilder = new firefox.ServiceBuilder('/usr/bin/geckodriver');
+    const serviceBuilder = new firefox.ServiceBuilder('/usr/bin/geckodriver');
     serviceBuilder.enableVerboseLogging();
 
     driver = await new Builder()

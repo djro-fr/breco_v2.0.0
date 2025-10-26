@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi } from 'vitest'
 import { LoginUseCase } from '@/domain/usecases/auth/LoginUseCase'
 import { RegisterUseCase } from '@/domain/usecases/auth/RegisterUseCase'

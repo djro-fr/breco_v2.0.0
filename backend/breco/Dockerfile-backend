@@ -64,7 +64,8 @@ COPY --from=builder /app /app
 
 # Create necessary directories
 RUN mkdir -p logs tmp cache && \
-    chmod -R 755 logs tmp cache
+    chown -R www-data:www-data logs tmp cache && \
+    chmod -R 750 logs tmp cache
 
 # Create .env file with default values
 RUN echo "DEBUG=false" > .env && \

@@ -44,7 +44,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm'
+                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:${WORKSPACE}/frontend/breco/test-results'
                         }
                     }
                     steps {
@@ -53,7 +53,6 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:unit
-                            cp -r test-results ${WORKSPACE}/frontend/breco/
                         '''
                     }
                 }
@@ -61,7 +60,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm'
+                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:${WORKSPACE}/frontend/breco/test-results'
                         }
                     }
                     steps {
@@ -70,7 +69,6 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:integration
-                            cp -r test-results ${WORKSPACE}/frontend/breco/
                         '''
                     }
                 }
@@ -78,7 +76,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm'
+                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:${WORKSPACE}/frontend/breco/test-results'
                         }
                     }
                     steps {
@@ -87,7 +85,6 @@ pipeline {
                             cd frontend/breco
                             npm ci
                             npm run test:ui
-                            cp -r test-results ${WORKSPACE}/frontend/breco/
                         '''
                     }
                 }

@@ -72,6 +72,17 @@ pipeline {
                 '''
             }
         }
+        stage('Test: E2E Tests') {
+            steps {
+                echo "Tests E2E (Selenium)..."
+                sh '''
+                    cd frontend/breco
+                    npm install -g bun chromedriver
+                    bun install --frozen-lockfile
+                    VITEST=true bun run test:e2e
+                '''
+            }
+        }
         // stage('Build') {
         //     steps {
         //         echo "Build des images Docker..."

@@ -127,7 +127,7 @@ pipeline {
             agent {
                 docker {
                     image 'openjdk:11-jre-slim'
-                    args '-u root'
+                    args '-u root -v ${WORKSPACE}:${WORKSPACE}'
                 }
             }
             steps {
@@ -140,7 +140,7 @@ pipeline {
                     wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
                     unzip -o -q apache-jmeter-5.6.3.zip
                     
-                    # Lance le test (chemin complet)
+                    # Lance le test
                     ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test-plan.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
                     # Génère le rapport
@@ -148,7 +148,6 @@ pipeline {
                 '''
             }
         }
-    }
     post {
         always {
             echo "Pipeline terminé"

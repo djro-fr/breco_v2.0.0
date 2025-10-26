@@ -167,7 +167,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
-                sh 'docker-compose build'
+                sh 'docker-compose build --build-arg BUILD_NUMBER=${BUILD_NUMBER}'
             }
         }
         stage('Deploy') {
@@ -179,7 +179,28 @@ pipeline {
                 '''
             }
         }
-        
+        stage('Verify Deployment Version') {
+            steps {
+                sh '''
+                    echo "Vérification de la version déployée..."
+                    
+                    # Récupère le numéro de build
+                    BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt)
+                    BUILD_DATE=$(curl -s http://37.59.101.232:3001/BUILD_DATE.txt)
+                    
+                    echo "Build Number: $BUILD_NUM"
+                    echo "Build Date: $BUILD_DATE"
+                    echo "Jenkins Build: ${BUILD_NUMBER}"
+                    
+                    if [ "$BUILD_NUM" == "${BUILD_NUMBER}" ]; then
+                        echo "✅ Correct version deployed!"
+                    else
+                        echo "❌ WRONG version deployed! Expected ${BUILD_NUMBER}, got $BUILD_NUM"
+                        exit 1
+                    fi
+                '''
+            }
+        }
         stage('Verify') {
             steps {
                 echo "Vérification du déploiement..."

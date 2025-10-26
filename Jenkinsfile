@@ -170,11 +170,14 @@ pipeline {
     }
     post {
         always {
-            junit '**/test-results/*.xml', allowEmptyResults: true
+            junit testResults: '**/test-results/*.xml', allowEmptyResults: true
             echo "Pipeline terminé"
         }
         failure {
             echo "❌ Pipeline échoué !"
+        }
+        success {
+            echo "✅ Pipeline réussi !"
         }
     }
 }

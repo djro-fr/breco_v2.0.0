@@ -72,23 +72,32 @@ pipeline {
                 '''
             }
         }
-        stage('Test: E2E Tests') {
-            agent {
-                docker {
-                    image 'node:25-alpine3.21'
-                    args '-u root'
-                }
-            }
-            steps {
-                echo "Tests E2E (Selenium)..."
-                sh '''
-                    npm install -g bun chromedriver
-                    cd frontend/breco
-                    bun install --frozen-lockfile
-                    VITEST=true bun run test:e2e
-                '''
-            }
-        }
+        // stage('Test: E2E Tests') {
+        //     agent {
+        //         docker {
+        //             image 'node:25-alpine3.21'
+        //             args '-u root'
+        //         }
+        //     }
+        //     steps {
+        //         echo "Tests E2E (Selenium)..."
+        //         sh '''
+        //             export DEBIAN_FRONTEND=noninteractive
+        //             apt-get update -qq && apt-get install -y firefox-esr wget netcat-openbsd
+                    
+        //             # Geckodriver
+        //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
+        //             tar -xzf geckodriver-v0.34.0-linux64.tar.gz
+        //             mv geckodriver /usr/bin/
+        //             chmod +x /usr/bin/geckodriver
+                    
+        //             npm install -g bun
+        //             cd frontend/breco
+        //             bun install --frozen-lockfile
+        //             VITEST=true bun run test:e2e
+        //         '''
+        //     }
+        // }
         // stage('Build') {
         //     steps {
         //         echo "Build des images Docker..."

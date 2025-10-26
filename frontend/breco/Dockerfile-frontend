@@ -3,13 +3,13 @@ FROM node:25-alpine3.21 AS builder
 RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
-COPY package.json bun.lock ./
+COPY package.json package-lock.json ./
 
 RUN npm install -g bun && \
     bun install && \
     npm rebuild rollup
 
-COPY package.json package-lock.json ./
+COPY . .
 
 RUN bun run build
 RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"

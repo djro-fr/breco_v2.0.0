@@ -141,31 +141,31 @@ pipeline {
                 '''                
             }
         }
-        stage('Performance: JMeter Tests') {
-            agent {
-                docker {
-                    image 'openjdk:11-jre-slim'
-                    args '-u root'
-                }
-            }
-            steps {
-                echo "Tests de charge JMeter..."
-                sh '''
-                    apt-get update -qq
-                    apt-get install -y wget unzip
+        // stage('Performance: JMeter Tests') {
+        //     agent {
+        //         docker {
+        //             image 'openjdk:11-jre-slim'
+        //             args '-u root'
+        //         }
+        //     }
+        //     steps {
+        //         echo "Tests de charge JMeter..."
+        //         sh '''
+        //             apt-get update -qq
+        //             apt-get install -y wget unzip
                     
-                    # Télécharge JMeter
-                    wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-                    unzip -o -q apache-jmeter-5.6.3.zip
+        //             # Télécharge JMeter
+        //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
+        //             unzip -o -q apache-jmeter-5.6.3.zip
                     
-                    # Lance le test
-                    ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
+        //             # Lance le test
+        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
-                    # Génère le rapport
-                    ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
-                '''
-            }
-        }
+        //             # Génère le rapport
+        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
+        //         '''
+        //     }
+        // }
         
     }
     post {

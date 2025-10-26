@@ -116,62 +116,69 @@ pipeline {
             //     }
             // }
         }
-        // stage('Build') {
-        //     steps {
-        //         echo "Build des images Docker..."
-        //         sh 'docker-compose build'
-        //     }
-        // }
-        // stage('Deploy') {
-        //     steps {
-        //         echo "Redéploiement..."
-        //         sh '''
-        //             docker-compose down
-        //             docker-compose up -d
-        //         '''
-        //     }
-        // }
-        // stage('Verify') {
-        //     steps {
-        //         echo "Vérification du déploiement..."
-        //         sh '''
-        //             sleep 10
-        //             curl -f http://37.59.101.232:8081/health || exit 1
-        //             echo "✅ OK !"
-        //         '''                
-        //     }
-        // }
-        // stage('Performance: JMeter Tests') {
-        //     agent {
-        //         docker {
-        //             image 'openjdk:11-jre-slim'
-        //             args '-u root'
-        //         }
-        //     }
-        //     steps {
-        //         echo "Tests de charge JMeter..."
-        //         sh '''
-        //             apt-get update -qq
-        //             apt-get install -y wget unzip
+        stage('Build') {
+            steps {
+                echo "Build des images Docker..."
+                sh 'docker-compose build'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo "Redéploiement..."
+                sh '''
+                    docker-compose down
+                    docker-compose up -d
+                '''
+            }
+        }
+        stage('Verify') {
+            steps {
+                echo "Vérification du déploiement..."
+                sh '''
+                    sleep 10
+                    curl -f http://37.59.101.232:8081/health || exit 1
+                    echo "✅ OK !"
+                '''                
+            }
+        }
+        stage('Performance: JMeter Tests') {
+            agent {
+                docker {
+                    image 'openjdk:11-jre-slim'
+                    args '-u root'
+                }
+            }
+            steps {
+                echo "Tests de charge JMeter..."
+                sh '''
+                    apt-get update -qq
+                    apt-get install -y wget unzip
                     
-        //             # Télécharge JMeter
-        //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-        //             unzip -o -q apache-jmeter-5.6.3.zip
+                    # Télécharge JMeter
+                    wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
+                    unzip -o -q apache-jmeter-5.6.3.zip
                     
-        //             # Lance le test
-        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
+                    # Lance le test
+                    ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
-        //             # Génère le rapport
-        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
-        //         '''
-        //     }
-        // }
+                    # Génère le rapport
+                    ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
+                '''
+            }
+        }
         
     }
     post {
         always {
-            junit testResults: '**/test-results/*.xml', allowEmptyResults: true
-            echo "Pipeline terminé"
+            junit testResults: 'frontend/breco/test-results/unit-results.xml', 
+                testDataPublishers: [], 
+                allowEmptyResults: true
+            junit testResults: 'frontend/breco/test-results/integration-results.xml',
+                testDataPublishers: [],
+                allowEmptyResults: true
+            junit testResults: 'frontend/breco/test-results/ui-results.xml',
+                testDataPublishers: [],
+                allowEmptyResults: true
         }
         failure {
             echo "❌ Pipeline échoué !"

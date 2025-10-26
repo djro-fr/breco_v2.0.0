@@ -82,7 +82,7 @@ pipeline {
             steps {
                 echo "Tests E2E (Selenium)..."
                 sh '''
-                    npm install -g bun
+                    npm install -g bun chromedriver
                     cd frontend/breco
                     bun install --frozen-lockfile
                     VITEST=true bun run test:e2e

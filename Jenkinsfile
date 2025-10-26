@@ -33,7 +33,7 @@ pipeline {
                 sh '''
                     npm install -g bun
                     cd frontend/breco
-                    bun install --frozen-lockfile
+                    bun install 
                     VITEST=true bun run test:unit
                 '''
             }
@@ -50,7 +50,7 @@ pipeline {
                 sh '''
                     npm install -g bun
                     cd frontend/breco
-                    bun install --frozen-lockfile
+                    bun install 
                     VITEST=true bun run test:integration
                 '''
             }
@@ -67,7 +67,7 @@ pipeline {
                 sh '''
                     npm install -g bun
                     cd frontend/breco
-                    bun install --frozen-lockfile
+                    bun install 
                     VITEST=true bun run test:ui
                 '''
             }
@@ -143,7 +143,6 @@ pipeline {
     post {
         always {
             echo "Pipeline terminé"
-            archiveArtifacts artifacts: 'jmeter/report/**', allowEmptyArchive: true
         }
         failure {
             echo "❌ Pipeline échoué !"

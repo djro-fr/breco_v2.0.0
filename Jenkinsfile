@@ -44,7 +44,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:${WORKSPACE}/frontend/breco/test-results'
+                            args '-u root -v npm-cache:/root/.npm'
                         }
                     }
                     steps {
@@ -55,12 +55,17 @@ pipeline {
                             npm run test:unit
                         '''
                     }
+                    post {
+                        always {
+                            junit 'frontend/breco/test-results/unit-results.xml'
+                        }
+                    }
                 }
                 stage('Test: Integration Tests') {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:${WORKSPACE}/frontend/breco/test-results'
+                            args '-u root -v npm-cache:/root/.npm'
                         }
                     }
                     steps {
@@ -71,12 +76,17 @@ pipeline {
                             npm run test:integration
                         '''
                     }
+                    post {
+                        always {
+                            junit 'frontend/breco/test-results/integration-results.xml'
+                        }
+                    }
                 }
                 stage('Test: UI Tests') {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:${WORKSPACE}/frontend/breco/test-results'
+                            args '-u root -v npm-cache:/root/.npm'
                         }
                     }
                     steps {
@@ -86,6 +96,11 @@ pipeline {
                             npm ci
                             npm run test:ui
                         '''
+                    }
+                    post {
+                        always {
+                            junit 'frontend/breco/test-results/ui-results.xml'
+                        }
                     }
                 }
             }
@@ -169,17 +184,6 @@ pipeline {
         
     }
     post {
-        always {
-            junit testResults: 'frontend/breco/test-results/unit-results.xml', 
-                testDataPublishers: [], 
-                allowEmptyResults: true
-            junit testResults: 'frontend/breco/test-results/integration-results.xml',
-                testDataPublishers: [],
-                allowEmptyResults: true
-            junit testResults: 'frontend/breco/test-results/ui-results.xml',
-                testDataPublishers: [],
-                allowEmptyResults: true
-        }
         failure {
             echo "❌ Pipeline échoué !"
         }

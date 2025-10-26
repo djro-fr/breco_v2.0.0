@@ -1,6 +1,8 @@
 # Stage 1: Build
 FROM node:25-alpine3.21 AS builder
 
+RUN apk add --no-cache python3 make g++
+
 WORKDIR /app
 
 # Copy package files

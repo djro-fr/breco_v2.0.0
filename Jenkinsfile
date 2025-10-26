@@ -21,7 +21,23 @@ pipeline {
                 checkout scm
             }
         }
-stage('Tests Parallèles') {
+        stage('Lint') {
+            agent {
+                docker {
+                    image 'node:25-alpine3.21'
+                    args '-u root'
+                }
+            }
+            steps {
+                echo "Linting..."
+                sh '''
+                    cd frontend/breco
+                    npm ci
+                    npm run lint
+                '''
+            }
+        }
+        stage('Tests Parallèles') {
             parallel {
                 stage('Test: Unit Tests') {
                     agent {
@@ -33,9 +49,10 @@ stage('Tests Parallèles') {
                     steps {
                         echo "Tests unitaires..."
                         sh '''
+                            mkdir -p test-results
                             cd frontend/breco
                             npm ci
-                            npm run test:unit -- --reporter=junit --outputFile=../../test-results/unit-results.xml
+                            npm run test:unit
                         '''
                     }
                 }
@@ -51,7 +68,7 @@ stage('Tests Parallèles') {
                         sh '''
                             cd frontend/breco
                             npm ci
-                            npm run test:integration -- --reporter=junit --outputFile=../../test-results/integration-results.xml
+                            npm run test:integration
                         '''
                     }
                 }
@@ -67,7 +84,7 @@ stage('Tests Parallèles') {
                         sh '''
                             cd frontend/breco
                             npm ci
-                            npm run test:ui -- --reporter=junit --outputFile=../../test-results/ui-results.xml
+                            npm run test:ui
                         '''
                     }
                 }
@@ -149,6 +166,7 @@ stage('Tests Parallèles') {
         //         '''
         //     }
         // }
+        
     }
     post {
         always {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Breco API Load Test" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load Test" enabled="true">
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
@@ -9,21 +9,24 @@
       <booleanProp name="TestPlan.serialize_threadgroups">false</booleanProp>
       <booleanProp name="TestPlan.functional_mode">false</booleanProp>
       <booleanProp name="TestPlan.tearDown_on_shutdown">true</booleanProp>
+      <booleanProp name="TestPlan.save_thread_counts">true</booleanProp>
     </TestPlan>
     <hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Breco Users" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Users" enabled="true">
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <booleanProp name="LoopController.continue_forever">false</booleanProp>
-          <stringProp name="LoopController.loops">10</stringProp>
+          <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">5</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
-        <longProp name="ThreadGroup.start_time">1635000000000</longProp>
-        <longProp name="ThreadGroup.end_time">1635000000000</longProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <booleanProp name="LoopController.continue_forever">false</booleanProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <booleanProp name="ThreadGroup.scheduler">false</booleanProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
-        <booleanProp name="ThreadGroup.same_user_on_next_iteration">true</booleanProp>
       </ThreadGroup>
       <hashTree>
         <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
@@ -38,19 +41,9 @@
           <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
           <booleanProp name="HTTPSampler.image_parser">false</booleanProp>
           <booleanProp name="HTTPSampler.concurrentDwn">false</booleanProp>
-          <stringProp name="HTTPSampler.concurrentPool"></stringProp>
         </ConfigTestElement>
         <hashTree/>
-        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-          <collectionProp name="HeaderManager.headers">
-            <elementProp name="Content-Type" elementType="Header">
-              <stringProp name="Header.name">Content-Type</stringProp>
-              <stringProp name="Header.value">application/json</stringProp>
-            </elementProp>
-          </collectionProp>
-        </HeaderManager>
-        <hashTree/>
-        <HTTPSampler guiclass="HttpTestSampleGui" testclass="HTTPSampler" testname="Login API" enabled="true">
+        <HTTPSampler guiclass="HttpTestSampleGui" testclass="HTTPSampler" testname="Health Check" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -58,8 +51,8 @@
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/api/auth/login</stringProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <stringProp name="HTTPSampler.path">/health</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
           <booleanProp name="HTTPSampler.follow_redirects">true</booleanProp>
           <booleanProp name="HTTPSampler.auto_redirects">false</booleanProp>
           <booleanProp name="HTTPSampler.use_keepalive">true</booleanProp>
@@ -67,31 +60,7 @@
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <booleanProp name="HTTPArgument.always_encode">false</booleanProp>
-                <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">{"email":"test@test.com","password":"password123"}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <booleanProp name="HTTPArgument.use_equals">true</booleanProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
         </HTTPSampler>
-        <hashTree/>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
-          <collectionProp name="Asserions">
-            <elementProp name="" elementType="ResponseAssertion">
-              <booleanProp name="Assertion.assume_success">false</booleanProp>
-              <intProp name="Assertion.test_type">1</intProp>
-              <stringProp name="Assertion.test_string">token</stringProp>
-              <booleanProp name="Assertion.test_null_main_sample">false</booleanProp>
-              <booleanProp name="Assertion.test_null_child_samples">false</booleanProp>
-            </elementProp>
-          </collectionProp>
-          <stringProp name="Assertion.test_listeners">true</stringProp>
-        </ResponseAssertion>
         <hashTree/>
         <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="true">
           <elementProp name="dataCollector" elementType="DataCollector" name="dataCollector">
@@ -103,9 +72,8 @@
             <stringProp name="DataCollector.skip_automation">false</stringProp>
             <booleanProp name="DataCollector.save_as_xml">false</booleanProp>
             <booleanProp name="DataCollector.new_files_only">false</booleanProp>
-            <stringProp name="filename">jmeter/results.jtl</stringProp>
+            <stringProp name="filename">results.jtl</stringProp>
           </elementProp>
-          <stringProp name="TestPlan.comments">Results file</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>

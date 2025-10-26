@@ -170,7 +170,7 @@ pipeline {
     }
     post {
         always {
-            junit 'frontend/breco/test-results/*.xml'
+            junit '**/test-results/*.xml'
             echo "Pipeline terminé"
         }
         failure {

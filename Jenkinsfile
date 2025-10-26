@@ -17,6 +17,7 @@ pipeline {
                 sh '''
                     mkdir -p ~/.ssh
                     ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null || true
+                    mkdir -p frontend/breco/test-results
                 '''
                 checkout scm
             }
@@ -49,7 +50,6 @@ pipeline {
                     steps {
                         echo "Tests unitaires..."
                         sh '''
-                            mkdir -p test-results
                             cd frontend/breco
                             npm ci
                             npm run test:unit
@@ -116,31 +116,31 @@ pipeline {
             //     }
             // }
         }
-        stage('Build') {
-            steps {
-                echo "Build des images Docker..."
-                sh 'docker-compose build'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo "Redéploiement..."
-                sh '''
-                    docker-compose down
-                    docker-compose up -d
-                '''
-            }
-        }
-        stage('Verify') {
-            steps {
-                echo "Vérification du déploiement..."
-                sh '''
-                    sleep 10
-                    curl -f http://37.59.101.232:8081/health || exit 1
-                    echo "✅ OK !"
-                '''                
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         echo "Build des images Docker..."
+        //         sh 'docker-compose build'
+        //     }
+        // }
+        // stage('Deploy') {
+        //     steps {
+        //         echo "Redéploiement..."
+        //         sh '''
+        //             docker-compose down
+        //             docker-compose up -d
+        //         '''
+        //     }
+        // }
+        // stage('Verify') {
+        //     steps {
+        //         echo "Vérification du déploiement..."
+        //         sh '''
+        //             sleep 10
+        //             curl -f http://37.59.101.232:8081/health || exit 1
+        //             echo "✅ OK !"
+        //         '''                
+        //     }
+        // }
         // stage('Performance: JMeter Tests') {
         //     agent {
         //         docker {

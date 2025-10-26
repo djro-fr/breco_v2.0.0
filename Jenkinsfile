@@ -37,7 +37,7 @@ pipeline {
                 '''
             }
         }
-        stage('Tests Parallèles') {
+        stage('Tests') {
             parallel {
                 stage('Test: Unit Tests') {
                     agent {
@@ -170,7 +170,7 @@ pipeline {
     }
     post {
         always {
-            junit 'test-results/*.xml'
+            junit 'frontend/breco/test-results/*.xml'
             echo "Pipeline terminé"
         }
         failure {

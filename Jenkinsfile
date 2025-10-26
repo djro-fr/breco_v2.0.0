@@ -44,14 +44,15 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v ${WORKSPACE}/frontend/breco/test-results:/test-results:rw'
+                            args '-u root -v ${WORKSPACE}/frontend/breco:/app'
                         }
                     }
                     steps {
                         sh '''
-                            cd frontend/breco
+                            cd /app
                             npm ci
-                            npm run test:unit
+                            mkdir -p test-results
+                            npm run test:unit -- --reporter=junit --outputFile=test-results/unit-results.xml
                         '''
                     }
                     post {
@@ -65,14 +66,15 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v ${WORKSPACE}/frontend/breco/test-results:/test-results:rw'
+                            args '-u root -v ${WORKSPACE}/frontend/breco:/app'
                         }
                     }
                     steps {
                         sh '''
-                            cd frontend/breco
+                            cd /app
                             npm ci
-                            npm run test:integration
+                            mkdir -p test-results
+                            npm run test:integration -- --reporter=junit --outputFile=test-results/integration-results.xml
                         '''
                     }
                     post {
@@ -86,14 +88,15 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v ${WORKSPACE}/frontend/breco/test-results:/test-results:rw'
+                            args '-u root -v ${WORKSPACE}/frontend/breco:/app'
                         }
                     }
                     steps {
                         sh '''
-                            cd frontend/breco
+                            cd /app
                             npm ci
-                            npm run test:ui
+                            mkdir -p test-results
+                            npm run test:ui -- --reporter=junit --outputFile=test-results/ui-results.xml
                         '''
                     }
                     post {
@@ -138,14 +141,14 @@ pipeline {
             steps {
                 sh '''
                     echo "Vérification des fichiers de tests..."
-                    find frontend/breco/test-results/ -name "*.xml" 2>/dev/null || echo "Aucun fichier trouvé"
+                    ls -la frontend/breco/test-results/
                     
                     echo "Copie des résultats de tests dans dist/..."
                     mkdir -p frontend/breco/dist/test-results
-                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null || true
+                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/
                     
-                    echo "Vérification :"
-                    ls -la frontend/breco/dist/test-results/ || echo "Aucun fichier copié"
+                    echo "Vérification finale :"
+                    ls -la frontend/breco/dist/test-results/
                 '''
             }
         }       

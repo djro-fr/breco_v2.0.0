@@ -5,13 +5,9 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN npm install -g bun && \
-    bun install && \
-    npm rebuild rollup
+RUN npm ci && \
+    npm run build
 
-COPY . .
-
-RUN bun run build
 RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 
 # Stage 2: Production

@@ -133,6 +133,9 @@ pipeline {
             steps {
                 echo "Tests de charge JMeter..."
                 sh '''
+                    apt-get update -qq
+                    apt-get install -y wget unzip
+                    
                     # Télécharge JMeter
                     wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
                     unzip -q apache-jmeter-5.6.3.zip

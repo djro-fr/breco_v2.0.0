@@ -137,10 +137,15 @@ pipeline {
             // http://37.59.101.232:3001/test-results/ui-results.xml
             steps {
                 sh '''
-                    echo "Copie des résultats de tests dans le code..."
+                    echo "Vérification des fichiers de tests..."
+                    find frontend/breco/test-results/ -name "*.xml" 2>/dev/null || echo "Aucun fichier trouvé"
+                    
+                    echo "Copie des résultats de tests dans dist/..."
                     mkdir -p frontend/breco/dist/test-results
-                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/
-                    ls -la frontend/breco/dist/test-results/
+                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null || true
+                    
+                    echo "Vérification :"
+                    ls -la frontend/breco/dist/test-results/ || echo "Aucun fichier copié"
                 '''
             }
         }       

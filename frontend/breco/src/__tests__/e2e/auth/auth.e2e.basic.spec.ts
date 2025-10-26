@@ -2,8 +2,10 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Browser, Builder } from 'selenium-webdriver'
 import chrome from 'selenium-webdriver/chrome.js'
 import path from 'path'
+import os from 'os'
 
 let driver
+const isWindows = os.platform() === 'win32'
 
 describe('E2E Basic Test', () => {
   beforeAll(async () => {
@@ -13,7 +15,7 @@ describe('E2E Basic Test', () => {
       'chromedriver',
       'lib',
       'chromedriver',
-      'chromedriver.exe'
+      isWindows ? 'chromedriver.exe' : 'chromedriver'
     )
 
     const options = new chrome.Options()

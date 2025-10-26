@@ -56,7 +56,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/unit-results.xml'                                                       
+                            junit 'frontend/breco/test-results/unit-results.xml'
                         }
                     }
                 }
@@ -77,7 +77,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/integration-results.xml'                                                       
+                            junit 'frontend/breco/test-results/integration-results.xml'
                         }
                     }
                 }
@@ -98,7 +98,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/ui-results.xml'                                                       
+                            junit 'frontend/breco/test-results/ui-results.xml'
                         }
                     }
                 }
@@ -130,18 +130,20 @@ pipeline {
             //         '''
             //     }
             // }
-            stage('Copy Test Results to Frontend') {
-                steps {
-                    sh '''
-                        echo "Copie des résultats de tests dans le code..."
-                        mkdir -p frontend/breco/public/test-results
-                        cp frontend/breco/test-results/*.xml frontend/breco/public/test-results/ || true
-                        ls -la frontend/breco/public/test-results/
-                    '''
-                }
-            }   
         }
-        
+        stage('Copy Test Results to Frontend') {
+            // http://37.59.101.232:3001/test-results/unit-results.xml
+            // http://37.59.101.232:3001/test-results/integration-results.xml
+            // http://37.59.101.232:3001/test-results/ui-results.xml
+            steps {
+                sh '''
+                    echo "Copie des résultats de tests dans le code..."
+                    mkdir -p frontend/breco/public/test-results
+                    cp frontend/breco/test-results/*.xml frontend/breco/public/test-results/ || true
+                    ls -la frontend/breco/public/test-results/
+                '''
+            }
+        }       
 
         stage('Build') {
             steps {

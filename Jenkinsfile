@@ -98,35 +98,52 @@ pipeline {
         //         '''
         //     }
         // }
-        // stage('Build') {
-        //     steps {
-        //         echo "Build des images Docker..."
-        //         sh 'docker-compose build'
-        //     }
-        // }
-        // stage('Deploy') {
-        //     steps {
-        //         echo "Redéploiement..."
-        //         sh '''
-        //             docker-compose down
-        //             docker-compose up -d
-        //         '''
-        //     }
-        // }
-        // stage('Verify') {
-        //     steps {
-        //         echo "Vérification du déploiement..."
-        //         sh '''
-        //             sleep 10
-        //             curl -f http://37.59.101.232:8081/health || exit 1
-        //             echo "✅ OK !"
-        //         '''                
-        //     }
-        // }
+        stage('Build') {
+            steps {
+                echo "Build des images Docker..."
+                sh 'docker-compose build'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo "Redéploiement..."
+                sh '''
+                    docker-compose down
+                    docker-compose up -d
+                '''
+            }
+        }
+        stage('Verify') {
+            steps {
+                echo "Vérification du déploiement..."
+                sh '''
+                    sleep 10
+                    curl -f http://37.59.101.232:8081/health || exit 1
+                    echo "✅ OK !"
+                '''                
+            }
+        }
+        stage('Performance: JMeter Tests') {
+            steps {
+                echo "Tests de charge JMeter..."
+                sh '''
+                    # Download JMeter
+                    wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
+                    unzip -q apache-jmeter-5.6.3.zip
+                    
+                    # Run JMeter tests
+                    ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t jmeter/test-plan.jmx -l jmeter/results.jtl -j jmeter/jmeter.log
+                    
+                    # Report generation
+                    ./apache-jmeter-5.6.3/bin/jmeter.sh -g jmeter/results.jtl -o jmeter/report
+                '''
+            }
+        }
     }
     post {
         always {
             echo "Pipeline terminé"
+            archiveArtifacts artifacts: 'jmeter/report/**', allowEmptyArchive: true
         }
         failure {
             echo "❌ Pipeline échoué !"

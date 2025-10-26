@@ -57,7 +57,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/unit-results.xml'
+                            junit '**/breco/test-results/unit-results.xml'
                         }
                     }
                 }
@@ -78,7 +78,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/integration-results.xml'
+                            junit '**/breco/test-results/integration-results.xml'
                         }
                     }
                 }
@@ -99,7 +99,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/ui-results.xml'
+                            junit '**/breco/test-results/ui-results.xml'
                         }
                     }
                 }

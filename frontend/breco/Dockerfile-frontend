@@ -2,13 +2,10 @@
 FROM node:25-alpine3.21 AS builder
 RUN apk add --no-cache python3 make g++
 WORKDIR /app
-
 COPY package.json package-lock.json ./
 COPY . .
-
 RUN npm ci && \
     npm run build
-
 RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 
 # Stage 2: Production

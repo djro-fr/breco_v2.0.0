@@ -1,10 +1,12 @@
+version: '3.8'
+
 services:
   # MySQL Database
   mysql:
     image: mysql:8.0
     container_name: breco_mysql
     networks:
-      - breco_network 
+      - breco_network
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
@@ -22,9 +24,7 @@ services:
 
   # Backend CakePHP
   backend:
-    build:
-      context: ./backend/breco
-      dockerfile: Dockerfile-backend
+    image: breco_v2_0_0_backend:latest
     container_name: breco_backend
     environment:
       DEBUG: "false"
@@ -61,18 +61,12 @@ services:
 
   # Frontend Vue 3
   frontend:
-    build:
-      context: ./frontend/breco
-      dockerfile: Dockerfile-frontend
-      args:
-        BUILD_NUMBER: ${BUILD_NUMBER:-unknown}
+    image: breco_v2_0_0_frontend:latest
     container_name: breco_frontend
     environment:
       VITE_API_URL: ${VITE_API_URL} # e.g., http://localhost:8081/api
     ports:
       - "3001:3000"    # Expose Frontend on host port 3001 instead of default 3000
-    #volumes:
-    #  - ./frontend/breco:/app
     depends_on:
       - backend
     networks:

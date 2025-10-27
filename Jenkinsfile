@@ -170,10 +170,19 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                echo "Pushing image to Docker Hub..."
+                sh '''
+                    docker tag breco_v2_0_0_frontend:latest your-registry/breco-frontend:${BUILD_NUMBER}
+                    docker tag breco_v2_0_0_frontend:latest your-registry/breco-frontend:latest
+                    docker push your-registry/breco-frontend:${BUILD_NUMBER}
+                    docker push your-registry/breco-frontend:latest
+                '''
+                
                 echo "Redéploiement..."
                 sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose down && docker-compose up -d"
+                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose pull && docker-compose up -d"
                 '''
+            }
             }
         }
         stage('Verify Deployment Version') {

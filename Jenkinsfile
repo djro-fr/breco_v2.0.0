@@ -11,8 +11,6 @@ pipeline {
         VITE_API_URL = credentials('vite_api_url')
         CORS_ORIGIN = credentials('cors_origin')
         DOCKER_CREDENTIALS = credentials('docker_credentials')
-        DOCKER_USERNAME = "${DOCKER_CREDENTIALS_USR}"
-        DOCKER_PASSWORD = "${DOCKER_CREDENTIALS_PSW}"
     }
     stages {
         stage('Checkout') {
@@ -177,28 +175,29 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo "Pushing image to Docker Hub..."
-                sh '''
-                    # Login to Docker Hub
-                    echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
-                    
-                    # Push Frontend
-                    docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
-                    docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:latest
-                    docker push ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
-                    docker push ${DOCKER_USERNAME}/breco-frontend:latest
-                    
-                    # Push Backend
-                    docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
-                    docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:latest
-                    docker push ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
-                    docker push ${DOCKER_USERNAME}/breco-backend:latest
-                '''
+                withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh '''
+                        # Login to Docker Hub (maskera automatiquement le password)
+                        echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                        
+                        # Push Frontend
+                        docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
+                        docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:latest
+                        docker push ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
+                        docker push ${DOCKER_USERNAME}/breco-frontend:latest
+                        
+                        # Push Backend
+                        docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
+                        docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:latest
+                        docker push ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
+                        docker push ${DOCKER_USERNAME}/breco-backend:latest
+                    '''
+                }
                 
                 echo "Redéploiement sur le VPS..."
                 sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose pull && docker-compose up -d"
-                '''            
+                '''
             }
         }
         stage('Verify Deployment Version') {

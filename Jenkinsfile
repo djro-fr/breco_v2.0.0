@@ -147,7 +147,13 @@ pipeline {
                 '''
             }
         }       
-
+        stage('Clean Docker Images') {
+            steps {
+                sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "docker rmi breco_v2_0_0_frontend breco_v2_0_0_backend 2>/dev/null || true"
+                '''
+            }
+        }
         stage('Build') {
             steps {
                 echo "Build des images Docker..."

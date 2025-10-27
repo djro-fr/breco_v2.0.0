@@ -10,6 +10,8 @@ pipeline {
         JWT_SECRET = credentials('jwt_secret')
         VITE_API_URL = credentials('vite_api_url')
         CORS_ORIGIN = credentials('cors_origin')
+        DOCKER_USERNAME = credentials('docker_credentials_username')
+        DOCKER_PASSWORD = credentials('docker_credentials_password')
     }
     stages {
         stage('Checkout') {
@@ -179,15 +181,20 @@ pipeline {
             steps {
                 echo "Pushing image to Docker Hub..."
                 sh '''
-                    docker tag breco_v2_0_0_frontend:latest djrofr/breco-frontend:${BUILD_NUMBER}
-                    docker tag breco_v2_0_0_frontend:latest djrofr/breco-frontend:latest
-                    docker push djrofr/breco-frontend:${BUILD_NUMBER}
-                    docker push djrofr/breco-frontend:latest
-
-                    docker tag breco_v2_0_0_backend:latest djrofr/breco-backend:${BUILD_NUMBER}
-                    docker tag breco_v2_0_0_backend:latest djrofr/breco-backend:latest
-                    docker push djrofr/breco-backend:${BUILD_NUMBER}
-                    docker push djrofr/breco-backend:latest
+                    # Login to Docker Hub
+                    echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
+                    
+                    # Push Frontend
+                    docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
+                    docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:latest
+                    docker push ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
+                    docker push ${DOCKER_USERNAME}/breco-frontend:latest
+                    
+                    # Push Backend
+                    docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
+                    docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:latest
+                    docker push ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
+                    docker push ${DOCKER_USERNAME}/breco-backend:latest
                 '''
                 
                 echo "Redéploiement..."

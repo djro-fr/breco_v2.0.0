@@ -10,8 +10,9 @@ pipeline {
         JWT_SECRET = credentials('jwt_secret')
         VITE_API_URL = credentials('vite_api_url')
         CORS_ORIGIN = credentials('cors_origin')
-        DOCKER_USERNAME = credentials('docker_credentials_username')
-        DOCKER_PASSWORD = credentials('docker_credentials_password')
+        DOCKER_CREDENTIALS = credentials('docker_credentials')
+        DOCKER_USERNAME = "${DOCKER_CREDENTIALS_USR}"
+        DOCKER_PASSWORD = "${DOCKER_CREDENTIALS_PSW}"
     }
     stages {
         stage('Checkout') {

@@ -44,7 +44,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:/app'
+                            args '-u root -v npm-cache:/root/.npm -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
                         }
                     }
                     steps {
@@ -65,7 +65,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:/app'
+                            args '-u root -v npm-cache:/root/.npm -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
                         }
                     }
                     steps {
@@ -86,7 +86,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:/app'
+                            args '-u root -v npm-cache:/root/.npm -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
                         }
                     }
                     steps {

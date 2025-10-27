@@ -151,9 +151,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
-                sh '''
-                    rm -f .env
-                    cp frontend/breco/.env.production .env
+                sh '''                    
                     docker-compose build --build-arg BUILD_NUMBER=${BUILD_NUMBER}
                 '''
             }

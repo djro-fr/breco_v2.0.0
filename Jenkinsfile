@@ -199,6 +199,11 @@ pipeline {
                     ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
                     docker-compose down && docker-compose pull && docker-compose up -d"
                 '''
+
+                echo "Copie des résultats de test sur le VPS..."
+                sh '''
+                    scp -o StrictHostKeyChecking=no -r frontend/breco/dist/test-results ubuntu@37.59.101.232:~/breco_v2_0_0/frontend/breco/dist/
+                '''
             }
         }
         stage('Verify Deployment Version') {

@@ -157,8 +157,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Redéploiement..."
-                sh '''
-                    cat > .env << EOF
+                sh '''                    
                     cp frontend/breco/.env.production .env
                     docker-compose down
                     docker-compose up -d

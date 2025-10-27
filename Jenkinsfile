@@ -164,7 +164,14 @@ pipeline {
                     --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
                     -t breco_v2_0_0_frontend \
                     -f frontend/breco/Dockerfile-frontend \
-                    frontend/breco                                       
+                    frontend/breco           
+
+                    docker build \
+                    --no-cache \
+                    -t breco_v2_0_0_backend:${BUILD_NUMBER} \
+                    -t breco_v2_0_0_backend:latest \
+                    -f backend/breco/Dockerfile-backend \
+                    backend/breco                            
                 '''
             }
         }
@@ -172,10 +179,15 @@ pipeline {
             steps {
                 echo "Pushing image to Docker Hub..."
                 sh '''
-                    docker tag breco_v2_0_0_frontend:latest your-registry/breco-frontend:${BUILD_NUMBER}
-                    docker tag breco_v2_0_0_frontend:latest your-registry/breco-frontend:latest
-                    docker push your-registry/breco-frontend:${BUILD_NUMBER}
-                    docker push your-registry/breco-frontend:latest
+                    docker tag breco_v2_0_0_frontend:latest djrofr/breco-frontend:${BUILD_NUMBER}
+                    docker tag breco_v2_0_0_frontend:latest djrofr/breco-frontend:latest
+                    docker push djrofr/breco-frontend:${BUILD_NUMBER}
+                    docker push djrofr/breco-frontend:latest
+
+                    docker tag breco_v2_0_0_backend:latest djrofr/breco-backend:${BUILD_NUMBER}
+                    docker tag breco_v2_0_0_backend:latest djrofr/breco-backend:latest
+                    docker push djrofr/breco-backend:${BUILD_NUMBER}
+                    docker push djrofr/breco-backend:latest
                 '''
                 
                 echo "Redéploiement..."

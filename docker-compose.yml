@@ -24,7 +24,7 @@ services:
 
   # Backend CakePHP
   backend:
-    image: breco_v2_0_0_backend:latest
+    image: djrofr/breco-backend:latest
     container_name: breco_backend
     environment:
       DEBUG: "false"
@@ -61,7 +61,7 @@ services:
 
   # Frontend Vue 3
   frontend:
-    image: breco_v2_0_0_frontend:latest
+    image: djrofr/breco-frontend:latest
     container_name: breco_frontend
     environment:
       VITE_API_URL: ${VITE_API_URL} # e.g., http://localhost:8081/api

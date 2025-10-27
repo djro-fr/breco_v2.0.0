@@ -170,7 +170,7 @@ pipeline {
                 sh '''
                     echo "Vérification de la version déployée..."                   
                     
-                    sleep 10
+                    sleep 20
                     # Récupère le numéro de build et la date depuis le serveur
                     
                     BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt 2>/dev/null | tr -d '\n')

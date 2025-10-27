@@ -196,7 +196,8 @@ pipeline {
                 
                 echo "Redéploiement sur le VPS..."
                 sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose pull && docker-compose up -d"
+                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
+                    docker-compose down && \ && docker-compose pull && docker-compose up -d"
                 '''
             }
         }

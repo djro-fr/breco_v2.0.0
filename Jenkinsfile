@@ -140,8 +140,7 @@ pipeline {
                     echo "Copie des résultats de tests dans dist/..."
                     mkdir -p frontend/breco/dist/test-results
                     
-                    # Trouve et copie tous les fichiers XML des tests
-                    find /var/jenkins_home/workspace -name "*-results.xml" -exec cp {} frontend/breco/dist/test-results/ \; 2>/dev/null || true
+                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null || true
                     
                     echo "Vérification :"
                     ls -la frontend/breco/dist/test-results/

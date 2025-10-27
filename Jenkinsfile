@@ -164,9 +164,7 @@ pipeline {
                     --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
                     -t breco_v2_0_0_frontend \
                     -f frontend/breco/Dockerfile-frontend \
-                    frontend/breco
-                    
-                    docker-compose build
+                    frontend/breco                                       
                 '''
             }
         }

@@ -158,9 +158,8 @@ pipeline {
             steps {
                 echo "Redéploiement..."
                 sh '''                    
+                    rm -f .env
                     cp frontend/breco/.env.production .env
-                    docker-compose down
-                    docker-compose up -d
                     docker-compose down
                     docker-compose up -d
                 '''

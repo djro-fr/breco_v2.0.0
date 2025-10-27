@@ -158,7 +158,9 @@ pipeline {
             steps {
                 echo "Build des images Docker..."
                 sh '''
+                    echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
                     docker build \
+                    --no-cache \
                     --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
                     -t breco_v2_0_0_frontend \
                     -f frontend/breco/Dockerfile-frontend \

@@ -148,32 +148,29 @@ pipeline {
                     ls -la frontend/breco/dist/test-results/
                 '''
             }
-        }       
-        stage('Clean Docker Images') {
-            steps {
-                sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose down && docker rmi breco_v2_0_0_frontend breco_v2_0_0_backend && echo '✅ Images cleaned' || echo '⚠️ Cleanup attempted'"
-                '''
-            }
-        }
+        } 
         stage('Build') {
             steps {
                 echo "Build des images Docker..."
                 sh '''
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
-                    docker build \
-                    --no-cache \
-                    --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
-                    -t breco_v2_0_0_frontend \
-                    -f frontend/breco/Dockerfile-frontend \
-                    frontend/breco           
 
+                    # Build Frontend
                     docker build \
-                    --no-cache \
-                    -t breco_v2_0_0_backend:${BUILD_NUMBER} \
-                    -t breco_v2_0_0_backend:latest \
-                    -f backend/breco/Dockerfile-backend \
-                    backend/breco                            
+                      --no-cache \
+                      --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
+                      -t breco_v2_0_0_frontend:${BUILD_NUMBER} \
+                      -t breco_v2_0_0_frontend:latest \
+                      -f frontend/breco/Dockerfile-frontend \
+                      frontend/breco
+                    
+                    # Build Backend
+                    docker build \
+                      --no-cache \
+                      -t breco_v2_0_0_backend:${BUILD_NUMBER} \
+                      -t breco_v2_0_0_backend:latest \
+                      -f backend/breco/Dockerfile-backend \
+                      backend/breco                           
                 '''
             }
         }
@@ -197,7 +194,7 @@ pipeline {
                     docker push ${DOCKER_USERNAME}/breco-backend:latest
                 '''
                 
-                echo "Redéploiement..."
+                echo "Redéploiement sur le VPS..."
                 sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose pull && docker-compose up -d"
                 '''            

@@ -167,11 +167,8 @@ pipeline {
         stage('Verify Deployment Version') {
             steps {
                 sh '''
-                    echo "Vérification de la version déployée..."                   
-                    
-                    sleep 120
-                    # Récupère le numéro de build et la date depuis le serveur
-                    
+                    echo "Vérification de la version déployée..."
+                    sleep 30
                     BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt 2>/dev/null | tr -d '\n')
                     BUILD_DATE=$(curl -s http://37.59.101.232:3001/BUILD_DATE.txt 2>/dev/null | tr -d '\n')
                     

@@ -159,9 +159,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Redéploiement..."
-                sh '''                                        
-                    docker-compose down
-                    docker-compose up -d
+                sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose down && docker-compose up -d"
                 '''
             }
         }
@@ -170,7 +169,7 @@ pipeline {
                 sh '''
                     echo "Vérification de la version déployée..."                   
                     
-                    sleep 20
+                    sleep 120
                     # Récupère le numéro de build et la date depuis le serveur
                     
                     BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt 2>/dev/null | tr -d '\n')

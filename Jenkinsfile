@@ -181,8 +181,7 @@ pipeline {
                 echo "Redéploiement..."
                 sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && docker-compose pull && docker-compose up -d"
-                '''
-            }
+                '''            
             }
         }
         stage('Verify Deployment Version') {

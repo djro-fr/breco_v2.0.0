@@ -44,29 +44,14 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v ${WORKSPACE}/frontend/breco:/app'
+                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:/app/test-results'
                         }
                     }
                     steps {
                         sh '''
-                            echo "=== DEBUG START ==="
-                            echo "PWD: $(pwd)"
-                            echo "WORKSPACE: ${WORKSPACE}"
-                            echo "Contenu de /app :"
-                            ls -la /app
-                            
                             cd /app
                             npm ci
                             npm run test:unit
-                            
-                            echo "=== APRÈS TEST ==="
-                            echo "Contenu de test-results/ :"
-                            ls -la test-results/
-                            
-                            echo "Contenu complet :"
-                            find . -name "*.xml" -type f
-                            
-                            echo "=== DEBUG END ==="
                         '''
                     }
                     post {
@@ -80,7 +65,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v ${WORKSPACE}/frontend/breco:/app'
+                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:/app/test-results'
                         }
                     }
                     steps {
@@ -101,7 +86,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v ${WORKSPACE}/frontend/breco:/app'
+                            args '-u root -v npm-cache:/root/.npm -v ${WORKSPACE}/frontend/breco/test-results:/app/test-results'
                         }
                     }
                     steps {
@@ -153,13 +138,13 @@ pipeline {
             steps {
                 sh '''
                     echo "Copie des résultats de tests dans dist/..."
-                    mkdir -p ${WORKSPACE}/frontend/breco/dist/test-results
+                    mkdir -p frontend/breco/dist/test-results
                     
-                    # Le workspace des tests Docker est breco@2
-                    cp /var/jenkins_home/workspace/breco@2/frontend/breco/test-results/*.xml ${WORKSPACE}/frontend/breco/dist/test-results/ 2>/dev/null || true
+                    # Trouve et copie tous les fichiers XML des tests
+                    find /var/jenkins_home/workspace -name "*-results.xml" -exec cp {} frontend/breco/dist/test-results/ \; 2>/dev/null || true
                     
                     echo "Vérification :"
-                    ls -la ${WORKSPACE}/frontend/breco/dist/test-results/
+                    ls -la frontend/breco/dist/test-results/
                 '''
             }
         }       
@@ -191,17 +176,19 @@ pipeline {
         stage('Verify Deployment Version') {
             steps {
                 sh '''
-                    echo "Vérification de la version déployée..."
+                    echo "Vérification de la version déployée..."                   
                     
-                    # Récupère le numéro de build
-                    BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt)
-                    BUILD_DATE=$(curl -s http://37.59.101.232:3001/BUILD_DATE.txt)
+                    sleep 10
+                    # Récupère le numéro de build et la date depuis le serveur
+                    
+                    BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt 2>/dev/null | tr -d '\n')
+                    BUILD_DATE=$(curl -s http://37.59.101.232:3001/BUILD_DATE.txt 2>/dev/null | tr -d '\n')
                     
                     echo "Build Number: $BUILD_NUM"
                     echo "Build Date: $BUILD_DATE"
                     echo "Jenkins Build: ${BUILD_NUMBER}"
                     
-                    if [ "$BUILD_NUM" == "${BUILD_NUMBER}" ]; then
+                    if [ "$BUILD_NUM" = "${BUILD_NUMBER}" ]; then
                         echo "✅ Correct version deployed!"
                     else
                         echo "❌ WRONG version deployed! Expected ${BUILD_NUMBER}, got $BUILD_NUM"
@@ -216,7 +203,7 @@ pipeline {
                 sh '''
                     sleep 10
                     curl -f http://37.59.101.232:8081/health || exit 1
-                    echo "✅ OK !"
+                    echo "✅ Health check OK !"
                 '''                
             }
         }

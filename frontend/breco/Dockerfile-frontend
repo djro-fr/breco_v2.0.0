@@ -15,10 +15,8 @@ RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 FROM node:25-alpine3.21
 WORKDIR /app
 ARG BUILD_NUMBER=unknown
-ARG API_URL=http://localhost:8081/api
 RUN npm install -g serve
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/dist/test-results ./dist/test-results
 RUN echo "${BUILD_NUMBER}" > ./dist/BUILD_NUMBER.txt
 RUN echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > ./dist/BUILD_DATE.txt
 EXPOSE 3000

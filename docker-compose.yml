@@ -64,6 +64,8 @@ services:
     build:
       context: ./frontend/breco
       dockerfile: Dockerfile-frontend
+      args:
+        BUILD_NUMBER: ${BUILD_NUMBER:-unknown}
     container_name: breco_frontend
     environment:
       VITE_API_URL: ${VITE_API_URL} # e.g., http://localhost:8081/api

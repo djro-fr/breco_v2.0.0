@@ -140,7 +140,7 @@ pipeline {
                     echo "Copie des résultats de tests dans dist/..."
                     mkdir -p frontend/breco/dist/test-results
                     
-                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null || true
+                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null  && echo '✅ Copy succeed' || true
                     
                     echo "Vérification :"
                     ls -la frontend/breco/dist/test-results/
@@ -158,7 +158,8 @@ pipeline {
             steps {
                 echo "Build des images Docker..."
                 sh '''                    
-                    docker-compose build --build-arg BUILD_NUMBER=${BUILD_NUMBER}
+                    export BUILD_NUMBER="${BUILD_NUMBER}"
+                    docker-compose build
                 '''
             }
         }

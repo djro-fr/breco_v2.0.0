@@ -174,6 +174,15 @@ pipeline {
             steps {
                 echo "Redéploiement..."
                 sh '''
+                    cat > .env << EOF
+                    VITE_API_URL=http://37.59.101.232:8081/api
+                    CORS_ORIGIN=http://37.59.101.232:3001
+                    MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+                    MYSQL_DB=${MYSQL_DB}
+                    MYSQL_USER=${MYSQL_USER}
+                    MYSQL_PASSWORD=${MYSQL_PASSWORD}
+                    JWT_SECRET=${JWT_SECRET}
+                    EOF
                     docker-compose down
                     docker-compose up -d
                 '''

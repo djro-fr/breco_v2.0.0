@@ -138,23 +138,23 @@ pipeline {
             // http://37.59.101.232:3001/test-results/ui-results.xml
             steps {
                 sh '''
-                    echo "Copie des résultats de tests dans dist/..."
+                    echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/dist/test-results
                     
                     cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null  && echo '✅ Copy succeed' || true
                     
-                    echo "Vérification :"
+                    echo "Verification:"
                     ls -la frontend/breco/dist/test-results/
                 '''
             }
         } 
         stage('Build') {
             steps {
-                echo "Build des images Docker..."
+                echo "Docker images build..."
                 sh '''
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
 
-                    # Build Frontend
+                    # Frontend Build
                     docker build \
                       --no-cache \
                       --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
@@ -163,7 +163,7 @@ pipeline {
                       -f frontend/breco/Dockerfile-frontend \
                       frontend/breco
                     
-                    # Build Backend
+                    # Backend Build 
                     docker build \
                       --no-cache \
                       -t breco_v2_0_0_backend:${BUILD_NUMBER} \
@@ -177,7 +177,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh '''
-                        # Login to Docker Hub (maskera automatiquement le password)
+                        # Login to Docker Hub (automaticly mask password in logs)
                         echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
                         
                         # Push Frontend
@@ -194,13 +194,13 @@ pipeline {
                     '''
                 }
                 
-                echo "Redéploiement sur le VPS..."
+                echo "Re-deploy on VPS..."
                 sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
                     docker-compose down && docker-compose pull && docker-compose up -d"
                 '''
 
-                echo "Copie des résultats de test sur le VPS..."
+                echo "Test results copy on VPS..."
                 sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "mkdir -p ~/breco_v2_0_0/frontend/breco/dist/test-results"
                     scp -o StrictHostKeyChecking=no -r frontend/breco/dist/test-results/* ubuntu@37.59.101.232:~/breco_v2_0_0/frontend/breco/dist/test-results/
@@ -210,7 +210,6 @@ pipeline {
         stage('Verify Deployment Version') {
             steps {
                 sh '''
-                    echo "Vérification de la version déployée..."
                     sleep 30
                     BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt 2>/dev/null | tr -d '\n')
                     BUILD_DATE=$(curl -s http://37.59.101.232:3001/BUILD_DATE.txt 2>/dev/null | tr -d '\n')
@@ -236,20 +235,19 @@ pipeline {
         //             args '-u root'
         //         }
         //     }
-        //     steps {
-        //         echo "Tests de charge JMeter..."
+        //     steps {        
         //         sh '''
         //             apt-get update -qq
         //             apt-get install -y wget unzip
                     
-        //             # Télécharge JMeter
+        //             # Download JMeter
         //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
         //             unzip -o -q apache-jmeter-5.6.3.zip
                     
-        //             # Lance le test
+        //             # Lanuch test
         //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
-        //             # Génère le rapport
+        //             # Generates the report
         //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
         //         '''
         //     }

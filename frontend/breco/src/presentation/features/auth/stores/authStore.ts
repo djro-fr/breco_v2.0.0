@@ -36,7 +36,13 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('token', result.token)
     } catch (err) {
       const exception = err as AppException
-      error.value = exception.message || 'Erreur de connexion'
+      if (exception.statusCode === 401) {
+        error.value = 'Email ou mot de passe incorrect'
+      } else if (exception.statusCode === 422) {
+        error.value = 'Données invalides'
+      } else {
+        error.value = exception.message || 'Erreur de connexion'
+      }
       throw err
     } finally {
       isLoading.value = false

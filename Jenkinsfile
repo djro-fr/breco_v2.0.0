@@ -233,9 +233,19 @@ pipeline {
                 echo "Vérification du déploiement..."
                 sh '''
                     sleep 10
-                    curl -f http://37.59.101.232:8081/api/auth/verify || exit 1
-                    echo "✅ Health check OK !"
-                '''                
+                    
+                    # Login to get the token
+                    TOKEN=$(curl -s http://37.59.101.232:8081/api/auth/login \
+                    -H "Content-Type: application/json" \
+                    -d '{"email":"test@test.com","password":"password123"}' \
+                    | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+                    
+                    # Verify with the token
+                    curl -f http://37.59.101.232:8081/api/auth/verify \
+                    -H "Authorization: Bearer $TOKEN" || exit 1
+                    
+                    echo "✅ API OK !"
+                '''            
             }
         }
         

@@ -7,6 +7,7 @@ import { VerifyTokenUseCase } from '@/domain/usecases/auth/VerifyTokenUseCase'
 import { LogoutUseCase } from '@/domain/usecases/auth/LogoutUseCase'
 import { AuthRepositoryImpl } from '@/data/repositories/AuthRepositoryImpl'
 import type { AppException } from '@/domain/exceptions/AppException'
+import type { AxiosError } from 'axios'
 
 export const useAuthStore = defineStore('auth', () => {
   // Create the use case instances with the repository
@@ -34,14 +35,15 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = result.token
       user.value = result.user
       localStorage.setItem('token', result.token)
-    } catch (err: any) {
-      if (err.response?.status === 401) {
+    } catch (err) {
+      const axiosError = err as AxiosError
+
+      if (axiosError.response?.status === 401) {
         error.value = 'Email ou mot de passe incorrect'
-      } else if (err.response?.status === 422) {
-        error.value = 'Données invalides : Le mot de passe doit avoir au moins 8 caractères'
+      } else if (axiosError.response?.status === 422) {
+        error.value = 'Données invalides'
       } else {
-        const exception = err as AppException
-        error.value = exception.message || 'Erreur de connexion'
+        error.value = (err as AppException).message || 'Erreur de connexion'
       }
       throw err
     } finally {

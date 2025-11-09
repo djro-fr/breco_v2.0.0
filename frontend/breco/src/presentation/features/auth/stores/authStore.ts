@@ -34,13 +34,13 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = result.token
       user.value = result.user
       localStorage.setItem('token', result.token)
-    } catch (err) {
-      const exception = err as AppException
-      if (exception.statusCode === 401) {
+    } catch (err: any) {
+      if (err.response?.status === 401) {
         error.value = 'Email ou mot de passe incorrect'
-      } else if (exception.statusCode === 422) {
-        error.value = 'Données invalides'
+      } else if (err.response?.status === 422) {
+        error.value = 'Données invalides : Le mot de passe doit avoir au moins 8 caractères'
       } else {
+        const exception = err as AppException
         error.value = exception.message || 'Erreur de connexion'
       }
       throw err

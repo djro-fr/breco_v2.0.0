@@ -39,7 +39,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && localStorage.getItem('token')) {
       // Token expired, disconnect
       localStorage.removeItem('token')
       window.location.href = '/login'

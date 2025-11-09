@@ -4,8 +4,9 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY . .
+ARG VITE_API_URL=http://localhost:8081/api
 RUN npm ci && \
-    npm run build
+    VITE_API_URL=${VITE_API_URL} npm run build
 RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 
 # Stage 2: Production

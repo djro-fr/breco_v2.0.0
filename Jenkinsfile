@@ -21,7 +21,7 @@ pipeline {
                     mkdir -p frontend/breco/test-results
                 '''
                 checkout scm
-            }
+            } 
         }
         stage('Lint') {
             agent {
@@ -152,6 +152,7 @@ pipeline {
             steps {
                 echo "Build des images Docker..."
                 sh '''
+                    export DOCKER_BUILDKIT=1
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
 
                     # Build Frontend

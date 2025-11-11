@@ -66,10 +66,12 @@ require CAKE . 'functions.php';
  * for more information for recommended practices.
 */
 if (file_exists(CONFIG . '.env')) {
-    $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
-    $dotenv->parse()
-        ->toEnv()
-        ->toServer();
+    if (class_exists('\josegonzalez\Dotenv\Loader')) {
+        $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
+        $dotenv->parse()
+            ->toEnv()
+            ->toServer();
+    }
 }
 
 /*
@@ -231,3 +233,4 @@ ServerRequest::addDetector('tablet', function ($request) {
 // and https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
 // \Cake\I18n\Date::setToStringFormat('dd.MM.yyyy');
 // \Cake\I18n\Time::setToStringFormat('dd.MM.yyyy HH:mm');
+

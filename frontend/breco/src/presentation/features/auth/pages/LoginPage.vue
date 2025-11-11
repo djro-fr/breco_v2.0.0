@@ -14,7 +14,7 @@ const error = computed(() => authStore.error)
 const handleLogin = async () => {
   try {
     await authStore.login(email.value, password.value)
-    router.push({ name: 'Dashboard' })
+    router.push({ name: 'Search' })
   } catch (err) {
     console.error('Login error:', err)
   }

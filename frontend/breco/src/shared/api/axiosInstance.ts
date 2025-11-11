@@ -6,7 +6,8 @@ const getApiUrl = () => {
   const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
 
   if (isLocalhost) {
-    return 'http://localhost:8081/api'
+    const port = window.location.port === '5173' ? '8765' : '8081'
+    return `http://localhost:${port}/api`
   }
   return `http://${hostname}:8081/api`
 }

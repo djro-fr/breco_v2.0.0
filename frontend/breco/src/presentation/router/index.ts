@@ -14,10 +14,13 @@ const publicRoutes: RouteRecordRaw[] = [
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/presentation/app/pages/DashboardPage.vue'),
-    meta: {
-      requiresAuth: true,
-      title: 'Tableau de bord',
-    },
+    meta: { requiresAuth: true, title: 'Tableau de bord' },
+  },
+  {
+      path: '/search',
+      name: 'Search',
+      component: () => import('@/presentation/app/pages/SearchPage.vue'),
+      meta: { requiresAuth: true, title: 'Rechercher un trajet' },
   },
 ]
 
@@ -54,9 +57,9 @@ router.beforeEach(async (to, from, next) => {
       query: { redirect: to.fullPath },
     })
   }
-  // Redirection if authenticated and goes to  login/register
+  // Redirection if authenticated and goes to Search
   else if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    next({ name: 'Dashboard' })
+    next({ name: 'Search' })
   } else {
     next()
   }

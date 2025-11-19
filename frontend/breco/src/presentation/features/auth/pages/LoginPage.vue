@@ -22,12 +22,13 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="whiteWindow">
-    <h1 class="text-center pa0 ma0">Connexion</h1>
+  <div class="bg-white rounded-md shadow-window px-4 pt-4 pb-7.5">
+    <h1 class="p-0 mx-auto my-0 pb-4 text-center text-3xl font-medium leading-none">Connexion</h1>
     <form @submit.prevent="handleLogin">
-      <input v-model="email" type="email" placeholder="Email" aria-label="Email" required />
+      <input v-model="email" class="mb-5 px-2 py-1 w-full text-lg border-b border-primary-light bg-white-dark" type="email" placeholder="Email" aria-label="Email" required />
       <input
         v-model="password"
+        class="mb-5 px-2 py-1 w-full text-lg border-b border-primary-light bg-white-dark"
         type="password"
         placeholder="Mot de passe"
         aria-label="Mot de passe"
@@ -37,53 +38,18 @@ const handleLogin = async () => {
       <div class="text-center forget">
         <a href="#">Mot de passe oublié ?</a>
       </div>
-      <div class="pa0 ma0 text-center">
-        <button type="submit" :disabled="isLoading" class="btn-action w100">
+      <div class="p-0 mx-auto my-0 text-center">
+        <button type="submit" :disabled="isLoading" class="my-6 py-2 w-full text-xl font-medium rounded-md bg-action hover:bg-action-on shadow-md shadow-black/20 hover:shadow-lg">
           {{ isLoading ? 'Connexion...' : 'Se connecter' }}
         </button>
       </div>
     </form>
     <p v-if="error" style="color: red">{{ error }}</p>
-    <p class="pa0 ma0 text-center">Pas encore inscrit ?</p>
-    <div class="pa0 ma0 text-center">
-      <button @click="$router.push('/register')" class="btn-secondary">S'inscrire</button>
+    <p class="p-0 mx-auto my-0 text-center">Pas encore inscrit ?</p>
+    <div class="p-0 mx-auto my-0 text-center">
+      <button @click="$router.push('/register')" class="mt-1 px-9 py-1 bg-primary-dark hover:bg-primary-dark-on  text-md text-white rounded-md shadow-md shadow-black/20 hover:shadow-lg">S'inscrire</button>
     </div>
   </div>
 </template>
 
-<style scoped>
-h1 {
-  margin-top: 0px;
-  line-height: 1;
-  font-weight: 800;
-  font-size: var(--fontL);
-  padding-bottom: 16px;
-}
 
-div.whiteWindow {
-  margin-top: 30px;
-  padding: 30px 16px;
-}
-div.whiteWindow input {
-  width: calc(100% - 10px);
-  border: none;
-  background-color: var(--dark-white);
-  border-bottom: 1px solid var(--primary-color);
-  margin-bottom: 20px;
-  font-size: var(--fontXS);
-  padding: 2px 5px;
-}
-
-button.btn-action {
-  margin-bottom: 32px;
-}
-
-button.btn-secondary {
-  margin-top: 4px;
-}
-
-div.forget {
-  margin-top: -8px;
-  margin-bottom: 16px;
-}
-</style>

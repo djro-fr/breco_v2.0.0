@@ -25,91 +25,40 @@ const handleLogin = async () => {
 
 <template>
   <div>
-    <h1>Breco</h1>
-    <h2>Application de covoiturage en Bretagne</h2>
+    <h1 class="m-0 p-0 text-3xl text-white leading-9 text-center font-extrabold">Breco</h1>
+    <h2 class="m-0 p-0 text-lg text-white leading-5 text-center font-normal">Application de covoiturage en&nbsp;Bretagne</h2>
 
-    <div v-if="!isAuthenticated" class="whiteWindow">
-      <h3>Connexion</h3>
+    <div v-if="!isAuthenticated" class="bg-white rounded-md shadow-window mt-10 px-4 pt-4 pb-7.5 ">
+      <h3 class="m-0 p-0 pb-4 text-2xl font-medium text-center">Connexion</h3>
       <form @submit.prevent="handleLogin">
-        <input v-model="email" type="email" placeholder="Email" aria-label="Email" required />
+        <input v-model="email"  class="mb-5 px-2 py-1 w-full text-lg border-b border-primary-light bg-white-dark" type="email" placeholder="Email" aria-label="Email" required />
         <input
           v-model="password"
+          class="mb-5 px-2 py-1 w-full text-lg border-b border-primary-light bg-white-dark"
           type="password"
           placeholder="Mot de passe"
           aria-label="Mot de passe"
           required
         />
-        <div class="text-center forget">
+        <div class="-mt-2 mb-1 text-center">
           <a href="#">Mot de passe oublié ?</a>
         </div>
-        <div class="pa0 ma0 text-center">
-          <button type="submit" :disabled="isLoading" class="btn-action w100">
+        <div class="p-0 mx-auto my-0 text-center">
+          <button type="submit" :disabled="isLoading" class="my-6 py-2 w-full text-xl font-medium rounded-md bg-action hover:bg-action-on shadow-md shadow-black/20 hover:shadow-lg">
             {{ isLoading ? 'Connexion...' : 'Se connecter' }}
           </button>
         </div>
       </form>
       <p v-if="error" style="color: red">{{ error }}</p>
-      <p class="pa0 ma0 text-center">Pas encore inscrit ?</p>
-      <div class="pa0 ma0 text-center">
-        <button @click="$router.push('/register')" class="btn-secondary">S'inscrire</button>
+      <p class="p-0 mx-auto my-0 text-center">Pas encore inscrit ?</p>
+      <div class="p-0 mx-auto my-0 text-center">
+        <button @click="$router.push('/register')" class="mt-1 px-9 py-1 bg-primary-dark hover:bg-primary-dark-on  text-md text-white rounded-md shadow-md shadow-black/20 hover:shadow-lg">S'inscrire</button>
       </div>
     </div>
 
-    <div v-else class="whiteWindow text-center">
+    <div v-else class="bg-white rounded-md shadow-window mt-10 px-4 py-7.5 text-center">
       <DashboardPage />
     </div>
   </div>
 </template>
 
-<style scoped>
-h1,
-h2,
-h3 {
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
-h1 {
-  color: white;
-  margin-top: 0px;
-  line-height: 1.5;
-  font-weight: 800;
-}
-h2 {
-  color: white;
-  line-height: 1.2;
-  font-weight: 400;
-}
-h3 {
-  padding-bottom: 16px;
-  font-size: var(--fontL);
-}
-
-div.whiteWindow {
-  margin-top: 40px;
-  padding: 30px 16px;
-}
-div.whiteWindow input {
-  width: calc(100% - 10px);
-  border: none;
-  background-color: var(--dark-white);
-  border-bottom: 1px solid var(--primary-color);
-  margin-bottom: 20px;
-  font-size: var(--fontXS);
-  padding: 2px 5px;
-}
-
-button.btn-action {
-  margin-bottom: 24px;
-}
-
-button.btn-secondary {
-  margin-top: 4px;
-}
-
-div.forget {
-  margin-top: -8px;
-  margin-bottom: 16px;
-  font-size: var(--fontXXS);
-}
-</style>

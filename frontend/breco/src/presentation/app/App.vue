@@ -21,14 +21,14 @@ const handleLogout = async (): Promise<void> => {
 </script>
 
 <template>
-  <div class="content">
-    <header>
-      <nav>
+  <div class="content m-0 py-0 px-4 flex flex-col">
+    <header class="sticky bg-white top-0 z-100 my-0 -mx-4 ">
+      <nav class="my-0 mx-4 py-2 px-0 flex max-w-full justify-between items-center h-15">
         <div class="nav-brand">
           <router-link to="/">
             <img
               src="../shared/assets/logo_breco_black.svg"
-              height="32"
+              class="h-8 hover:opacity-80"
               alt="retour à l'accueil de Breco"
             />
           </router-link>
@@ -42,18 +42,18 @@ const handleLogout = async (): Promise<void> => {
         </button>
 
         <!-- Menu (caché sur mobile) -->
-        <div class="nav-menu" :class="{ open: isMenuOpen }">
+        <div class="nav-menu flex gap-5 items-center" :class="{ open: isMenuOpen }">
           <div v-if="!isAuthenticated">
             <router-link to="/login" @click="isMenuOpen = false">Connexion</router-link>
             <router-link to="/register" @click="isMenuOpen = false">Inscription</router-link>
           </div>
 
-          <div v-if="isAuthenticated" class="logout">
+          <div v-if="isAuthenticated" class="w-fit flex flex-row mb-1.5">
             <router-link to="/dashboard" @click="isMenuOpen = false">Dashboard</router-link>
-            <span
+            <span class="font-normal text-lg flex self-center"
               >&nbsp;de&nbsp;<strong>{{ authStore.user?.firstName }}</strong>
             </span>
-            <button @click="handleLogout" class="btn-secondary btn-logout">Déconnexion</button>
+            <button @click="handleLogout" class="btn-secondary ml-5 mb-1.5">Déconnexion</button>
           </div>
         </div>
       </nav>
@@ -70,51 +70,16 @@ const handleLogout = async (): Promise<void> => {
 </template>
 
 <style scoped>
-div.logout {
-  display: flex;
-  flex-direction: row !important;
-  width: fit-content !important;
-}
-
-div.logout a {
-  width: fit-content !important;
-  display: flex;
-  align-self: center;
-  font-weight: 400;
-  margin-bottom: 6px;
-  font-size: var(--fontS);
-}
-div.logout span {
-  font-weight: 400;
-  font-size: var(--fontS);
-  display: flex;
-  align-self: center;
-  margin-bottom: 6px;
-}
-.btn-logout {
-  margin-left: 20px;
-  margin-bottom: 6px;
-}
-
-div.nav-brand a:hover {
-  border: none;
-  opacity: 0.8;
-}
 
 div.content {
-  margin: 0;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   background-image: url('/sebastian-Vc5XMryq8JM-unsplash.jpg');
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-color: #000;
   position: relative;
-  padding: 0 16px;
 }
-
 div.content::before {
   content: '';
   position: absolute;
@@ -124,26 +89,6 @@ div.content::before {
   bottom: 0;
   background-color: rgba(3, 17, 46, 0.4);
   pointer-events: none;
-  z-index: 1;
-}
-
-header {
-  background-color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  margin: 0 -16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-nav {
-  max-width: 100%;
-  margin: 0 16px;
-  padding: 8px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
 }
 
 .menu-toggle {
@@ -157,7 +102,6 @@ nav {
   padding: 0;
   top: 2px;
 }
-
 .menu-toggle span {
   display: block;
   width: 100%;
@@ -168,37 +112,26 @@ nav {
   transition: all 0.3s ease;
   position: absolute;
 }
-
 .menu-toggle span:nth-child(1) {
   top: 0;
 }
-
 .menu-toggle span:nth-child(2) {
   top: 8px;
 }
-
 .menu-toggle span:nth-child(3) {
   top: 16px;
 }
-
 .menu-toggle:has(+ .nav-menu.open) span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
-
 .menu-toggle:has(+ .nav-menu.open) span:nth-child(2) {
   opacity: 0;
   transform: scale(0);
 }
-
 .menu-toggle:has(+ .nav-menu.open) span:nth-child(3) {
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
-.nav-menu {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
 
 .nav-menu a {
   text-decoration: none;
@@ -240,6 +173,7 @@ footer p {
   font-size: var(--fontXXS);
   color: #bbbbbb;
 }
+
 
 /* Mobile */
 @media (max-width: 768px) {

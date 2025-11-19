@@ -4,7 +4,7 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-  <div class="whiteWindow pa2">
+  <div class="bg-white rounded-md shadow-window p-8">
     <h1>Tableau de bord</h1>
     <p>Bienvenue {{ authStore.user?.firstName }} !</p>
     <p><strong>Nom complet :</strong> <span v-if="authStore.user?.gender==='Homme'">M. </span><span v-else-if="authStore.user?.gender==='Femme'">Mme. </span><span v-else> </span>  {{ authStore.user?.getFullName() }}</p>

@@ -21,8 +21,8 @@ const handleLogout = async (): Promise<void> => {
 </script>
 
 <template>
-  <div class="content m-0 py-0 px-4 flex flex-col">
-    <header class="sticky bg-white top-0 z-100 my-0 -mx-4 ">
+  <div class="content m-0 py-0 flex flex-col">
+    <header class="sticky bg-white top-0 z-100 my-0">
       <nav class="my-0 mx-4 py-2 px-0 flex max-w-full justify-between items-center h-15">
         <div class="nav-brand">
           <router-link to="/">
@@ -42,7 +42,7 @@ const handleLogout = async (): Promise<void> => {
         </button>
 
         <!-- Menu (caché sur mobile) -->
-        <div class="nav-menu flex gap-5 items-center" :class="{ open: isMenuOpen }">
+        <div class="nav-menu flex gap-5 items-center bg-white-dark opacity-97" :class="{ open: isMenuOpen }">
           <div v-if="!isAuthenticated">
             <router-link to="/login" @click="isMenuOpen = false">Connexion</router-link>
             <router-link to="/register" @click="isMenuOpen = false">Inscription</router-link>
@@ -53,13 +53,13 @@ const handleLogout = async (): Promise<void> => {
             <span class="font-normal text-lg flex self-center"
               >&nbsp;de&nbsp;<strong>{{ authStore.user?.firstName }}</strong>
             </span>
-            <button @click="handleLogout" class="btn-secondary ml-5 mb-1.5">Déconnexion</button>
+            <button @click="handleLogout" class="block btn-secondary mx-auto mb-1.5">Déconnexion</button>
           </div>
         </div>
       </nav>
     </header>
 
-    <main class="main-content">
+    <main class="box-border relative flex w-full mx-0 my-0 px-0 py-6">
       <router-view />
     </main>
 
@@ -144,16 +144,6 @@ div.content::before {
   border: none;
 }
 
-.main-content {
-  flex: 1;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 2;
-}
 
 footer {
   background-color: rgba(0, 0, 0, 0.8);
@@ -193,7 +183,6 @@ footer p {
     padding: 16px;
     left: 0;
     right: 0;
-    background-color: var(--primary-color);
     flex-direction: column;
     z-index: 200;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);

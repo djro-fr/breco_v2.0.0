@@ -22,32 +22,32 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="bg-white rounded-md shadow-window px-4 pt-4 pb-7.5">
-    <h1 class="p-0 mx-auto my-0 pb-4 text-center text-3xl font-medium leading-none">Connexion</h1>
+  <div class="flex self-center flex-col mx-auto px-4 pt-4 pb-7.5 w-full max-w-md bg-white rounded-md shadow-window ">
+    <h1 class="pt-2 pb-6">Connexion</h1>
     <form @submit.prevent="handleLogin">
-      <input v-model="email" class="mb-5 px-2 py-1 w-full text-lg border-b border-primary-light bg-white-dark" type="email" placeholder="Email" aria-label="Email" required />
+      <input v-model="email" class="mb-7 max-w-96 block mx-auto" type="email" placeholder="E-mail" aria-label="Email" required />
       <input
         v-model="password"
-        class="mb-5 px-2 py-1 w-full text-lg border-b border-primary-light bg-white-dark"
+        class="mb-2 max-w-96 block mx-auto"
         type="password"
         placeholder="Mot de passe"
         aria-label="Mot de passe"
         required
       />
 
-      <div class="text-center forget">
+      <div class="text-center">
         <a href="#">Mot de passe oublié ?</a>
       </div>
-      <div class="p-0 mx-auto my-0 text-center">
-        <button type="submit" :disabled="isLoading" class="my-6 py-2 w-full text-xl font-medium rounded-md bg-action hover:bg-action-on shadow-md shadow-black/20 hover:shadow-lg">
+      <div class="p-0 mx-auto my-6 text-center">
+        <button type="submit" :disabled="isLoading" class="btn-action">
           {{ isLoading ? 'Connexion...' : 'Se connecter' }}
         </button>
       </div>
     </form>
     <p v-if="error" style="color: red">{{ error }}</p>
-    <p class="p-0 mx-auto my-0 text-center">Pas encore inscrit ?</p>
+    <p class="p-0 mx-auto my-0 text-center text-lg">Pas encore inscrit ?</p>
     <div class="p-0 mx-auto my-0 text-center">
-      <button @click="$router.push('/register')" class="mt-1 px-9 py-1 bg-primary-dark hover:bg-primary-dark-on  text-md text-white rounded-md shadow-md shadow-black/20 hover:shadow-lg">S'inscrire</button>
+      <button @click="$router.push('/register')" class="btn-secondary">S'inscrire</button>
     </div>
   </div>
 </template>

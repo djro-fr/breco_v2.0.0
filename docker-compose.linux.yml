@@ -1,0 +1,71 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: breco_mysql
+    networks:
+      - breco_network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: djrofr/breco-backend:latest
+    container_name: breco_backend
+    ports:
+      - "8765:9000"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    depends_on:
+      - mysql
+    networks:
+      - breco_network
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(file_exists('/app/logs') ? 0 : 1);"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: breco_nginx
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - breco_network
+
+  frontend:
+    image: ${DOCKER_USERNAME}/breco-frontend:latest
+    container_name: breco_frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    networks:
+      - breco_network
+
+volumes:
+  mysql_data:
+
+networks:
+  breco_network:
+    driver: bridge

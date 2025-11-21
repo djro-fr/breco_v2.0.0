@@ -2,12 +2,12 @@
 
 @theme {
   --color-primary-light: #00c4f0;
-  --color-primary-text: #005a7e;
-  --color-primary-dark: #006a94;
+  --color-primary-light50: #00c4f050;
+  --color-primary-dark: #006B96;
   --color-primary-dark-on: #025779;
   --color-action: #00d5a7;
   --color-action-on: #01c399;
-  --color-white-dark: #f5f5f5;
+  --color-white-dark: #fafafa;
   --color-white-back: #eeeeee;
   --color-gray-light: #888;
   --color-gray-dark: #474747;
@@ -17,6 +17,53 @@
   --spacing-default: 20px;
 
   --shadow-window: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+}
+
+@layer base {
+  h1 {
+    @apply m-0 pb-20 text-center text-3xl text-primary-dark font-semibold leading-none;
+  }
+
+  a,
+  button {
+    @apply cursor-pointer;
+  }
+
+  a {
+    @apply text-primary-dark font-semibold no-underline pb-0;
+  }
+  a:hover {
+    @apply text-primary-light border-b border-primary-light;
+  }
+}
+@layer components {
+  .btn-action {
+    @apply block h-12 mx-auto py-1 w-full max-w-96 text-2xl font-medium rounded-xl ;
+    @apply text-black bg-action hover:bg-action-on shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply block mx-auto py-1 px-8 w-full max-w-96 text-xl font-medium rounded-md;
+    @apply text-white bg-primary-dark hover:bg-primary-dark-on shadow-md hover:shadow-lg;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply w-full px-2 py-1 border-b-2 text-lg;
+    @apply text-black border-primary-light  bg-white-dark focus:outline-none focus:border-b-action;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply opacity-60;
+  }
+}
+
+@layer utilities {
+  .custom-shadow {
+    @apply shadow-lg shadow-blue-500;
+  }
 }
 
 /* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
@@ -32,22 +79,7 @@ body {
   font-family: 'Baloo 2', sans-serif;
 }
 
-a,
-button {
-  cursor: pointer;
-}
 
-
-a {
-  color: var(--color-primary-text);
-  font-weight: 600;
-  text-decoration: none;
-  padding-bottom: 0px;
-}
-a:hover {
-  color: var(--color-primary-light);
-  border-bottom: 1px solid var(--color-primary-light);
-}
 
 /* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 

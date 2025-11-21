@@ -5,6 +5,8 @@
 Terminal 1, Backend docker (sans frontend) :
 '''
 docker-compose up -d backend mysql nginx
+ou
+docker-compose -f docker-compose.linux.yml up --build -d mysql backend nginx
 '''
 
 Terminal 2, Frontend dev :
@@ -22,3 +24,11 @@ docker-compose up -d
 '''
 
 '''test@test.com/password123'''
+
+## Compose docker containers locally
+
+Sur Linux :
+'''docker-compose -f docker-compose.linux.yml up -d'''
+
+Sur Windows :
+'''docker-compose up -d'''

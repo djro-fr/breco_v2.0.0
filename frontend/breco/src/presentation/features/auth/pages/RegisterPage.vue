@@ -315,7 +315,7 @@ const handleRegister = async () => {
         <button
           v-if="currentStep < 4"
           type="button"
-          class="btn-primary"
+          class="btn-action"
           :disabled="
             (currentStep === 1 && !step1Valid) ||
             (currentStep === 2 && !step2Valid) ||
@@ -329,7 +329,7 @@ const handleRegister = async () => {
         <button
           v-if="currentStep === 4"
           type="submit"
-          class="btn-primary"
+          class="btn-action"
           :disabled="isLoading"
           @click="handleRegister"
         >
@@ -561,42 +561,6 @@ input:disabled {
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
-}
-
-.btn-primary,
-.btn-secondary {
-  flex: 1;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Baloo 2', sans-serif;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-color-dark);
-}
-
-.btn-primary:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.btn-secondary:hover {
-  background-color: #bdbdbd;
 }
 
 .login-link {

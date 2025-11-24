@@ -34,8 +34,11 @@ pipeline {
                 echo "Linting..."
                 sh '''                    
                     cd frontend/breco
-                    npm ci --omit=optional
-                    npm run lint
+                    # Install Bun first
+                    curl -fsSL https://bun.sh/install | bash
+                    export PATH="/root/.bun/bin:$PATH"
+                    bun install --frozen-lockfile
+                    bun run lint
                 '''
             }
         }
@@ -45,14 +48,17 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
+                            args '-u root -v bun-cache:/root/.bun -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
                         }
                     }
                     steps {
                         sh '''
                             cd /app
-                            npm ci
-                            npm run test:unit
+                            # Install Bun first
+                            curl -fsSL https://bun.sh/install | bash
+                            export PATH="/root/.bun/bin:$PATH"
+                            bun install --frozen-lockfile
+                            bun run test:unit
                         '''
                     }
                     post {
@@ -66,14 +72,17 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
+                            args '-u root -v bun-cache:/root/.bun -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
                         }
                     }
                     steps {
                         sh '''
                             cd /app
-                            npm ci
-                            npm run test:integration
+                            # Install Bun first
+                            curl -fsSL https://bun.sh/install | bash
+                            export PATH="/root/.bun/bin:$PATH"
+                            bun install --frozen-lockfile
+                            bun run test:integration
                         '''
                     }
                     post {
@@ -87,14 +96,17 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v npm-cache:/root/.npm -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
+                            args '-u root -v bun-cache:/root/.bun -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
                         }
                     }
                     steps {
                         sh '''
                             cd /app
-                            npm ci
-                            npm run test:ui
+                            # Install Bun first
+                            curl -fsSL https://bun.sh/install | bash
+                            export PATH="/root/.bun/bin:$PATH"
+                            bun install --frozen-lockfile
+                            bun run test:ui
                         '''
                     }
                     post {
@@ -109,7 +121,7 @@ pipeline {
             //     agent {
             //         docker {
             //             image 'node:25-alpine3.21'
-            //             args '-u root -v npm-cache:/root/.npm'
+            //             args '-u root'
             //         }
             //     }
             //     steps {
@@ -124,7 +136,8 @@ pipeline {
             //             mv geckodriver /usr/bin/
             //             chmod +x /usr/bin/geckodriver
                         
-            //             npm install -g bun
+            //             curl -fsSL https://bun.sh/install | bash
+            //             export PATH="/root/.bun/bin:$PATH"
             //             cd frontend/breco
             //             bun install --frozen-lockfile
             //             VITEST=true bun run test:e2e

@@ -34,7 +34,7 @@ pipeline {
                 echo "Linting..."
                 sh '''                    
                     cd frontend/breco
-                    npm ci
+                    npm ci --omit=optional
                     npm run lint
                 '''
             }

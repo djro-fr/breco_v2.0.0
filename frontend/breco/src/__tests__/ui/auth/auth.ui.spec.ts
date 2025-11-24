@@ -59,6 +59,6 @@ describe('RegisterPage Component', () => {
 
   it('should have next button', () => {
     const wrapper = mount(RegisterPage)
-    expect(wrapper.find('.btn-primary').exists()).toBe(true)
+    expect(wrapper.find('.btn-action').exists()).toBe(true)
   })
 })

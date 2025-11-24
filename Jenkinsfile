@@ -34,7 +34,7 @@ pipeline {
                 echo "Linting..."
                 sh '''                    
                     cd frontend/breco
-                    # Install Bun first
+                    apk add --no-cache curl bash
                     curl -fsSL https://bun.sh/install | bash
                     export PATH="/root/.bun/bin:$PATH"
                     bun install --frozen-lockfile
@@ -54,7 +54,7 @@ pipeline {
                     steps {
                         sh '''
                             cd /app
-                            # Install Bun first
+                            apk add --no-cache curl bash
                             curl -fsSL https://bun.sh/install | bash
                             export PATH="/root/.bun/bin:$PATH"
                             bun install --frozen-lockfile
@@ -78,7 +78,7 @@ pipeline {
                     steps {
                         sh '''
                             cd /app
-                            # Install Bun first
+                            apk add --no-cache curl bash
                             curl -fsSL https://bun.sh/install | bash
                             export PATH="/root/.bun/bin:$PATH"
                             bun install --frozen-lockfile
@@ -102,7 +102,7 @@ pipeline {
                     steps {
                         sh '''
                             cd /app
-                            # Install Bun first
+                            apk add --no-cache curl bash
                             curl -fsSL https://bun.sh/install | bash
                             export PATH="/root/.bun/bin:$PATH"
                             bun install --frozen-lockfile

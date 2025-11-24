@@ -1,23 +1,32 @@
 # Stage 1: Build
 FROM node:25-alpine3.21 AS builder
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ curl bash
 WORKDIR /app
-COPY package.json package-lock.json ./
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
+COPY package.json bun.lock ./
 COPY . .
 ARG VITE_API_URL=http://localhost:8081/api
-RUN npm ci && \
-    VITE_API_URL=${VITE_API_URL} npm run build
+RUN bun install --frozen-lockfile && \
+VITE_API_URL=${VITE_API_URL} bun run build
 RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 
 # Stage 2: Production
 FROM node:25-alpine3.21
 WORKDIR /app
 ARG BUILD_NUMBER=unknown
-RUN npm install -g serve
+RUN apk add --no-cache curl bash && \
+curl -fsSL https://bun.sh/install | bash && \
+npm install -g serve
+ENV PATH="/root/.bun/bin:$PATH"
+
 COPY --from=builder /app/dist ./dist
 RUN echo "${BUILD_NUMBER}" > ./dist/BUILD_NUMBER.txt
 RUN echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > ./dist/BUILD_DATE.txt
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
+CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
 CMD ["serve", "-s", "/app/dist", "-l", "3000"]

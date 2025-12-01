@@ -45,13 +45,12 @@ services:
 
   # Nginx (Reverse Proxy for Backend)
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     container_name: breco_nginx
     ports:
       - "8081:80"    # Expose Nginx on host port 8081 instead of default 80
-    volumes:
-      - ./nginx:/etc/nginx:ro
-      - ./backend/breco/webroot:/app/webroot:ro
     depends_on:
       - backend
     networks:

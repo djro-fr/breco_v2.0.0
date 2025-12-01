@@ -2,11 +2,11 @@
 
 Application de covoiturage construite avec Vue.js et CakePHP.
 
-## 📚 Documentation
+## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) - Architecture DDD du projet
 
-## 🏗️ Stack technique
+## Stack technique
 
 - **Frontend** : Vue.js 3, TypeScript, Tailwind CSS
 - **Backend** : CakePHP, MySQL

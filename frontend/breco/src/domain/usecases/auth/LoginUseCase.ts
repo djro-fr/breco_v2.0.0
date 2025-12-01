@@ -1,27 +1,27 @@
+// frontend/breco/src/domain/usecases/auth/LoginUseCase.ts
 import type { IAuthRepository, LoginInput, AuthOutput } from '@/domain/repositories/IAuthRepository'
+import { LoginInputSchema } from '@/domain/repositories/IAuthRepository'
 import { ValidationException } from '@/domain/exceptions/AppException'
+import { ZodError } from 'zod'
 
 export class LoginUseCase {
   constructor(private authRepository: IAuthRepository) {}
 
   async execute(input: LoginInput): Promise<AuthOutput> {
-    // email not empty
-    if (!input.email || input.email.trim().length === 0) {
-      throw new ValidationException("L'email est requis")
+    try {
+      // Validation with Zod
+      const validated = LoginInputSchema.parse(input)
+
+      // Call to repository
+      return await this.authRepository.login(validated)
+    } catch (error) {
+      if (error instanceof ZodError) {
+        // Transform ZodError into ValidationException
+        const firstError = error.issues[0]
+        const message = firstError?.message || 'Données invalides'
+        throw new ValidationException(message)
+      }
+      throw error
     }
-    // email must contain an @
-    if (!input.email.includes('@')) {
-      throw new ValidationException('Email invalide')
-    }
-    // password not empty
-    if (!input.password || input.password.trim().length === 0) {
-      throw new ValidationException('Le mot de passe est requis')
-    }
-    // password at least 8 characters
-    if (input.password.length < 8) {
-      throw new ValidationException('Le mot de passe doit avoir au moins 8 caractères')
-    }
-    // If everything is OK, call the repository to connect
-    return await this.authRepository.login(input)
   }
 }

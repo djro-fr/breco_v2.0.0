@@ -1,3 +1,58 @@
+// frontend/breco/src/domain/entities/User.ts
+
+import { z } from 'zod'
+import { emailSchema, phoneSchema, nameSchema } from '@/utils/validationSchemas'
+
+// Zod schema for User validation
+export const UserSchema = z.object({
+  id: z.number().int().positive(),
+  email: emailSchema,
+  phone: phoneSchema,
+  firstName: nameSchema('prénom'),
+  lastName: nameSchema('nom'),
+  driver: z.boolean().default(false),
+  createdAt: z.string().refine(
+    (val) => !isNaN(Date.parse(val)),
+    { message: "Date invalide" }
+  ).optional(),
+  gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional(),
+  zipCode: z.string().refine(
+    (val) => /^[0-9]{5}$/.test(val),
+    { message: "Code postal invalide" }
+  ).optional(),
+  town: z.string().min(2).max(100).optional(),
+  carModel: z.string().max(50).optional(),
+  carColor: z.string().max(30).optional(),
+  carSeatNb: z.number().int().min(1).max(8).optional()
+})
+
+// Derived schemas for creating and updating users
+// id and createdAt are set by backend
+export const CreateUserSchema = UserSchema.omit({ id: true, createdAt: true })
+// only id is required for updates, rest are optional
+export const UpdateUserSchema = UserSchema.partial().required({ id: true })
+
+// Schema to validate driver-specific fields
+export const DriverUserSchema = UserSchema.refine(
+  (data) => {
+    if (data.driver) {
+      return data.carModel && data.carColor && data.carSeatNb
+    }
+    return true
+  },
+  {
+    message: "Les informations du véhicule sont obligatoires pour les conducteurs",
+    path: ['carModel']
+  }
+)
+
+// TypeScript types inferred from Zod schemas
+export type UserData = z.infer<typeof UserSchema>
+export type CreateUserData = z.infer<typeof CreateUserSchema>
+export type UpdateUserData = z.infer<typeof UpdateUserSchema>
+
+
+// Domain Entity
 export class User {
   constructor(
     public id: number,
@@ -7,7 +62,7 @@ export class User {
     public lastName: string,
     public driver: boolean = false,
     public createdAt?: string,
-    public gender?: string,
+    public gender?: 'Homme'| 'Femme'| 'Ne pas dire',
     public zipCode?: string,
     public town?: string,
     public carModel?: string,
@@ -15,11 +70,24 @@ export class User {
     public carSeatNb?: number,
   ) {}
 
+  // Business Methods
   getFullName(): string {
     return `${this.firstName} ${this.lastName}`
   }
-
   isValid(): boolean {
     return this.id > 0 && this.email.length > 0 && this.firstName.length > 0
+  }
+  isDriver(): boolean {
+    return this.driver
+  }
+  hasCompleteProfile(): boolean {
+    return Boolean(
+      this.email &&
+      this.phone &&
+      this.firstName &&
+      this.lastName &&
+      this.town &&
+      this.zipCode
+    )
   }
 }

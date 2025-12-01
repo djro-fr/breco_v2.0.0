@@ -1,4 +1,16 @@
-# BRECO
+# Breco v2.0.0
+
+Application de covoiturage construite avec Vue.js et CakePHP.
+
+## 📚 Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) - Architecture DDD du projet
+
+## 🏗️ Stack technique
+
+- **Frontend** : Vue.js 3, TypeScript, Tailwind CSS
+- **Backend** : CakePHP, MySQL
+- **DevOps** : Docker, Jenkins
 
 ## Local server, hot reload (port 5173)
 

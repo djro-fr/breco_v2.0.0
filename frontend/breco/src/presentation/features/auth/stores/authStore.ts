@@ -1,3 +1,5 @@
+// frontend/breco/src/presentation/features/auth/stores/authStore.ts
+
 import { defineStore } from 'pinia'
 import { ref, computed, type Ref, type ComputedRef } from 'vue'
 import type { User } from '@/domain/entities/User'
@@ -58,7 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
     firstName: string,
     lastName: string,
     driver: boolean = false,
-    gender?: string,
+    gender?: 'Homme' | 'Femme' | 'Ne pas dire',
     zipCode?: string,
     town?: string,
     carModel?: string,

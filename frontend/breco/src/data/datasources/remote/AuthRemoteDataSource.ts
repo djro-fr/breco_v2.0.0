@@ -1,3 +1,5 @@
+// frontend/breco/src/data/datasources/remote/AuthRemoteDataSource.ts
+
 import axiosInstance from '@/shared/api/axiosInstance'
 import { UserModel, type UserDTO } from '@/data/models/UserModel'
 import type { User } from '@/domain/entities/User'
@@ -13,10 +15,12 @@ export class AuthRemoteDataSource {
 
   // API call to log in
   async login(email: string, password: string): Promise<AuthApiResponse> {
-    const { data } = await axiosInstance.post<AuthApiResponse>(`${this.API_PREFIX}/login`, {
-      email,
-      password,
-    })
+    const { data } = await axiosInstance.post<AuthApiResponse>(
+      `${this.API_PREFIX}/login`, {
+        email,
+        password,
+      }
+  )
     return data
   }
 
@@ -33,22 +37,25 @@ export class AuthRemoteDataSource {
     town?: string,
     carModel?: string,
     carColor?: string,
-    carSeatNb?: number
+    carSeatNb?: number,
   ): Promise<AuthApiResponse> {
-    const { data } = await axiosInstance.post<AuthApiResponse>(`${this.API_PREFIX}/register`, {
-      email,
-      phone,
-      password,
-      firstName,
-      lastName,
-      driver,
-      gender,
-      zipCode,
-      town,
-      carModel,
-      carColor,
-      carSeatNb,
-    })
+    const { data } = await axiosInstance.post<AuthApiResponse>(
+      `${this.API_PREFIX}/register`,
+      {
+        email,
+        phone,
+        password,
+        firstName,
+        lastName,
+        driver,
+        gender,
+        zipCode,
+        town,
+        carModel,
+        carColor,
+        carSeatNb,
+      }
+    )
     return data
   }
 
@@ -73,11 +80,14 @@ export class AuthRemoteDataSource {
   // API call to check the token
   async verifyToken(): Promise<User> {
     const token = localStorage.getItem('token')
-    const { data } = await axiosInstance.get<UserDTO>(`${this.API_PREFIX}/verify`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const { data } = await axiosInstance.get<UserDTO>(
+      `${this.API_PREFIX}/verify`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+  )
     // Convert DTO to Entity User
     return UserModel.fromJson(data)
   }

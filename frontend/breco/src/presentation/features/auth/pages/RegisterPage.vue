@@ -1,9 +1,14 @@
-// frontend/Breco/src/presentation/features/auth/pages/RegisterPage.vue
-
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
+import FormInput from '@/presentation/shared/components/FormInput.vue'
+import { emailSchema, phoneSchema, passwordSchema, nameSchema } from '@/utils/validationSchemas'
+import { UserSchema } from '@/domain/entities/User'
+import type { CreateUserData } from '@/domain/entities/User';
+import { ZodError } from 'zod'
+
+type RegisterFormField = keyof CreateUserData | 'password';
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -14,7 +19,7 @@ const password = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const driver = ref(false)
-const gender = ref('')
+const gender = ref<'Homme' | 'Femme' | 'Ne pas dire' | ''>('')
 const zipCode = ref('')
 const town = ref('')
 const carModel = ref('')
@@ -24,43 +29,132 @@ const carSeatNb = ref(0)
 const currentStep = ref(1)
 const passwordConfirm = ref('')
 
+// Errors per field
+const errors = ref<Record<string, string>>({})
+
 const isLoading = computed(() => authStore.isLoading)
-const error = computed(() => authStore.error)
+const globalError = computed(() => authStore.error)
 
+// Real-time validation for each field
+const validateField = (field: RegisterFormField, value: string | number | boolean) => {
+  const optionalFields = ['zipCode', 'town', 'carModel', 'carColor', 'carSeatNb']
+  if (optionalFields.includes(field as string) && (!value || (typeof value === 'string' && value.trim().length === 0))) {
+    delete errors.value[field as string]
+    return
+  }
+  try {
+    switch (field) {
+      case 'email':
+        emailSchema.parse(value)
+        break
+      case 'phone':
+        phoneSchema.parse(value)
+        break
+      case 'password':
+        if (typeof value === 'string') passwordSchema.parse(value)
+        break
+      case 'firstName':
+        if (typeof value === 'string') nameSchema('prénom').parse(value)
+        break
+      case 'lastName':
+        if (typeof value === 'string') nameSchema('nom').parse(value)
+        break
+      case 'zipCode':
+        if (typeof value === 'string' && value.trim().length > 0) {
+          const zipCodeSchema = UserSchema.shape.zipCode
+          zipCodeSchema.parse(value)
+        } else {
+          delete errors.value[field as string]
+          return
+        }
+        break
+    }
+    delete errors.value[field as string]
+  } catch (error) {
+    if (error instanceof ZodError) {
+      errors.value[field as string] = error.issues[0]?.message || 'Champ invalide'
+    } else if (error instanceof Error) {
+      errors.value[field as string] = error.message
+    }
+  }
+}
+
+const handleBlur = (field: RegisterFormField, value: string | number | boolean) => {
+  validateField(field, value)
+}
 // Step by step validation
-const step1Valid = computed(
-  () =>
+const step1Valid = computed(() => {
+  return (
     email.value.length > 0 &&
-    email.value.includes('@') &&
+    !errors.value.email &&
     password.value.length >= 8 &&
+    !errors.value.password &&
     password.value === passwordConfirm.value &&
-    phone.value.length > 0,
-)
-
-const step2Valid = computed(
-  () => firstName.value.length > 0 && lastName.value.length > 0 && gender.value.length > 0,
-)
-
-// No validation needed for step 3 (car)
+    phone.value.length > 0 &&
+    !errors.value.phone
+  )
+})
+const step2Valid = computed(() => {
+  return (
+    firstName.value.length > 0 &&
+    !errors.value.firstName &&
+    lastName.value.length > 0 &&
+    !errors.value.lastName
+  )
+})
 const step3Valid = computed(() => true)
 
-// Detailed password error messages
-const passwordError = computed(() => {
-  if (password.value.length < 8 && password.value.length > 0) {
-    return 'Le mot de passe doit contenir au moins 8 caractères'
-  }
+// Password confirmation error
+const passwordConfirmError = computed(() => {
   if (password.value !== passwordConfirm.value && passwordConfirm.value.length > 0) {
     return 'Les mots de passe ne correspondent pas'
   }
   return ''
 })
 
+const vehicleInfoConfirmation = computed(() => {
+  if (driver.value) {
+    if (carModel.value && carColor.value && carSeatNb.value) {
+       let message =`${carModel.value} (${carColor.value}) - ${carSeatNb.value}`
+       if(carSeatNb.value <= 1 ) message += ' place disponible'
+       else message += ' places disponibles'
+       return message
+    } else {
+      return 'Véhicule incomplet'
+    }
+  }
+  return 'Aucun véhicule utilisé'
+})
+
 const nextStep = () => {
-  if (currentStep.value === 1 && step1Valid.value) {
-    currentStep.value = 2
-  } else if (currentStep.value === 2 && step2Valid.value) {
-    currentStep.value = 3
-  } else if (currentStep.value === 3 && step3Valid.value) {
+  if (currentStep.value === 1) {
+    validateField('email', email.value)
+    validateField('phone', phone.value)
+    validateField('password', password.value)
+    if (password.value !== passwordConfirm.value) {
+      errors.value.passwordConfirm = 'Les mots de passe ne correspondent pas'
+    } else {
+      delete errors.value.passwordConfirm
+    }
+
+    if (step1Valid.value) {
+      currentStep.value = 2
+    }
+  } else if (currentStep.value === 2) {
+    validateField('firstName', firstName.value)
+    validateField('lastName', lastName.value)
+    validateField('zipCode', zipCode.value)
+
+    if (!gender.value || gender.value.length === 0) {
+      errors.value.gender = 'Le genre est requis'
+    } else {
+      delete errors.value.gender
+    }
+
+    if (step2Valid.value && !errors.value.gender) {
+      currentStep.value = 3
+    }
+  } else if (currentStep.value === 3) {
     currentStep.value = 4
   }
 }
@@ -71,13 +165,16 @@ const previousStep = () => {
   }
 }
 
-
-
 const handleRegister = async () => {
+  //Errors reset
+  errors.value = {}
+
   try {
+    const cleanedPhone = phone.value.replace(/\s/g, '')
+
     await authStore.register(
       email.value,
-      phone.value,
+      cleanedPhone,
       password.value,
       firstName.value,
       lastName.value,
@@ -89,7 +186,6 @@ const handleRegister = async () => {
       carColor.value || undefined,
       carSeatNb.value || undefined,
     )
-
     router.push({ name: 'Dashboard' })
   } catch (err) {
     console.error('Register error:', err)
@@ -98,218 +194,348 @@ const handleRegister = async () => {
 </script>
 
 <template>
-  <div class="whiteWindow register-container ma0">
-    <div class="register-card">
-      <h1 class="text-center">Créer un compte Breco</h1>
+  <div
+    class="flex self-center flex-col mx-auto px-6 pt-6 pb-9.5 w-full max-w-[580px] bg-white rounded-md shadow-window"
+  >
+    <div class="max-w-full w-full">
+      <h1 class="text-center pb-9 mt-0 leading-none font-black text-2xl">Créer un compte Breco</h1>
 
-      <div class="progress-indicator">
-        <div class="progress-step" :class="{ active: currentStep >= 1, completed: currentStep > 1 }">
-          <span>1</span>
-          <p>Contact</p>
+      <div class="flex justify-between items-center mb-10 gap-2">
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center flex-1">
+          <span
+            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
+            :class="currentStep === 1 ? 'bg-primary-light text-black' : 'bg-gray-dark text-white'"
+          >
+            1
+          </span>
+          <p class="text-gray-dark text-center text-md">Contact</p>
         </div>
-        <div class="progress-line" :class="{ completed: currentStep > 1 }"></div>
+        <!-- Separator 1-2 -->
+        <div
+          class="flex-1 h-0.5 my-0 mx-1 mb-6 transition-all duration-300"
+          :class="currentStep > 1 ? 'bg-gray-dark' : 'bg-gray-light'"
+        ></div>
 
-        <div class="progress-step" :class="{ active: currentStep >= 2, completed: currentStep > 2 }">
-          <span>2</span>
-          <p>Identité</p>
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center flex-1">
+          <span
+            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
+            :class="[
+              currentStep < 2
+                ? 'bg-gray-light text-black'
+                : currentStep === 2
+                  ? 'bg-primary-light text-black'
+                  : 'bg-gray-dark text-white',
+            ]"
+          >
+            2
+          </span>
+          <p class="text-gray-dark text-center text-md">Identité</p>
         </div>
-        <div class="progress-line" :class="{ completed: currentStep > 2 }"></div>
+        <!-- Separator 2-3 -->
+        <div
+          class="flex-1 h-0.5 my-0 mx-1 mb-6 transition-all duration-300"
+          :class="currentStep > 2 ? 'bg-gray-dark' : 'bg-gray-light'"
+        ></div>
 
-        <div class="progress-step" :class="{ active: currentStep >= 3, completed: currentStep > 3 }">
-          <span>3</span>
-          <p>Véhicule</p>
+        <!-- Step 3 -->
+        <div class="flex flex-col items-center flex-1">
+          <span
+            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
+            :class="[
+              currentStep < 3
+                ? 'bg-gray-light text-black'
+                : currentStep === 3
+                  ? 'bg-primary-light text-black'
+                  : 'bg-gray-dark text-white',
+            ]"
+          >
+            3
+          </span>
+          <p class="text-gray-dark text-center text-md">Véhicule</p>
         </div>
-        <div class="progress-line" :class="{ completed: currentStep > 3 }"></div>
+        <!-- Separator 3-4 -->
+        <div
+          class="flex-1 h-0.5 my-0 mx-1 mb-6 transition-all duration-300"
+          :class="currentStep > 3 ? 'bg-gray-dark' : 'bg-gray-light'"
+        ></div>
 
-        <div class="progress-step" :class="{ active: currentStep >= 4, completed: currentStep > 4 }">
-          <span>4</span>
-          <p>Confirmation</p>
+        <!-- Step 4 -->
+        <div class="flex flex-col items-center flex-1">
+          <span
+            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
+            :class="[
+              currentStep < 4
+                ? 'bg-gray-light text-black'
+                : currentStep === 4
+                  ? 'bg-primary-light text-black'
+                  : 'bg-gray-dark text-white',
+            ]"
+          >
+            4
+          </span>
+          <p class="text-gray-dark text-center text-md">Confirmation</p>
         </div>
       </div>
-
       <!-- Step 1: Contact -->
-      <div v-if="currentStep === 1" class="step-content">
-        <h2>Pour vous contacter</h2>
+      <div v-if="currentStep === 1" class="mb-7.5">
+        <h2 class="text-2xl mb-4 text-black font-medium">Pour vous contacter</h2>
 
-        <input
-          v-model="email"
-          type="email"
-          placeholder="Email"
-          aria-label="Email"
-          required
-        />
-        <p class="helper-text">Nous vous enverrons un email de confirmation</p>
+        <div class="mb-4">
+          <FormInput
+            v-model="email"
+            type="email"
+            placeholder="E-mail"
+            label="E-mail"
+            aria-label="E-mail"
+            required
+            :hasError="Boolean(errors.email)"
+            @blur="handleBlur('email', email)"
+          />
+          <p v-if="errors.email" class="error-text mt-1 mb-6">{{ errors.email }}</p>
+        </div>
+        <p class="text-gray-dark text-md -mt-7 mb-6">
+          Nous vous enverrons un e-mail de confirmation
+        </p>
 
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Mot de passe (min 8 caractères)"
-          aria-label="Mot de passe"
-          required
-        />
-        <input
-          v-model="passwordConfirm"
-          type="password"
-          placeholder="Confirmez le mot de passe"
-          aria-label="Confirmez le mot de passe"
-          required
-        />
-        <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
-        <p class="helper-text">Minimum 8 caractères recommandés</p>
+        <div class="mb-4">
+          <FormInput
+            v-model="password"
+            type="password"
+            placeholder="Mot de passe (min 8 caractères)"
+            label="Mot de passe"
+            aria-label="Mot de passe"
+            required
+            :hasError="Boolean(errors.password)"
+            @blur="handleBlur('password', password)"
+          />
+          <p v-if="errors.password" class="error-text mt-1">{{ errors.password }}</p>
+        </div>
 
-        <input
-          v-model="phone"
-          type="tel"
-          placeholder="Téléphone"
-          aria-label="Téléphone"
-          required
-        />
+        <div class="mb-4">
+          <FormInput
+            v-model="passwordConfirm"
+            type="password"
+            placeholder="Confirmez le mot de passe"
+            label="Confirmez le mot de passe"
+            aria-label="Confirmez le mot de passe"
+            required
+            :hasError="Boolean(passwordConfirmError)"
+          />
+          <p v-if="passwordConfirmError" class="error-text mt-1">{{ passwordConfirmError }}</p>
+        </div>
+
+        <div class="mb-4">
+          <FormInput
+            v-model="phone"
+            type="tel"
+            placeholder="Téléphone"
+            label="Téléphone"
+            aria-label="Téléphone"
+            required
+            class="w-40"
+            :hasError="Boolean(errors.phone)"
+            @blur="handleBlur('phone', phone)"
+          />
+          <p v-if="errors.phone" class="error-text mt-1">{{ errors.phone }}</p>
+        </div>
       </div>
 
       <!-- Step 2: Identity -->
-      <div v-if="currentStep === 2" class="step-content">
-        <h2>Votre identité</h2>
+      <div v-if="currentStep === 2" class="mb-7.5">
+        <h2 class="text-2xl mb-0 text-black font-medium">Votre identité</h2>
 
-        <label>Genre</label>
-        <div class="button-group-gender">
+        <label class="block mt-1 mb-1 text-md text-primary-dark font-medium"
+          >Genre<span class="text-error"> *</span></label
+        >
+        <div class="flex gap-2 mb-5">
           <button
             type="button"
-            class="gender-btn"
-            :class="{ active: gender === 'Homme' }"
-            @click="gender = 'Homme'"
+            class="px-2 py-1 border border-primary-light rounded-md"
+            :class="[
+              gender === 'Homme' ? 'bg-primary-light text-black' : '',
+              errors.gender ? 'border-error -mb-5' : '',
+            ]"
+            @click="
+              gender = 'Homme',
+              delete errors.gender
+            "
           >
             Homme
           </button>
           <button
             type="button"
-            class="gender-btn"
-            :class="{ active: gender === 'Femme' }"
-            @click="gender = 'Femme'"
+            class="px-2 py-1 border border-primary-light rounded-md"
+            :class="[
+              gender === 'Femme' ? 'bg-primary-light text-black' : '',
+              errors.gender ? 'border-error -mb-5' : '',
+            ]"
+            @click="
+              gender = 'Femme',
+              delete errors.gender
+            "
           >
             Femme
           </button>
           <button
             type="button"
-            class="gender-btn"
-            :class="{ active: gender === 'je préfère ne pas le dire' }"
-            @click="gender = 'je préfère ne pas le dire'"
+            class="px-2 py-1 border border-primary-light rounded-md"
+            :class="[
+              gender === 'Ne pas dire' ? 'bg-primary-light text-black' : '',
+              errors.gender ? 'border-error -mb-5' : '',
+            ]"
+            @click="
+              gender = 'Ne pas dire',
+              delete errors.gender
+            "
           >
             Ne pas dire
           </button>
         </div>
 
-        <input
-          v-model="firstName"
-          type="text"
-          placeholder="Prénom"
-          aria-label="Prénom"
-          required
-        />
-        <input
-          v-model="lastName"
-          type="text"
-          placeholder="Nom"
-          aria-label="Nom"
-          required
-        />
+        <p v-if="errors.gender" class="error-text mt-1 mb-4">{{ errors.gender }}</p>
 
-        <input
-          v-model="zipCode"
-          type="text"
-          placeholder="Code Postal"
-          aria-label="Code Postal"
-        />
-        <input
-          v-model="town"
-          type="text"
-          placeholder="Ville"
-          aria-label="Ville"
-        />
+        <div class="mb-4">
+          <FormInput
+            v-model="firstName"
+            type="text"
+            placeholder="Prénom"
+            label="Prénom"
+            aria-label="Prénom"
+            required
+            :hasError="Boolean(errors.firstName)"
+            @blur="handleBlur('firstName', firstName)"
+          />
+          <p v-if="errors.firstName" class="error-text mt-1">{{ errors.firstName }}</p>
+        </div>
+
+        <div class="mb-4">
+          <FormInput
+            v-model="lastName"
+            type="text"
+            placeholder="Nom"
+            label="Nom"
+            aria-label="Nom"
+            required
+            :hasError="Boolean(errors.lastName)"
+            @blur="handleBlur('lastName', lastName)"
+          />
+          <p v-if="errors.lastName" class="error-text mt-1">{{ errors.lastName }}</p>
+        </div>
+
+        <div class="mb-4">
+          <FormInput
+            v-model="zipCode"
+            type="text"
+            placeholder="Code Postal"
+            label="Code Postal"
+            aria-label="Code Postal"
+            class="w-40"
+            :hasError="Boolean(errors.zipCode)"
+            @blur="handleBlur('zipCode', zipCode)"
+          />
+          <p v-if="errors.zipCode" class="error-text mt-1">{{ errors.zipCode }}</p>
+        </div>
+        <div class="mb-4">
+          <FormInput
+            v-model="town"
+            type="text"
+            placeholder="Ville"
+            label="Ville"
+            aria-label="Ville"
+          />
+        </div>
       </div>
-
       <!-- Step 3: Car -->
-      <div v-if="currentStep === 3" class="step-content">
-        <h2>Votre véhicule</h2>
+      <div v-if="currentStep === 3" class="mb-7.5">
+        <h2 class="text-2xl mb-0 text-black font-medium">Votre véhicule</h2>
 
-        <label>Souhaitez-vous utiliser votre voiture ?</label>
-        <div class="button-group-driver">
+        <label class="block mt-1 mb-1 text-md text-primary-dark font-medium"
+          >Souhaitez-vous utiliser votre voiture ?</label
+        >
+        <div class="flex gap-2 mb-5">
           <button
             type="button"
-            class="driver-btn"
-            :class="{ active: driver === true }"
+            class="px-2 py-1 border border-primary-light rounded-md"
+            :class="driver === true ? 'bg-primary-light text-black' : ''"
             @click="driver = true"
           >
             Oui
           </button>
           <button
             type="button"
-            class="driver-btn"
-            :class="{ active: driver === false }"
+            class="px-2 py-1 border border-primary-light rounded-md"
+            :class="driver === false ? 'bg-primary-light text-black' : ''"
             @click="driver = false"
           >
             Non
           </button>
         </div>
-
-        <input
-          v-model="carModel"
-          :disabled="!driver"
-          type="text"
-          placeholder="Modèle (ex: Toyota Prius)"
-          aria-label="Modèle"
-        />
-        <input
-          v-model="carColor"
-          :disabled="!driver"
-          type="text"
-          placeholder="Couleur"
-          aria-label="Couleur"
-        />
-        <label>Nombre de places disponibles</label>
-        <input
-          v-model="carSeatNb"
-          :disabled="!driver"
-          type="number"
-        />
+        <div v-if="driver">
+          <div class="mb-4">
+            <FormInput
+              v-model="carModel"
+              type="text"
+              placeholder="Modèle (ex: Toyota Prius)"
+              label="Modèle"
+              aria-label="Modèle"
+            />
+          </div>
+          <div class="mb-4">
+            <FormInput
+              v-model="carColor"
+              type="text"
+              placeholder="Couleur"
+              label="Couleur"
+              aria-label="Couleur"
+            />
+            <label class="block -mb-4 text-md text-primary-dark font-medium"
+              >Nombre de places disponibles</label
+            >
+          </div>
+          <div class="mb-4">
+            <FormInput v-model="carSeatNb" type="number" class="w-20" />
+          </div>
+        </div>
       </div>
 
       <!-- Step 4: Confirmation -->
-      <div v-if="currentStep === 4" class="step-content">
-        <h2>Récapitulatif</h2>
-        <div class="summary">
-          <div class="summary-item">
-            <strong>Nom complet :</strong> {{ firstName }} {{ lastName }}
+      <div v-if="currentStep === 4" class="mb-7.5">
+        <h2 class="text-2xl mb-2 text-black font-medium">Récapitulatif</h2>
+        <div class="p-4 rounded mb-4 bg-white-back">
+          <div class="py-2 text-sm">
+            <strong class="text-primary-dark">Nom complet :</strong> {{ firstName }} {{ lastName }}
           </div>
-          <div class="summary-item">
-            <strong>Email :</strong> {{ email }}
+          <div class="py-2 text-sm">
+            <strong class="text-primary-dark">Email :</strong> {{ email }}
           </div>
-          <div class="summary-item">
-            <strong>Téléphone :</strong> {{ phone }}
+          <div class="py-2 text-sm">
+            <strong class="text-primary-dark">Téléphone :</strong> {{ phone }}
           </div>
-          <div class="summary-item">
-            <strong>Genre :</strong> {{ gender }}
+          <div class="py-2 text-sm">
+            <strong class="text-primary-dark">Genre :</strong> {{ gender }}
           </div>
-          <div v-if="zipCode || town" class="summary-item">
-            <strong>Localisation :</strong> {{ zipCode }} {{ town }}
+          <div v-if="zipCode || town" class="py-2 text-sm">
+            <strong class="text-primary-dark">Localisation :</strong> {{ zipCode }} {{ town }}
           </div>
-          <div v-if="driver" class="summary-item">
-            <strong>Véhicule :</strong> {{ carModel }} ({{ carColor }})
-            - {{ carSeatNb }} place(s)
+          <div v-if="driver" class="py-2 text-sm">
+            <strong class="text-primary-dark">Véhicule :</strong> {{ vehicleInfoConfirmation }}
           </div>
         </div>
 
-        <p v-if="error" class="error-message">{{ error }}</p>
+        <p v-if="globalError" class="error-message">{{ globalError }}</p>
       </div>
 
-      <!-- Navigation Buttons -->
-      <div class="button-group">
-        <button
-          v-if="currentStep > 1"
-          type="button"
-          class="btn-secondary"
-          @click="previousStep"
-        >
-          Retour
+      <div class="text-center mb-4" v-if="currentStep < 4">
+        <p>
+          <em>Les champs avec <span class="text-error"> *</span> sont obligatoires</em>
+        </p>
+      </div>
+
+      <div class="flex gap-3 mb-4">
+        <button v-if="currentStep > 1" type="button" class="btn-secondary" @click="previousStep">
+          &lsaquo; Retour
         </button>
 
         <button
@@ -323,7 +549,7 @@ const handleRegister = async () => {
           "
           @click="nextStep"
         >
-          Suivant
+          Suivant &rsaquo;;
         </button>
 
         <button
@@ -337,265 +563,10 @@ const handleRegister = async () => {
         </button>
       </div>
 
-      <p class="login-link">
+      <p class="text-center text-md text-gray-dark">
         Vous avez un compte ?
         <router-link to="/login">Se connecter</router-link>
       </p>
     </div>
   </div>
 </template>
-
-<style scoped>
-.register-container {
-  max-width: 580px;
-}
-
-.register-card {
-  max-width: 100%;
-  width: 100%;
-}
-
-h1 {
-  margin-top: 0px;
-  line-height: 1;
-  font-weight: 800;
-  font-size: var(--fontL);
-  padding-bottom: 16px;
-}
-
-h2 {
-  font-size: 20px;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-div.whiteWindow {
-  margin-top: 30px;
-  padding: 30px 16px;
-}
-
-div.whiteWindow input {
-  width: calc(100% - 10px);
-  border: none;
-  background-color: var(--dark-white);
-  border-bottom: 1px solid var(--primary-color);
-  margin-bottom: 20px;
-  font-size: var(--fontXS);
-  padding: 2px 5px;
-}
-
-.progress-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  gap: 8px;
-}
-
-.progress-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-}
-
-.progress-step span {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  color: #999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-bottom: 4px;
-  transition: all 0.3s;
-}
-
-.progress-step.active span {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.progress-step.completed span {
-  background-color: var(--action);
-  color: white;
-}
-
-.progress-step p {
-  font-size: 12px;
-  color: #999;
-  text-align: center;
-}
-
-.progress-line {
-  flex: 1;
-  height: 2px;
-  background-color: #e0e0e0;
-  margin: 0 4px;
-  transition: all 0.3s;
-}
-
-.progress-line.completed {
-  background-color: var(--action);
-}
-
-.step-content {
-  margin-bottom: 30px;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--primary-color-dark);
-  box-shadow: 0 0 0 3px rgba(0, 121, 148, 0.1);
-}
-
-input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  opacity: .4;
-}
-
-.helper-text {
-  font-size: 12px;
-  color: #999;
-  margin-top: -8px;
-  margin-bottom: 12px;
-}
-
-.error-text {
-  font-size: 12px;
-  color: #f44336;
-  margin-top: -8px;
-  margin-bottom: 12px;
-}
-
-.error-message {
-  color: #f44336;
-  background-color: #ffebee;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-
-.button-group-gender, .button-group-driver {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.gender-btn, .driver-btn {
-  flex: 1;
-  padding: 10px 16px;
-  border: 2px solid #ddd;
-  background-color: white;
-  color: #333;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'Baloo 2', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-
-.gender-btn:hover, .driver-btn:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-}
-
-.gender-btn.active, .driver-btn.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.radio-group div {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.radio-group input {
-  margin: 0;
-  width: auto;
-  border: none;
-  margin-bottom: 0;
-}
-
-.radio-group label {
-  margin: 0;
-  font-size: 14px;
-  border: none;
-  background-color: transparent;
-  padding: 0;
-  margin-bottom: 0;
-}
-
-.summary {
-  background-color: #f5f5f5;
-  padding: 16px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-}
-
-.summary-item {
-  padding: 8px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.summary-item strong {
-  color: var(--primary-color-dark);
-}
-
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.login-link {
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-}
-
-.login-link a {
-  color: var(--primary-color-dark);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 600px) {
-  .register-card {
-    padding: 24px;
-  }
-
-  .progress-indicator {
-    margin-bottom: 24px;
-  }
-
-  .progress-step span {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
-  }
-
-  .progress-step p {
-    font-size: 10px;
-  }
-}
-</style>

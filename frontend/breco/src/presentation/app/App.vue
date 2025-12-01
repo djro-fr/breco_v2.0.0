@@ -34,15 +34,13 @@ const handleLogout = async (): Promise<void> => {
           </router-link>
         </div>
 
-        <!-- Bouton menu hamburger avec 3 barres -->
         <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen" aria-label="Menu">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <!-- Menu (caché sur mobile) -->
-        <div class="nav-menu flex gap-5 items-center bg-white-dark opacity-97" :class="{ open: isMenuOpen }">
+        <div class="nav-menu flex gap-5 items-center max-[769px]:bg-white-dark max-[769px]:opacity-97" :class="{ open: isMenuOpen }">
           <div v-if="!isAuthenticated">
             <router-link to="/login" @click="isMenuOpen = false">Connexion</router-link>
             <router-link to="/register" @click="isMenuOpen = false">Inscription</router-link>

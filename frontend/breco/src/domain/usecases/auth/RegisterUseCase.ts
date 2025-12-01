@@ -1,35 +1,33 @@
+// frontend/breco/src/domain/usecases/auth/RegisterUseCase.ts
+
 import type {
   IAuthRepository,
   RegisterInput,
   AuthOutput,
 } from '@/domain/repositories/IAuthRepository'
+import { RegisterInputSchema, RegisterDriverInputSchema } from '@/domain/repositories/IAuthRepository'
 import { ValidationException } from '@/domain/exceptions/AppException'
+import { ZodError } from 'zod'
 
 export class RegisterUseCase {
   constructor(private authRepository: IAuthRepository) {}
 
   async execute(input: RegisterInput): Promise<AuthOutput> {
-    if (!input.firstName || input.firstName.trim().length === 0) {
-      throw new ValidationException('Le prénom est requis')
+    try {
+      // Validation with driver schema if driver is true
+      const schema = input.driver ? RegisterDriverInputSchema : RegisterInputSchema
+      const validated = schema.parse(input)
+
+      // Call to repository
+      return await this.authRepository.register(validated)
+    } catch (error) {
+      if (error instanceof ZodError) {
+        // Transform ZodError into ValidationException
+        const firstError = error.issues[0]
+        const message = firstError?.message || 'Données invalides'
+        throw new ValidationException(message)
+      }
+      throw error
     }
-    if (!input.lastName || input.lastName.trim().length === 0) {
-      throw new ValidationException('Le nom est requis')
-    }
-    if (!input.email || input.email.trim().length === 0) {
-      throw new ValidationException("L'email est requis")
-    }
-    if (!input.phone || input.phone.trim().length === 0) {
-      throw new ValidationException('Le n° de téléphone est requis')
-    }
-    if (!input.email.includes('@')) {
-      throw new ValidationException('Email invalide')
-    }
-    if (!input.password || input.password.trim().length === 0) {
-      throw new ValidationException('Le mot de passe est requis')
-    }
-    if (input.password.length < 8) {
-      throw new ValidationException('Le mot de passe doit avoir au moins 8 caractères')
-    }
-    return await this.authRepository.register(input)
   }
 }

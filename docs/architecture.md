@@ -338,7 +338,7 @@ const handleSubmit = async () => {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <input v-model="formData.email" placeholder="Email" />
+    <input v-model="formData.email" placeholder="E-mail" />
     <span v-if="errors.email">{{ errors.email }}</span>
     
     <button type="submit" :disabled="loading">Créer</button>

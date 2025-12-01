@@ -39,7 +39,7 @@ class AuthController extends Controller
             return $this->response
                 ->withStatus(422)
                 ->withStringBody(json_encode([
-                    'error' => 'Email et mot de passe requis'
+                    'error' => 'E-mail et mot de passe requis'
                 ]));
         }
 
@@ -53,7 +53,7 @@ class AuthController extends Controller
             return $this->response
                 ->withStatus(401)
                 ->withStringBody(json_encode([
-                    'error' => 'Email ou mot de passe incorrect'
+                    'error' => 'E-mail ou mot de passe incorrect'
                 ]));
         }
 
@@ -111,7 +111,7 @@ class AuthController extends Controller
             return $this->response
                 ->withStatus(422)
                 ->withStringBody(json_encode([
-                    'error' => 'Email déjà utilisé'
+                    'error' => 'E-mail déjà utilisé'
                 ]));
         }
 

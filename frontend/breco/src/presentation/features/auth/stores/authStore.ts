@@ -8,7 +8,7 @@ import { RegisterUseCase } from '@/domain/usecases/auth/RegisterUseCase'
 import { VerifyTokenUseCase } from '@/domain/usecases/auth/VerifyTokenUseCase'
 import { LogoutUseCase } from '@/domain/usecases/auth/LogoutUseCase'
 import { AuthRepositoryImpl } from '@/data/repositories/AuthRepositoryImpl'
-import type { AppException } from '@/domain/exceptions/AppException'
+import { AppException } from '@/domain/exceptions/AppException'
 import type { AxiosError } from 'axios'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -38,14 +38,12 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = result.user
       localStorage.setItem('token', result.token)
     } catch (err) {
-      const axiosError = err as AxiosError
-
-      if (axiosError.response?.status === 401) {
-        error.value = 'Email ou mot de passe incorrect'
-      } else if (axiosError.response?.status === 422) {
-        error.value = 'Données invalides'
+      if (err instanceof AppException) {
+        error.value = err.message
+      } else if (err instanceof Error) {
+        error.value = err.message
       } else {
-        error.value = (err as AppException).message || 'Erreur de connexion'
+        error.value = 'Erreur de connexion'
       }
       throw err
     } finally {
@@ -89,8 +87,13 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = result.user
       localStorage.setItem('token', result.token)
     } catch (err) {
-      const exception = err as AppException
-      error.value = exception.message || "Erreur d'inscription"
+      if (err instanceof AppException) {
+        error.value = err.message
+      } else if (err instanceof Error) {
+        error.value = err.message
+      } else {
+        error.value = "Erreur d'inscription"
+      }
       throw err
     } finally {
       isLoading.value = false

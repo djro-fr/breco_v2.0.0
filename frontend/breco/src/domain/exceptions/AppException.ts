@@ -1,3 +1,5 @@
+// frontend\breco\src\domain\exceptions\AppException.ts
+
 export class AppException extends Error {
   constructor(
     public code: string,

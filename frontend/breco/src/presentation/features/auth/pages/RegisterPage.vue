@@ -508,7 +508,7 @@ const handleRegister = async () => {
             <strong class="text-primary-dark">Nom complet :</strong> {{ firstName }} {{ lastName }}
           </div>
           <div class="py-2 text-sm">
-            <strong class="text-primary-dark">Email :</strong> {{ email }}
+            <strong class="text-primary-dark">E-mail :</strong> {{ email }}
           </div>
           <div class="py-2 text-sm">
             <strong class="text-primary-dark">Téléphone :</strong> {{ phone }}
@@ -535,7 +535,7 @@ const handleRegister = async () => {
 
       <div class="flex gap-3 mb-4">
         <button v-if="currentStep > 1" type="button" class="btn-secondary" @click="previousStep">
-          &lsaquo; Retour
+          &lt;&nbsp;&nbsp;Retour
         </button>
 
         <button
@@ -549,7 +549,7 @@ const handleRegister = async () => {
           "
           @click="nextStep"
         >
-          Suivant &rsaquo;;
+          Suivant&nbsp;&nbsp;&gt;
         </button>
 
         <button

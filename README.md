@@ -53,3 +53,13 @@ docker build --build-arg BUILD_NUMBER=1 -t local/breco-backend:latest -f backend
 ## Test user (to remove in production)
 
 '''test@test.com/Password123'''
+
+## Empty user db
+
+'''
+docker exec -it breco_mysql mysql -u root -p
+
+mysql> USE breco_db;
+mysql> SELECT * FROM users;
+mysql> TRUNCATE TABLE users;
+'''

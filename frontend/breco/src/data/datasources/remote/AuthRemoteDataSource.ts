@@ -101,6 +101,7 @@ export class AuthRemoteDataSource {
           carSeatNb,
         }
       )
+      // console.log('Backend register response:', JSON.stringify(data, null, 2))
       return data
     } catch (error) {
       this.handleAxiosError(error)

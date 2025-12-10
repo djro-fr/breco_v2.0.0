@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Http\Response;
+// use Cake\Http\Response;
 use Firebase\JWT\JWT;
 
 class AuthController extends Controller
@@ -63,7 +63,7 @@ class AuthController extends Controller
                 'sub' => $user->id,
                 'email' => $user->email,
                 'iat' => time(),
-                'exp' => time() + (7 * 24 * 60 * 60) // 7 jours
+                'exp' => time() + (7 * 24 * 60 * 60) // 7 days
             ],
             env('JWT_SECRET', 'your-secret-key'),
             'HS256'
@@ -74,9 +74,6 @@ class AuthController extends Controller
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
-                'firstName' => $user->firstName,
-                'lastName' => $user->lastName,
-                'createdAt' => $user->createdAt ? $user->createdAt->format('Y-m-d H:i:s') : null,
             ]
         ]));
     }
@@ -120,15 +117,15 @@ class AuthController extends Controller
             'email' => $data['email'],
             'phone' => $data['phone'],
             'password' => password_hash($data['password'], PASSWORD_BCRYPT),
-            'firstName' => $data['firstName'],
-            'lastName' => $data['lastName'],
+            'first_name' => $data['firstName'],
+            'last_name' => $data['lastName'],
             'driver' => $data['driver'] ?? false,
             'gender' => $data['gender'] ?? null,
-            'zipCode' => $data['zipCode'] ?? null,
+            'zip_code' => $data['zipCode'] ?? null,
             'town' => $data['town'] ?? null,
-            'carModel' => $data['carModel'] ?? null,
-            'carColor' => $data['carColor'] ?? null,
-            'carSeatNb' => $data['carSeatNb'] ?? null
+            'car_model' => $data['carModel'] ?? null,
+            'car_color' => $data['carColor'] ?? null,
+            'car_seat_nb' => $data['carSeatNb'] ?? null
         ]);
 
         if (!$usersTable->save($user)) {
@@ -157,16 +154,16 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'firstName' => $user->firstName,
-                'lastName' => $user->lastName,
+                'firstName' => $user->first_name,
+                'lastName' => $user->last_name,
                 'driver' => $user->driver,
-                'createdAt' => $user->createdAt ? $user->createdAt->format('Y-m-d H:i:s') : null,
+                'createdAt' => $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : null,
                 'gender' => $user->gender,
-                'zipCode' => $user->zipCode,
+                'zipCode' => $user->zip_code,
                 'town' => $user->town,
-                'carModel' => $user->carModel,
-                'carColor' => $user->carColor,
-                'carSeatNb' => $user->carSeatNb,
+                'carModel' => $user->car_model,
+                'carColor' => $user->car_color,
+                'carSeatNb' => $user->car_seat_nb,
             ]
         ]));
     }
@@ -200,16 +197,16 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'firstName' => $user->firstName,
+                'firstName' => $user->first_name,
+                'lastName' => $user->last_name,
                 'driver' => $user->driver,
-                'lastName' => $user->lastName,
-                'createdAt' => $user->createdAt->format('Y-m-d H:i:s'),
+                'createdAt' => $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : null,
                 'gender' => $user->gender,
-                'zipCode' => $user->zipCode,
+                'zipCode' => $user->zip_code,
                 'town' => $user->town,
-                'carModel' => $user->carModel,
-                'carColor' => $user->carColor,
-                'carSeatNb' => $user->carSeatNb,
+                'carModel' => $user->car_model,
+                'carColor' => $user->car_color,
+                'carSeatNb' => $user->car_seat_nb,
             ]));
         } catch (\Exception $e) {
             return $this->response

@@ -15,7 +15,7 @@ describe('Auth Use Cases (Unit)', () => {
     mockRepository.login.mockResolvedValue({ user: { id: 1 }, token: 'token' })
     const useCase = new LoginUseCase(mockRepository as any)
 
-    const input = { email: 'test@test.com', password: 'password123' }
+    const input = { email: 'test@test.com', password: 'Password123' }
     await useCase.execute(input)
 
     expect(mockRepository.login).toHaveBeenCalledWith(input)
@@ -28,7 +28,7 @@ describe('Auth Use Cases (Unit)', () => {
     await useCase.execute({
       email: 'test@test.com',
       phone: '+33612345678',
-      password: 'password123',
+      password: 'Password123',
       firstName: 'John',
       lastName: 'Doe',
     })

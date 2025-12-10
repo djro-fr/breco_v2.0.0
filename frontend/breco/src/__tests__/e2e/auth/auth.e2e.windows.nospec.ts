@@ -42,7 +42,7 @@ describe('Auth E2E Tests (Windows Dev)', () => {
     const submitButton = await driver.findElement(By.css('button[type="submit"]'))
 
     await emailInput.sendKeys('test@test.com')
-    await passwordInput.sendKeys('password123')
+    await passwordInput.sendKeys('Password123')
     await submitButton.click()
 
     await driver.wait(until.urlContains('/dashboard'), 5000)
@@ -83,7 +83,7 @@ describe('Auth E2E Tests (Windows Dev)', () => {
     const submitButton = await driver.findElement(By.css('button[type="submit"]'))
 
     await emailInput.sendKeys('invalid-email')
-    await passwordInput.sendKeys('password123')
+    await passwordInput.sendKeys('Password123')
     await submitButton.click()
 
     await driver.wait(
@@ -103,7 +103,7 @@ describe('Auth E2E Tests (Windows Dev)', () => {
     const submitButton = await driver.findElement(By.css('button[type="submit"]'))
 
     await emailInput.sendKeys('test@test.com')
-    await passwordInput.sendKeys('password123')
+    await passwordInput.sendKeys('Password123')
     await submitButton.click()
 
     await driver.wait(until.urlContains('/dashboard'), 5000)

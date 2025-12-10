@@ -22,7 +22,7 @@ export class AuthRepositoryImpl implements IAuthRepository {
     // Calls the data source to make the HTTP call
     const response = await this.remoteDataSource.login(input.email, input.password)
 
-    const user = UserModel.fromJson(response.user)
+    const user = UserModel.fromJsonUnsafe(response.user)
 
     // Return the result to the Use Case
     return {

@@ -28,7 +28,7 @@ describe('Auth Integration', () => {
 
     expect(store.isAuthenticated).toBe(false)
 
-    await store.login('test@test.com', 'password123')
+    await store.login('test@test.com', 'Password123')
 
     expect(store.isAuthenticated).toBe(true)
     expect(store.user?.email).toBe('test@test.com')
@@ -61,7 +61,7 @@ describe('Auth Integration', () => {
   it('should verify token on app startup', async () => {
     const store = useAuthStore()
 
-    await store.login('test@test.com', 'password123')
+    await store.login('test@test.com', 'Password123')
     await store.checkAuth()
 
     expect(store.isAuthenticated).toBe(true)
@@ -71,7 +71,7 @@ describe('Auth Integration', () => {
   it('should handle multiple sequential operations', async () => {
     const store = useAuthStore()
 
-    await store.login('test@test.com', 'password123')
+    await store.login('test@test.com', 'Password123')
     expect(store.isAuthenticated).toBe(true)
 
     store.error = null
@@ -88,7 +88,7 @@ describe('Auth Integration', () => {
 
     store.error = 'Previous error'
 
-    await store.login('test@test.com', 'password123')
+    await store.login('test@test.com', 'Password123')
 
     expect(store.error).toBeNull()
     expect(store.isAuthenticated).toBe(true)

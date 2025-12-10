@@ -21,6 +21,26 @@ export interface UserDTO {
 }
 
 export class UserModel {
+
+  // Creates User entity from JSON without validation for login (unsafe)
+  static fromJsonUnsafe(json: any): User {
+    return new User(
+      json.id,
+      json.email,
+      json.phone ?? null,
+      json.firstName ?? null,
+      json.lastName ?? null,
+      json.driver ?? false,
+      json.createdAt,
+      json.gender,
+      json.zipCode,
+      json.town,
+      json.carModel,
+      json.carColor,
+      json.carSeatNb,
+    )
+  }
+
   // Converts UserDTO (API) into Entity Domain
   static fromJson(json: UserDTO): User {
     // validates data with Zod before creating User entity

@@ -38,7 +38,7 @@ Sur Linux :
 Sur Windows :
 '''docker-compose up -d'''
 
-## Local frontend docker image re-build à la racine de l'app
+## Local frontend docker image re-build (at the root of the application directory)
 
 '''
 docker build --build-arg BUILD_NUMBER=1 -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
@@ -46,4 +46,10 @@ docker-compose down
 docker-compose up -d
 '''
 
-'''test@test.com/password123'''
+## Local backend docker image re-build (at the root of the application directory)
+
+docker build --build-arg BUILD_NUMBER=1 -t local/breco-backend:latest -f backend/breco/Dockerfile-backend backend/breco
+
+## Test user (to remove in production)
+
+'''test@test.com/Password123'''

@@ -1,3 +1,5 @@
+// frontend\breco\src\presentation\router\index.ts
+
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/presentation/features/auth/stores/authStore'
 import { authRoutes } from '@/presentation/features/auth/router/authRoutes'
@@ -44,6 +46,9 @@ const router = createRouter({
 // Global guard - Check authentication at first load
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+
+  // empty error state before each navigation
+  authStore.error = null
 
   // Check authentication at first load
   if (!authStore.token && localStorage.getItem('token')) {

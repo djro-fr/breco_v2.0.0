@@ -35,14 +35,14 @@ class UsersTable extends Table
             ->notEmptyString('password');
 
         $validator
-            ->scalar('firstName')
-            ->requirePresence('firstName', 'create')
-            ->notEmptyString('firstName');
+            ->scalar('first_name')
+            ->requirePresence('first_name', 'create')
+            ->notEmptyString('first_name');
 
         $validator
-            ->scalar('lastName')
-            ->requirePresence('lastName', 'create')
-            ->notEmptyString('lastName');
+            ->scalar('last_name')
+            ->requirePresence('last_name', 'create')
+            ->notEmptyString('last_name');
 
         $validator
             ->boolean('driver')
@@ -53,24 +53,24 @@ class UsersTable extends Table
             ->allowEmptyString('gender');
 
         $validator
-            ->scalar('zipCode')
-            ->allowEmptyString('zipCode');
+            ->scalar('zip_code')
+            ->allowEmptyString('zip_code');
 
         $validator
             ->scalar('town')
             ->allowEmptyString('town');
 
         $validator
-            ->scalar('carModel')
-            ->allowEmptyString('carModel');
+            ->scalar('car_model')
+            ->allowEmptyString('car_model');
 
         $validator
-            ->scalar('carColor')
-            ->allowEmptyString('carColor');
+            ->scalar('car_color')
+            ->allowEmptyString('car_color');
 
         $validator
-            ->integer('carSeatNb')
-            ->allowEmptyString('carSeatNb');
+            ->integer('car_seat_nb')
+            ->allowEmptyString('car_seat_nb');
 
         return $validator;
     }

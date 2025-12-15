@@ -1,4 +1,5 @@
 <?php
+// backend\breco\config\routes.php
 /**
  * Routes configuration.
  *
@@ -102,11 +103,14 @@ return function (RouteBuilder $routes): void {
             ['_method' => 'OPTIONS']
         );
 
-        // Real routes
+        // Auth routes
         $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
         $routes->post('/auth/register', ['controller' => 'Auth', 'action' => 'register']);
         $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
         $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
+        $routes->get('/auth/verify-email/:token', ['controller' => 'Auth', 'action' => 'verifyEmail'])
+            ->setPass(['token']);
+        // ex: GET http://localhost:8081/api/auth/verify-email/abc123def456...
+        // → Calls AuthController::verifyEmail('abc123def456...')
     });
 };
-

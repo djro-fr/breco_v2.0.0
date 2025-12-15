@@ -11,33 +11,33 @@ export interface UserDTO {
   firstName: string
   lastName: string
   driver: boolean
-  createdAt?: string
-  gender?: 'Homme'| 'Femme'| 'Ne pas dire',
-  zipCode?: string
-  town?: string
-  carModel?: string
-  carColor?: string
-  carSeatNb?: number
+  createdAt?: string | null
+  gender?: 'Homme'| 'Femme'| 'Ne pas dire' | null
+  zipCode?: string | null
+  town?: string | null
+  carModel?: string | null
+  carColor?: string | null
+  carSeatNb?: number | null
 }
 
 export class UserModel {
 
   // Creates User entity from JSON without validation for login (unsafe)
-  static fromJsonUnsafe(json: any): User {
+  static fromJsonUnsafe(json: UserDTO): User {
     return new User(
       json.id,
       json.email,
-      json.phone ?? null,
-      json.firstName ?? null,
-      json.lastName ?? null,
+      json.phone,
+      json.firstName,
+      json.lastName,
       json.driver ?? false,
-      json.createdAt,
-      json.gender,
-      json.zipCode,
-      json.town,
-      json.carModel,
-      json.carColor,
-      json.carSeatNb,
+      json.createdAt ?? undefined,
+      json.gender ?? undefined,
+      json.zipCode ?? undefined,
+      json.town ?? undefined,
+      json.carModel ?? undefined,
+      json.carColor ?? undefined,
+      json.carSeatNb ?? undefined,
     )
   }
 

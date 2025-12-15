@@ -9,7 +9,6 @@ import { VerifyTokenUseCase } from '@/domain/usecases/auth/VerifyTokenUseCase'
 import { LogoutUseCase } from '@/domain/usecases/auth/LogoutUseCase'
 import { AuthRepositoryImpl } from '@/data/repositories/AuthRepositoryImpl'
 import { AppException } from '@/domain/exceptions/AppException'
-import type { AxiosError } from 'axios'
 
 export const useAuthStore = defineStore('auth', () => {
   // Create the use case instances with the repository

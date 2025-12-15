@@ -14,16 +14,16 @@ export const UserSchema = z.object({
   createdAt: z.string().refine(
     (val) => !isNaN(Date.parse(val)),
     { message: "Date invalide" }
-  ).optional().nullable(),
-  gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional().nullable(),
+  ).optional().nullable().transform(val => val ?? undefined),
+  gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional().nullable().transform(val => val ?? undefined),
   zipCode: z.string().refine(
     (val) => /^[0-9]{5}$/.test(val),
     { message: "Code postal invalide" }
-  ).optional().nullable(),
-  town: z.string().min(2).max(100).optional().nullable(),
-  carModel: z.string().max(50).optional().nullable(),
-  carColor: z.string().max(30).optional().nullable(),
-  carSeatNb: z.number().int().min(1).max(8).optional().nullable()
+  ).optional().nullable().transform(val => val ?? undefined),
+  town: z.string().min(2).max(100).optional().nullable().transform(val => val ?? undefined),
+  carModel: z.string().max(50).optional().nullable().transform(val => val ?? undefined),
+  carColor: z.string().max(30).optional().nullable().transform(val => val ?? undefined),
+  carSeatNb: z.number().int().min(1).max(8).optional().nullable().transform(val => val ?? undefined)
 })
 
 // Derived schemas for creating and updating users

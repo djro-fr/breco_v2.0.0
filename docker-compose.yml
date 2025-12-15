@@ -1,3 +1,4 @@
+# docker-compose.yml
 services:
   # MySQL Database
   mysql:
@@ -28,6 +29,9 @@ services:
       DEBUG: "false"
       DATABASE_URL: "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DB}"
       JWT_SECRET: ${JWT_SECRET}
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
+      EMAIL_FROM: noreply@breco.fr
     ports:
       - "8765:9000"
     volumes:
@@ -66,6 +70,16 @@ services:
       - "3001:3000"    # Expose Frontend on host port 3001 instead of default 3000
     depends_on:
       - backend
+    networks:
+      - breco_network
+
+  # MailHog - Email testing tool
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: breco_mailhog
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
     networks:
       - breco_network
 

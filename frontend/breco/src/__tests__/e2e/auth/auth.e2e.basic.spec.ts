@@ -1,32 +1,37 @@
-import { Browser, Builder } from 'selenium-webdriver';
-import firefox from 'selenium-webdriver/firefox.js';
-import assert from 'assert';
+// frontend/breco/src/__tests__/e2e/auth/auth.e2e.basic.spec.ts
+import { describe, it, beforeAll, afterAll, expect } from 'vitest'
+import { Browser, Builder } from 'selenium-webdriver'
+import firefox from 'selenium-webdriver/firefox.js'
 
-describe('UI - Test Selenium avec Firefox', function() {
-  this.timeout(30000); // Timeout global pour tous les tests
-  let driver;
+describe('UI - Selenium Test with Firefox', () => {
+  let driver
 
-  before(async function() {
-    const options = new firefox.Options();
-    options.addArguments('--headless');
-    const serviceBuilder = new firefox.ServiceBuilder('/usr/bin/geckodriver');
-    serviceBuilder.enableVerboseLogging();
+  beforeAll(async () => {
+    const options = new firefox.Options()
+    options.addArguments('--headless')
+
+    const serviceBuilder = new firefox.ServiceBuilder('/usr/bin/geckodriver')
+    serviceBuilder.enableVerboseLogging()
 
     driver = await new Builder()
       .forBrowser(Browser.FIREFOX)
       .setFirefoxOptions(options)
       .setFirefoxService(serviceBuilder)
-      .build();
-  });
+      .build()
+  }, 30000) // 30 second timeout for setup
 
-  after(async function() {
-    await driver.quit();
-  });
+  afterAll(async () => {
+    if (driver) {
+      await driver.quit()
+    }
+  })
 
-  it('Devrait ouvrir selenium-dev et vérifier le titre', async function() {
-    await driver.get('https://www.selenium.dev');
-    const title = await driver.getTitle();
-    console.log('Titre de la page :', title);
-    assert.ok(title.includes('Selenium'), 'Le titre devrait contenir "Selenium"');
-  });
-});
+  it('should open selenium-dev and verify title', async () => {
+    await driver.get('https://www.selenium.dev')
+
+    const title = await driver.getTitle()
+    console.log('Page title:', title)
+
+    expect(title).toContain('Selenium')
+  }, 30000) // 30 second timeout for this test
+})

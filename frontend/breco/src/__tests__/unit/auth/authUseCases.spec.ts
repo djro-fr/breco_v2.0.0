@@ -27,7 +27,7 @@ describe('Auth Use Cases (Unit)', () => {
 
     await useCase.execute({
       email: 'test@test.com',
-      phone: '+33612345678',
+      phone: '0612345678',
       password: 'Password123',
       firstName: 'John',
       lastName: 'Doe',

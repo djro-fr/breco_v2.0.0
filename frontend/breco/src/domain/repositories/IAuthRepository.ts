@@ -41,13 +41,18 @@ export const RegisterDriverInputSchema = RegisterInputSchema.refine(
   }
 )
 
-// Types inférés
+// Inferred types
 export type LoginInput = z.infer<typeof LoginInputSchema>
 export type RegisterInput = z.infer<typeof RegisterInputSchema>
 
+// If requiresVerification: true -> no token nor user
+// If normal connection -> token and user present
 export interface AuthOutput {
-  token: string
-  user: User
+  token?: string
+  user?: User
+  requiresVerification?: boolean
+  message?: string
+  success?: boolean
 }
 
 export interface IAuthRepository {

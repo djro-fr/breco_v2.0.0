@@ -1,5 +1,4 @@
 // frontend/breco/src/data/datasources/remote/AuthRemoteDataSource.ts
-
 import axiosInstance from '@/shared/api/axiosInstance'
 import { UserModel, type UserDTO } from '@/data/models/UserModel'
 import type { User } from '@/domain/entities/User'
@@ -13,8 +12,11 @@ import axios from 'axios'
 
 // API response format for authentication
 interface AuthApiResponse {
-  token: string
-  user: UserDTO
+  token?: string
+  user?: UserDTO
+  requiresVerification?: boolean
+  message?: string
+  success?: boolean
 }
 
 export class AuthRemoteDataSource {
@@ -33,6 +35,7 @@ export class AuthRemoteDataSource {
     if (axios.isAxiosError(error)) {
       const statusCode = error.response?.status || 500
       const serverMessage = this.extractErrorMessage(error.response?.data)
+
       // Launch the appropriate exception based on the HTTP status
       switch (statusCode) {
         case 401:
@@ -45,10 +48,12 @@ export class AuthRemoteDataSource {
           throw new AppException('API_ERROR', serverMessage || 'Une erreur est survenue', statusCode)
       }
     }
+
     // Non-Axios error (network, timeout, etc.)
     if (error instanceof Error) {
       throw new AppException('NETWORK_ERROR', error.message, 0)
     }
+
     throw new AppException('UNKNOWN_ERROR', 'Une erreur inconnue est survenue', 500)
   }
 

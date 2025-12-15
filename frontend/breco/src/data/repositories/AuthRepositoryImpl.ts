@@ -1,5 +1,4 @@
 // frontend/breco/src/data/repositories/AuthRepositoryImpl.ts
-
 import type {
   IAuthRepository,
   LoginInput,
@@ -21,6 +20,10 @@ export class AuthRepositoryImpl implements IAuthRepository {
   async login(input: LoginInput): Promise<AuthOutput> {
     // Calls the data source to make the HTTP call
     const response = await this.remoteDataSource.login(input.email, input.password)
+
+    if (!response.token || !response.user) {
+      throw new Error('Réponse invalide du serveur')
+    }
 
     const user = UserModel.fromJsonUnsafe(response.user)
 
@@ -49,9 +52,22 @@ export class AuthRepositoryImpl implements IAuthRepository {
       input.carSeatNb,
     )
 
+    // Check if email verification is required
+    if (response.requiresVerification) {
+      return {
+        requiresVerification: true,
+        message: response.message,
+        success: response.success
+      }
+    }
+
+    // Direct login with token and user
+    if (!response.token || !response.user) {
+      throw new Error('Réponse invalide du serveur')
+    }
+
     const user = UserModel.fromJson(response.user)
 
-    // Return the result to the Use Case
     return {
       token: response.token,
       user,

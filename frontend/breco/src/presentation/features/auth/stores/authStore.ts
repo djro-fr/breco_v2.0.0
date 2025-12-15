@@ -33,6 +33,11 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const result = await loginUseCase.execute({ email, password })
+
+      if (!result.token || !result.user) {
+        throw new Error('Réponse invalide du serveur')
+      }
+
       token.value = result.token
       user.value = result.user
       localStorage.setItem('token', result.token)
@@ -49,6 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = false
     }
   }
+
   // Action: Register
   const register = async (
     email: string,
@@ -63,7 +69,7 @@ export const useAuthStore = defineStore('auth', () => {
     carModel?: string,
     carColor?: string,
     carSeatNb?: number,
-  ): Promise<void> => {
+  ): Promise<{ requiresVerification?: boolean; message?: string }> => {
 
     isLoading.value = true
     error.value = null
@@ -82,9 +88,25 @@ export const useAuthStore = defineStore('auth', () => {
         carColor,
         carSeatNb,
       })
+
+      // Check if email verification is required
+      if (result.requiresVerification) {
+        return {
+          requiresVerification: true,
+          message: result.message || 'Veuillez vérifier votre email'
+        }
+      }
+
+      // Direct login (in case backend doesn't require verification)
+      if (!result.token || !result.user) {
+        throw new Error('Réponse invalide du serveur')
+      }
+
       token.value = result.token
       user.value = result.user
       localStorage.setItem('token', result.token)
+
+      return {}
     } catch (err) {
       if (err instanceof AppException) {
         error.value = err.message
@@ -98,6 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = false
     }
   }
+
   // Action: Logout
   const logout = async (): Promise<void> => {
     isLoading.value = true
@@ -108,6 +131,7 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = false
     }
   }
+
   // Action: Check the token at startup
   const checkAuth = async (): Promise<void> => {
     const storedToken = localStorage.getItem('token')
@@ -121,6 +145,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
   }
+
   // Action: Erase the authentication data
   const clearAuth = (): void => {
     user.value = null

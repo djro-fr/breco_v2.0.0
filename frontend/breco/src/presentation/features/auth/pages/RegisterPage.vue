@@ -86,6 +86,7 @@ const validateField = (field: RegisterFormField, value: string | number | boolea
 const handleBlur = (field: RegisterFormField, value: string | number | boolean) => {
   validateField(field, value)
 }
+
 // Step by step validation
 const step1Valid = computed(() => {
   return (
@@ -98,6 +99,7 @@ const step1Valid = computed(() => {
     !errors.value.phone
   )
 })
+
 const step2Valid = computed(() => {
   return (
     firstName.value.length > 0 &&
@@ -106,6 +108,7 @@ const step2Valid = computed(() => {
     !errors.value.lastName
   )
 })
+
 const step3Valid = computed(() => true)
 
 // Password confirmation error
@@ -164,19 +167,19 @@ const nextStep = () => {
 }
 
 const previousStep = () => {
-  if (currentStep.value > 1) {
+  if (currentStep.value > 1 && currentStep.value < 5) {
     currentStep.value -= 1
   }
 }
 
 const handleRegister = async () => {
-  //Errors reset
+  // Errors reset
   errors.value = {}
 
   try {
     const cleanedPhone = phone.value.replace(/\s/g, '')
 
-    await authStore.register(
+    const result = await authStore.register(
       email.value,
       cleanedPhone,
       password.value,
@@ -190,13 +193,20 @@ const handleRegister = async () => {
       carColor.value || undefined,
       carSeatNb.value || undefined,
     )
-    router.push({ name: 'Dashboard' })
+
+    // Check if email verification is required
+    if (result.requiresVerification) {
+      currentStep.value = 5
+    } else {
+      // Direct login (shouldn't happen with new flow)
+      router.push({ name: 'Dashboard' })
+    }
   } catch (err) {
     console.error('Register error:', err)
   }
 }
 
-const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
+const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email']
 </script>
 
 <template>
@@ -206,7 +216,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
     <div class="max-w-full w-full">
       <h1 class="text-center pb-9 mt-0 leading-none font-black text-2xl">Créer un compte Breco</h1>
 
-      <div class="mb-8 -mt-2">
+      <div class="mb-8 -mt-2" v-if="currentStep < 5">
         <!-- Progress bar -->
         <div class="relative mb-6">
           <!-- Background bar -->
@@ -243,7 +253,6 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
         </div>
         <div class="-mx-6 mt-4 -mb-3 h-2 bg-white-dark border-t border-dotted border-gray-light"></div>
       </div>
-
 
       <!-- Step 1: Contact -->
       <div v-if="currentStep === 1" class="mb-7.5">
@@ -405,6 +414,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
           />
         </div>
       </div>
+
       <!-- Step 3: Car -->
       <div v-if="currentStep === 3" class="mb-7.5">
         <h2 class="text-2xl mb-0 text-black font-medium">Votre véhicule</h2>
@@ -485,13 +495,46 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
         <p v-if="globalError" class="error-message">{{ globalError }}</p>
       </div>
 
+      <!-- Step 5: Email Verification -->
+      <div v-if="currentStep === 5" class="mb-7.5 text-center">
+        <div class="mb-6 flex justify-center">
+          <svg class="h-20 w-20 text-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+
+        <h2 class="text-2xl mb-4 text-black font-medium">Vérifiez votre email</h2>
+
+        <p class="text-gray-dark mb-6 text-lg">
+          Un email de vérification a été envoyé à <strong class="text-black">{{ email }}</strong>.
+        </p>
+
+        <div class="p-4 rounded mb-6 bg-primary-light/10 border border-primary-light">
+          <p class="text-md text-gray-dark">
+            📧 Cliquez sur le lien dans l'email pour activer votre compte et commencer à utiliser Breco.
+          </p>
+        </div>
+
+        <p class="text-sm text-gray-dark mb-6">
+          ⚠️ Le lien expirera dans <strong>24 heures</strong>.
+        </p>
+
+        <p class="text-sm text-gray-dark mb-8">
+          Vous n'avez pas reçu l'email ? Vérifiez vos spams ou contactez le support.
+        </p>
+
+        <button type="button" class="btn-action" @click="router.push({ name: 'Login' })">
+          Aller à la connexion
+        </button>
+      </div>
+
       <div class="text-center mb-4" v-if="currentStep < 4">
         <p>
           <em>Les champs avec <span class="text-error"> *</span> sont obligatoires</em>
         </p>
       </div>
 
-      <div class="flex gap-3 mb-4">
+      <div class="flex gap-3 mb-4" v-if="currentStep < 5">
         <button v-if="currentStep > 1" type="button" class="btn-secondary max-[768px]:w-[40%]" @click="previousStep">
           &lt;&nbsp;&nbsp;Retour
         </button>
@@ -521,7 +564,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
         </button>
       </div>
 
-      <p class="text-center text-md text-gray-dark">
+      <p class="text-center text-md text-gray-dark" v-if="currentStep < 5">
         Vous avez un compte ?
         <router-link to="/login">Se connecter</router-link>
       </p>

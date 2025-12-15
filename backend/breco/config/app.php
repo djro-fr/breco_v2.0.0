@@ -1,4 +1,5 @@
 <?php
+// backend\breco\config\app.php
 
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
@@ -215,20 +216,12 @@ return [
      */
     'EmailTransport' => [
         'default' => [
-            'className' => MailTransport::class,
-            /*
-             * The keys host, port, timeout, username, password, client and tls
-             * are used in SMTP transports
-             */
-            'host' => 'localhost',
-            'port' => 25,
+            'className' => 'Smtp',
+            'host' => env('EMAIL_HOST', 'mailhog'),
+            'port' => (int)env('EMAIL_PORT', 1025),
             'timeout' => 30,
-            /*
-             * It is recommended to set these options through your environment or app_local.php
-             */
-            //'username' => null,
-            //'password' => null,
-            'client' => null,
+            'username' => null,
+            'password' => null,
             'tls' => false,
             'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
@@ -246,12 +239,9 @@ return [
     'Email' => [
         'default' => [
             'transport' => 'default',
-            'from' => 'you@localhost',
-            /*
-             * Will by default be set to config value of App.encoding, if that exists otherwise to UTF-8.
-             */
-            //'charset' => 'utf-8',
-            //'headerCharset' => 'utf-8',
+            'from' => [env('EMAIL_FROM', 'noreply@breco.fr') => 'Breco'],
+            'charset' => 'utf-8',
+            'headerCharset' => 'utf-8',
         ],
     ],
 

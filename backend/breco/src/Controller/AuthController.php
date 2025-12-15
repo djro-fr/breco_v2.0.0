@@ -154,6 +154,11 @@ class AuthController extends Controller
                 ]));
         }
 
+        error_log('=== DEBUG EMAIL ===');
+        error_log('User email: ' . $user->email);
+        error_log('Token: ' . $verificationToken);
+        error_log('First name: ' . $user->first_name);
+
         // Send verification email
         $emailService = new EmailService();
         $emailSent = $emailService->sendVerificationEmail(
@@ -161,6 +166,8 @@ class AuthController extends Controller
             $verificationToken,
             $user->first_name
         );
+
+        error_log('Email sent result: ' . ($emailSent ? 'TRUE' : 'FALSE'));
 
         if (!$emailSent) {
             // User created but email could not be sent

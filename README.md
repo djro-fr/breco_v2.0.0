@@ -57,9 +57,17 @@ docker build --build-arg BUILD_NUMBER=1 -t local/breco-backend:latest -f backend
 ## Empty user db
 
 '''
-docker exec -it breco_mysql mysql -u root -p
+docker exec -it breco_mysql mysql -u root -p breco_db;
 
-mysql> USE breco_db;
 mysql> SELECT * FROM users;
 mysql> TRUNCATE TABLE users;
+'''
+
+## Delete user nr. 4
+
+'''
+docker exec -it breco_mysql mysql -u root -p breco_db;
+
+mysql> SELECT * FROM users;
+mysql> DELETE FROM users WHERE id='4';
 '''

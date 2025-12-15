@@ -33,15 +33,20 @@ class EmailService
                     'token' => $token
                 ])
                 ->viewBuilder()
-                    ->setTemplate('verification')
-                    ->setLayout('default');
+                ->setTemplate('verification')
+                ->setLayout('default');
 
             $mailer->deliver();
 
             Log::info('Email de vérification envoyé', ['email' => $email]);
             return true;
-
         } catch (\Exception $e) {
+            error_log('=== EMAIL ERROR DETAILS ===');
+            error_log('Message: ' . $e->getMessage());
+            error_log('File: ' . $e->getFile());
+            error_log('Line: ' . $e->getLine());
+            error_log('Trace: ' . $e->getTraceAsString());
+
             Log::error('Erreur lors de l\'envoi de l\'email', [
                 'email' => $email,
                 'error' => $e->getMessage()

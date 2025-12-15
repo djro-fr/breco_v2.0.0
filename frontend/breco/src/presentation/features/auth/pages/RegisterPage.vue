@@ -515,7 +515,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
           </p>
         </div>
 
-        <p class="text-sm text-gray-dark mb-6">
+        <p class="text-lg text-gray-dark mb-6">
           ⚠️ Le lien expirera dans <strong>24 heures</strong>.
         </p>
 

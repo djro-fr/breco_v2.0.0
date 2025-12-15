@@ -1,3 +1,4 @@
+<!-- frontend\breco\src\presentation\app\App.vue -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -21,7 +22,7 @@ const handleLogout = async (): Promise<void> => {
 </script>
 
 <template>
-  <div class="content m-0 py-0 flex flex-col">
+  <div class="content m-0 py-0 flex flex-col min-h-screen">
     <header class="sticky bg-white top-0 z-100 my-0">
       <nav class="my-0 mx-4 py-2 px-0 flex max-w-full justify-between items-center h-15">
         <div class="nav-brand">
@@ -40,15 +41,15 @@ const handleLogout = async (): Promise<void> => {
           <span></span>
         </button>
 
-        <div class="nav-menu flex gap-5 items-center max-[769px]:bg-white-dark max-[769px]:opacity-97" :class="{ open: isMenuOpen }">
+        <div class="nav-menu flex gap-5 items-center max-[768px]:bg-white-dark max-[768px]:opacity-97" :class="{ open: isMenuOpen }">
           <div v-if="!isAuthenticated">
             <router-link to="/login" @click="isMenuOpen = false">Connexion</router-link>
             <router-link to="/register" @click="isMenuOpen = false">Inscription</router-link>
           </div>
 
-          <div v-if="isAuthenticated" class="w-fit flex flex-row mb-1.5">
-            <router-link to="/dashboard" @click="isMenuOpen = false">Dashboard</router-link>
-            <span class="font-normal text-lg flex self-center"
+          <div v-if="isAuthenticated" class="w-fit flex flex-row mb-0 mt-1.5">
+            <span class="font-normal text-lg flex self-center max-[768px]:-mt-4 max-[768px]:-mb-6 "><router-link to="/dashboard" @click="isMenuOpen = false">Dashboard</router-link></span>
+            <span class="font-normal text-lg flex self-center mr-3 max-[768px]:mb-2"
               >&nbsp;de&nbsp;<strong>{{ authStore.user?.firstName }}</strong>
             </span>
             <button @click="handleLogout" class="block btn-secondary mx-auto mb-1.5">Déconnexion</button>
@@ -57,12 +58,12 @@ const handleLogout = async (): Promise<void> => {
       </nav>
     </header>
 
-    <main class="box-border relative flex w-full mx-0 my-0 px-0 py-6">
+    <main class="box-border relative flex min-[769px]:w-full max-[768px]:w-[calc(100% - 32px)] mx-4 my-0 px-0 py-6 flex-1">
       <router-view />
     </main>
 
-    <footer>
-      <p>&copy; 2025 Breco</p>
+    <footer class="z-2 relative flex h-10 mt-auto p-0 items-center justify-center text-center text-white bg-black ">
+      <p class="my-0 mx-auto p-0 text-gray-light text-xs">&copy; 2025 Breco</p>
     </footer>
   </div>
 </template>
@@ -70,7 +71,6 @@ const handleLogout = async (): Promise<void> => {
 <style scoped>
 
 div.content {
-  min-height: 100vh;
   background-image: url('/sebastian-Vc5XMryq8JM-unsplash.jpg');
   background-size: cover;
   background-attachment: fixed;
@@ -140,26 +140,6 @@ div.content::before {
 .nav-menu a:hover {
   opacity: 0.7;
   border: none;
-}
-
-
-footer {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  text-align: center;
-  position: relative;
-  z-index: 2;
-  padding: 0px;
-  margin: 0 -16px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-}
-footer p {
-  margin: 0 auto;
-  padding: 0;
-  font-size: var(--fontXXS);
-  color: #bbbbbb;
 }
 
 

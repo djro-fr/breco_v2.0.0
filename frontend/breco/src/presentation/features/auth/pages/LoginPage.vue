@@ -1,3 +1,4 @@
+<!-- frontend\breco\src\presentation\features\auth\pages\LoginPage.vue -->
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'

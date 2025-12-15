@@ -41,7 +41,7 @@
   }
 
   .btn-secondary {
-    @apply block mx-auto py-1 px-8 w-full max-w-96 text-xl font-medium rounded-md;
+    @apply block mx-auto py-1 px-4 w-full max-w-96 text-xl font-medium rounded-md;
     @apply text-white bg-primary-dark hover:bg-primary-dark-on shadow-md hover:shadow-lg;
   }
 

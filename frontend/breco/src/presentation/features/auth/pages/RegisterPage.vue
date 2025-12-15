@@ -6,10 +6,10 @@ import { useAuthStore } from '../stores/authStore'
 import FormInput from '@/presentation/shared/components/FormInput.vue'
 import { emailSchema, phoneSchema, passwordSchema, nameSchema } from '@/utils/validationSchemas'
 import { UserSchema } from '@/domain/entities/User'
-import type { CreateUserData } from '@/domain/entities/User';
+import type { CreateUserData } from '@/domain/entities/User'
 import { ZodError } from 'zod'
 
-type RegisterFormField = keyof CreateUserData | 'password';
+type RegisterFormField = keyof CreateUserData | 'password'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -39,7 +39,10 @@ const globalError = computed(() => authStore.error)
 // Real-time validation for each field
 const validateField = (field: RegisterFormField, value: string | number | boolean) => {
   const optionalFields = ['zipCode', 'town', 'carModel', 'carColor', 'carSeatNb']
-  if (optionalFields.includes(field as string) && (!value || (typeof value === 'string' && value.trim().length === 0))) {
+  if (
+    optionalFields.includes(field as string) &&
+    (!value || (typeof value === 'string' && value.trim().length === 0))
+  ) {
     delete errors.value[field as string]
     return
   }
@@ -116,10 +119,10 @@ const passwordConfirmError = computed(() => {
 const vehicleInfoConfirmation = computed(() => {
   if (driver.value) {
     if (carModel.value && carColor.value && carSeatNb.value) {
-       let message =`${carModel.value} (${carColor.value}) - ${carSeatNb.value}`
-       if(carSeatNb.value <= 1 ) message += ' place disponible'
-       else message += ' places disponibles'
-       return message
+      let message = `${carModel.value} (${carColor.value}) - ${carSeatNb.value}`
+      if (carSeatNb.value <= 1) message += ' place disponible'
+      else message += ' places disponibles'
+      return message
     } else {
       return 'Véhicule incomplet'
     }
@@ -192,6 +195,8 @@ const handleRegister = async () => {
     console.error('Register error:', err)
   }
 }
+
+const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
 </script>
 
 <template>
@@ -201,84 +206,45 @@ const handleRegister = async () => {
     <div class="max-w-full w-full">
       <h1 class="text-center pb-9 mt-0 leading-none font-black text-2xl">Créer un compte Breco</h1>
 
-      <div class="flex justify-between items-center mb-10 gap-2">
-        <!-- Step 1 -->
-        <div class="flex flex-col items-center flex-1">
-          <span
-            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
-            :class="currentStep === 1 ? 'bg-primary-light text-black' : 'bg-gray-dark text-white'"
-          >
-            1
-          </span>
-          <p class="text-gray-dark text-center text-md">Contact</p>
-        </div>
-        <!-- Separator 1-2 -->
-        <div
-          class="flex-1 h-0.5 my-0 mx-1 mb-6 transition-all duration-300"
-          :class="currentStep > 1 ? 'bg-gray-dark' : 'bg-gray-light'"
-        ></div>
+      <div class="mb-8 -mt-2">
+        <!-- Progress bar -->
+        <div class="relative mb-6">
+          <!-- Background bar -->
+          <div class="h-2 bg-white-back rounded-full overflow-hidden">
+            <!-- Active progress -->
+            <div
+              class="h-full bg-primary-light transition-all duration-300 ease-out rounded-full"
+              :style="{ width: `${(currentStep / 4) * 100}%` }"
+            ></div>
+          </div>
 
-        <!-- Step 2 -->
-        <div class="flex flex-col items-center flex-1">
-          <span
-            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
-            :class="[
-              currentStep < 2
-                ? 'bg-gray-light text-black'
-                : currentStep === 2
-                  ? 'bg-primary-light text-black'
-                  : 'bg-gray-dark text-white',
-            ]"
-          >
-            2
-          </span>
-          <p class="text-gray-dark text-center text-md">Identité</p>
+          <!-- Step indicators -->
+          <div class="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-0">
+            <div
+              v-for="step in 4"
+              :key="step"
+              class="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-300"
+              :class="[
+                step <= currentStep
+                  ? 'bg-primary-light text-black shadow-md scale-110'
+                  : 'bg-white border-2 border-white-back text-gray-400',
+              ]"
+            >
+              <span>{{ step }}</span>
+            </div>
+          </div>
         </div>
-        <!-- Separator 2-3 -->
-        <div
-          class="flex-1 h-0.5 my-0 mx-1 mb-6 transition-all duration-300"
-          :class="currentStep > 2 ? 'bg-gray-dark' : 'bg-gray-light'"
-        ></div>
 
-        <!-- Step 3 -->
-        <div class="flex flex-col items-center flex-1">
-          <span
-            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
-            :class="[
-              currentStep < 3
-                ? 'bg-gray-light text-black'
-                : currentStep === 3
-                  ? 'bg-primary-light text-black'
-                  : 'bg-gray-dark text-white',
-            ]"
-          >
-            3
-          </span>
-          <p class="text-gray-dark text-center text-md">Véhicule</p>
+        <!-- Current step label -->
+        <div class="text-center">
+          <p class="text-md font-medium text-gray-dark">
+            Étape {{ currentStep }}/4 : <strong>{{ stepLabels[currentStep - 1] }}</strong>
+          </p>
         </div>
-        <!-- Separator 3-4 -->
-        <div
-          class="flex-1 h-0.5 my-0 mx-1 mb-6 transition-all duration-300"
-          :class="currentStep > 3 ? 'bg-gray-dark' : 'bg-gray-light'"
-        ></div>
-
-        <!-- Step 4 -->
-        <div class="flex flex-col items-center flex-1">
-          <span
-            class="flex mb-1 transition-all duration-300 items-center justify-center w-9 h-9 rounded-full font-bold"
-            :class="[
-              currentStep < 4
-                ? 'bg-gray-light text-black'
-                : currentStep === 4
-                  ? 'bg-primary-light text-black'
-                  : 'bg-gray-dark text-white',
-            ]"
-          >
-            4
-          </span>
-          <p class="text-gray-dark text-center text-md">Confirmation</p>
-        </div>
+        <div class="-mx-6 mt-4 -mb-3 h-2 bg-white-dark border-t border-dotted border-gray-light"></div>
       </div>
+
+
       <!-- Step 1: Contact -->
       <div v-if="currentStep === 1" class="mb-7.5">
         <h2 class="text-2xl mb-4 text-black font-medium">Pour vous contacter</h2>
@@ -358,10 +324,7 @@ const handleRegister = async () => {
               gender === 'Homme' ? 'bg-primary-light text-black' : '',
               errors.gender ? 'border-error -mb-5' : '',
             ]"
-            @click="
-              gender = 'Homme',
-              delete errors.gender
-            "
+            @click="((gender = 'Homme'), delete errors.gender)"
           >
             Homme
           </button>
@@ -372,10 +335,7 @@ const handleRegister = async () => {
               gender === 'Femme' ? 'bg-primary-light text-black' : '',
               errors.gender ? 'border-error -mb-5' : '',
             ]"
-            @click="
-              gender = 'Femme',
-              delete errors.gender
-            "
+            @click="((gender = 'Femme'), delete errors.gender)"
           >
             Femme
           </button>
@@ -386,10 +346,7 @@ const handleRegister = async () => {
               gender === 'Ne pas dire' ? 'bg-primary-light text-black' : '',
               errors.gender ? 'border-error -mb-5' : '',
             ]"
-            @click="
-              gender = 'Ne pas dire',
-              delete errors.gender
-            "
+            @click="((gender = 'Ne pas dire'), delete errors.gender)"
           >
             Ne pas dire
           </button>
@@ -535,7 +492,7 @@ const handleRegister = async () => {
       </div>
 
       <div class="flex gap-3 mb-4">
-        <button v-if="currentStep > 1" type="button" class="btn-secondary" @click="previousStep">
+        <button v-if="currentStep > 1" type="button" class="btn-secondary max-[768px]:w-[40%]" @click="previousStep">
           &lt;&nbsp;&nbsp;Retour
         </button>
 

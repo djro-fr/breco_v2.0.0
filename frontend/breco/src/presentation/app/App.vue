@@ -48,7 +48,7 @@ const handleLogout = async (): Promise<void> => {
           </div>
 
           <div v-if="isAuthenticated" class="w-fit flex flex-row mb-0 mt-1.5">
-            <span class="font-normal text-lg flex self-center max-[768px]:-mt-4 max-[768px]:-mb-6 "><router-link to="/dashboard" @click="isMenuOpen = false">Dashboard</router-link></span>
+            <span class="font-normal text-lg flex self-center max-[768px]:-mt-4 max-[768px]:-mb-5 "><router-link to="/dashboard" @click="isMenuOpen = false">Dashboard</router-link></span>
             <span class="font-normal text-lg flex self-center mr-3 max-[768px]:mb-2"
               >&nbsp;de&nbsp;<strong>{{ authStore.user?.firstName }}</strong>
             </span>

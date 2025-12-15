@@ -223,7 +223,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
             <div
               v-for="step in 4"
               :key="step"
-              class="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-300"
+              class="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
               :class="[
                 step <= currentStep
                   ? 'bg-primary-light text-black shadow-md scale-110'
@@ -262,7 +262,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
           />
           <p v-if="errors.email" class="error-text mt-1 mb-6">{{ errors.email }}</p>
         </div>
-        <p class="text-gray-dark text-md -mt-7 mb-6">
+        <p class="text-gray-dark text-md leading-[1.1] li -mt-7 mb-6">
           Nous vous enverrons un e-mail de confirmation
         </p>
 
@@ -517,7 +517,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation']
           :disabled="isLoading"
           @click="handleRegister"
         >
-          {{ isLoading ? 'Inscription...' : 'Créer mon compte' }}
+          {{ isLoading ? 'Inscription...' : 'Créer compte' }}
         </button>
       </div>
 

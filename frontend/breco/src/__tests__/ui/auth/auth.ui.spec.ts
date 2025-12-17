@@ -2,6 +2,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
+import type { Component } from 'vue'
 import LoginPage from '@/presentation/features/auth/pages/LoginPage.vue'
 import RegisterPage from '@/presentation/features/auth/pages/RegisterPage.vue'
 
@@ -10,12 +11,12 @@ const globalConfig = {
   global: {
     stubs: {
       RouterLink: true,
-      RouterView: true
-    }
-  }
+      RouterView: true,
+    },
+  },
 }
 // Factory function to create a wrapper for the component
-function createWrapper(component: any): VueWrapper {
+function createWrapper(component: Component): VueWrapper {
   return mount(component, globalConfig)
 }
 
@@ -59,6 +60,7 @@ describe('RegisterPage Component', () => {
   it('should display step 1 by default', () => {
     expect(wrapper.text()).toContain('Pour vous contacter')
     expect(wrapper.text()).toContain('Étape 1/4')
+
   })
 
   it('should have email input in step 1', () => {
@@ -83,11 +85,12 @@ describe('RegisterPage Component', () => {
 
   it('should highlight current step (step 1) in progress bar', () => {
     const stepIndicators = wrapper.findAll('.w-8.h-8.rounded-full')
+    expect(stepIndicators.length).toBe(4)
 
-    expect(stepIndicators[0].classes()).toContain('bg-primary-light')
-    expect(stepIndicators[1].classes()).toContain('bg-white')
-    expect(stepIndicators[2].classes()).toContain('bg-white')
-    expect(stepIndicators[3].classes()).toContain('bg-white')
+    expect(stepIndicators[0]?.classes()).toContain('bg-primary-light')
+    expect(stepIndicators[1]?.classes()).toContain('bg-white')
+    expect(stepIndicators[2]?.classes()).toContain('bg-white')
+    expect(stepIndicators[3]?.classes()).toContain('bg-white')
   })
 
   it('should have next button', () => {

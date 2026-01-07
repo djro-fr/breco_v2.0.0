@@ -21,7 +21,10 @@ services:
       retries: 5
 
   backend:
-    image: djrofr/breco-backend:latest
+    image: djrofr/breco-backend:latest    
+    build:
+      context: ./backend/breco
+      dockerfile: Dockerfile-backend
     container_name: breco_backend
     ports:
       - "8765:9000"

@@ -21,7 +21,7 @@ class EmailService
     {
         try {
             // Build the verification URL (points to frontend)
-            $verificationUrl = env('FRONTEND_URL', 'http://localhost:3001') . '/auth/verify-email/' . $token;
+            $verificationUrl = env('FRONTEND_URL', 'http://localhost:5173') . '/auth/verify-email/' . $token;
 
             $mailer = new Mailer('default');
             $mailer

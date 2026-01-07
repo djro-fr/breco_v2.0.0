@@ -2,12 +2,11 @@
 // backend\breco\src\Controller\AuthController.php
 namespace App\Controller;
 
-use Cake\Controller\Controller;
 use Firebase\JWT\JWT;
 use App\Service\EmailService;
-use Cake\I18n\FrozenTime; // A CakePHP class to manipulate dates/times in an immutable way, to create expiration times (24h)
+use Cake\I18n\DateTime; // A CakePHP class to manipulate dates/times in an immutable way, to create expiration times (24h)
 
-class AuthController extends Controller
+class AuthController extends AppController
 {
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
@@ -125,7 +124,7 @@ class AuthController extends Controller
 
         // Generate verification token
         $verificationToken = bin2hex(random_bytes(32));
-        $expiresAt = new FrozenTime('+24 hours');
+        $expiresAt = new DateTime('+24 hours');
 
         // Create a new user
         $user = $usersTable->newEntity([
@@ -192,6 +191,7 @@ class AuthController extends Controller
     // Verify email with token
     public function verifyEmail($token = null)
     {
+        error_log("=== VERIFY EMAIL CALLED WITH TOKEN: " . ($token ?? 'NULL') . " ===");
         $this->request->allowMethod(['get']);
         $this->response = $this->response->withType('application/json');
 
@@ -210,7 +210,7 @@ class AuthController extends Controller
         $user = $usersTable->find()
             ->where([
                 'verification_token' => $token,
-                'verification_token_expires >' => new FrozenTime()
+                'verification_token_expires >' => new DateTime()
             ])
             ->first();
 

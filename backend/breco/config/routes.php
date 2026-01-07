@@ -22,6 +22,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Routing\Route\Route;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
@@ -50,6 +51,19 @@ return function (RouteBuilder $routes): void {
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    $routes->scope('/api', ['routeClass' => Route::class], function (RouteBuilder $routes): void {
+        $routes->setExtensions(['json']);
+
+        $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
+        $routes->post('/auth/register', ['controller' => 'Auth', 'action' => 'register']);
+        $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
+
+        $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
+        $routes->get('/auth/verify-email/{token}', ['controller' => 'Auth', 'action' => 'verifyEmail'])
+        ->setPatterns(['token' => '[a-zA-Z0-9]+'])
+        ->setPass(['token']);
+    });
+
     $routes->scope('/', function (RouteBuilder $builder): void {
         /*
          * Here, we are connecting '/' (base path) to a controller called 'Pages',
@@ -76,7 +90,7 @@ return function (RouteBuilder $routes): void {
          * It is NOT recommended to use fallback routes after your initial prototyping phase!
          * See https://book.cakephp.org/5/en/development/routing.html#fallbacks-method for more information
          */
-        $builder->fallbacks();
+        // $builder->fallbacks();
     });
 
     /*
@@ -94,23 +108,6 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
-    $routes->scope('/api', function (RouteBuilder $routes) {
-        $routes->setExtensions(['json']);
 
-        // Handle OPTIONS for all API routes (preflight)
-        $routes->connect('/:controller/:action',
-            ['action' => 'options'],
-            ['_method' => 'OPTIONS']
-        );
 
-        // Auth routes
-        $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
-        $routes->post('/auth/register', ['controller' => 'Auth', 'action' => 'register']);
-        $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
-        $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
-        $routes->get('/auth/verify-email/:token', ['controller' => 'Auth', 'action' => 'verifyEmail'])
-            ->setPass(['token']);
-        // ex: GET http://localhost:8081/api/auth/verify-email/abc123def456...
-        // → Calls AuthController::verifyEmail('abc123def456...')
-    });
 };

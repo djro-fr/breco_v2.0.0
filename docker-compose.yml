@@ -24,6 +24,9 @@ services:
   # Backend CakePHP
   backend:
     image: ${DOCKER_USERNAME}/breco-backend:latest
+    build:
+      context: ./backend/breco
+      dockerfile: Dockerfile-backend
     container_name: breco_backend
     environment:
       DEBUG: "false"

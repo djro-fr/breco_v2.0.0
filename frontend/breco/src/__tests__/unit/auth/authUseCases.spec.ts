@@ -31,6 +31,7 @@ describe('Auth Use Cases (Unit)', () => {
       password: 'Password123',
       firstName: 'John',
       lastName: 'Doe',
+      driver: false
     })
 
     expect(mockRepository.register).toHaveBeenCalled()

@@ -1,10 +1,10 @@
 // frontend/breco/src/__tests__/e2e/auth/auth.e2e.basic.spec.ts
 import { describe, it, beforeAll, afterAll, expect } from 'vitest'
-import { Browser, Builder } from 'selenium-webdriver'
+import { Browser, Builder, WebDriver } from 'selenium-webdriver'
 import firefox from 'selenium-webdriver/firefox.js'
 
 describe('UI - Selenium Test with Firefox', () => {
-  let driver
+  let driver: WebDriver
 
   beforeAll(async () => {
     const options = new firefox.Options()

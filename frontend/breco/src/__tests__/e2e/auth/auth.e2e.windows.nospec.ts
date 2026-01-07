@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { Builder, By, until } from 'selenium-webdriver'
+import { Builder, By, until, WebDriver } from 'selenium-webdriver'
 import chrome from 'selenium-webdriver/chrome.js'
 import path from 'path'
 
-let driver
+let driver: WebDriver
 
 const BASE_URL = process.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -59,8 +59,8 @@ describe('Auth E2E Tests (Windows Dev)', () => {
     const phoneInput = await driver.findElement(By.css('input[type="tel"]'))
 
     await emailInput.sendKeys('newuser@test.com')
-    await passwordInputs[0].sendKeys('SecurePass123!')
-    await passwordInputs[1].sendKeys('SecurePass123!')
+    await passwordInputs[0]?.sendKeys('SecurePass123!')
+    await passwordInputs[1]?.sendKeys('SecurePass123!')
     await phoneInput.sendKeys('+33612345678')
 
     const nextButton = await driver.findElement(By.css('.btn-primary'))

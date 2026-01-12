@@ -2,7 +2,7 @@
 
 <template>
   <div class="background"></div>
-  <main class="absolute top-0 block h-full w-full overflow-hidden">
+  <div class="absolute top-0 block h-full w-full overflow-hidden">
     <div class="flex flex-col h-[35%] items-center justify-center">
       <h1 class="text-6xl pb-6 text-white leading-10">Breco</h1>
       <h2 class="m-0 p-0 text-3xl text-white leading-5 text-center font-normal">
@@ -61,47 +61,40 @@
             </div>
           </div>
         </div>
-        <div id="jours" class="mt-5 flex justify-center gap-3 flex-wrap">
+        <div id="jours" class="mt-5 flex justify-center gap-1 flex-wrap">
           <input type="checkbox" class="hidden" id="J1" name="J1" /><label
             for="J1"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Lu</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-l-4xl rounded-r-lg font-bold transition-transform duration-100 active:scale-90"
+            >Lu</label>
           <input type="checkbox" class="hidden" id="J2" name="J2" /><label
             for="J2"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Ma</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+            >Ma</label>
           <input type="checkbox" class="hidden" id="J3" name="J3" /><label
             for="J3"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Me</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20   rounded-lg font-bold transition-transform duration-100 active:scale-90"
+            >Me</label>
           <input type="checkbox" class="hidden" id="J4" name="J4" /><label
             for="J4"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Je</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+            >Je</label>
           <input type="checkbox" class="hidden" id="J5" name="J5" /><label
             for="J5"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Ve</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+            >Ve</label>
           <input type="checkbox" class="hidden" id="J6" name="J6" /><label
             for="J6"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Sa</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+            >Sa</label>
           <input type="checkbox" class="hidden" id="J7" name="J7" /><label
             for="J7"
-            class="px-5 py-3 cursor-pointer text-primary-dark border-2 border-primary-light rounded-lg font-bold"
-            >Di</label
-          >
+            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-l-lg rounded-4xl font-bold transition-transform duration-100 active:scale-90"
+            >Di</label>
         </div>
         <button type="submit" class="btn-action mt-12 mb-4">Rechercher</button>
       </form>
     </div>
-  </main>
+  </div>
 </template>
 
 <style scoped>
@@ -119,12 +112,17 @@
 }
 
 #jours input[type='checkbox']:checked + label  {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary-light);
+  background-color: var(--color-primary-lightest);
+  border-color: var(--color-primary-lightest);
   color: black;
 }
 #jours input[type='checkbox']:hover + label  {
-  background-color: var(--color-primary-light50);
+  background-color: var(--color-primary-lightest40);
+  color: var(--text-primary-dark);
+}
+
+#jours input[type='checkbox']:checked:hover + label  {
+  background-color: var(--color-primary-lightest85);
   color: var(--text-primary-dark);
 }
 </style>

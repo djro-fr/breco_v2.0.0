@@ -2,7 +2,12 @@
 
 @theme {
   --color-primary-light: #00c4f0;
-  --color-primary-light50: #00c4f050;
+  --color-primary-light40: #00c4f040;
+  --color-primary-light85: #00c4f085;
+  --color-primary-lightest: #6ee4ff;
+  --color-primary-lightest20: #6ee4ff20;
+  --color-primary-lightest40: #6ee4ff40;
+  --color-primary-lightest85: #6ee4ff85  ;
   --color-primary-dark: #006B96;
   --color-primary-dark-on: #025779;
   --color-action: #00d5a7;

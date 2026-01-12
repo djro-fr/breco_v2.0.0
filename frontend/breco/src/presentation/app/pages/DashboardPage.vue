@@ -1,3 +1,4 @@
+<!-- frontend\breco\src\presentation\app\pages\DashboardPage.vue -->
 <script setup lang="ts">
 import { formatPhone } from '@/presentation/shared/utils/phoneFormatter';
 import { useAuthStore } from '@/presentation/features/auth/stores/authStore'

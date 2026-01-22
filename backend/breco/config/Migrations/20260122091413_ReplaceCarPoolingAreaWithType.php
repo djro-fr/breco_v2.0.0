@@ -12,7 +12,7 @@ class ReplaceCarPoolingAreaWithType extends BaseMigration
         $table->addColumn('type', 'string', [
             'limit' => 50,
             'null' => false,
-            'default' => 'parking',
+            'default' => 'Parking',
             'after' => 'gps_lng',
             'comment' => 'Type de lieu (Aire de covoiturage, Parking, Supermarché, etc.)'
         ])

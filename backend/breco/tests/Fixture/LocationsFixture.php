@@ -25,9 +25,9 @@ class LocationsFixture extends TestFixture
                 'address' => 'Lorem ipsum dolor sit amet',
                 'gps_lat' => 1.5,
                 'gps_lng' => 1.5,
-                'carpooling_area' => 1,
-                'created' => '2026-01-14 13:11:52',
-                'modified' => '2026-01-14 13:11:52',
+                'type' => 'Lorem ipsum dolor sit amet',
+                'created' => '2026-01-22 10:15:23',
+                'modified' => '2026-01-22 10:15:23',
             ],
         ];
         parent::init();

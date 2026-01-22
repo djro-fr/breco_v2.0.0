@@ -15,17 +15,10 @@ use Cake\Validation\Validator;
  *
  * @method \App\Model\Entity\Location newEmptyEntity()
  * @method \App\Model\Entity\Location newEntity(array $data, array $options = [])
- * @method array<\App\Model\Entity\Location> newEntities(array $data, array $options = [])
  * @method \App\Model\Entity\Location get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
  * @method \App\Model\Entity\Location findOrCreate($search, ?callable $callback = null, array $options = [])
  * @method \App\Model\Entity\Location patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\App\Model\Entity\Location> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\Location|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \App\Model\Entity\Location saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\Location>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Location>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Location>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Location> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Location>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Location>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Location>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Location> deleteManyOrFail(iterable $entities, array $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
@@ -80,16 +73,33 @@ class LocationsTable extends Table
         $validator
             ->decimal('gps_lat')
             ->requirePresence('gps_lat', 'create')
-            ->notEmptyString('gps_lat');
+            ->notEmptyString('gps_lat')
+            ->add('gps_lat', 'range', [
+                'rule' => function ($value) {
+                    // Bretagne : environ 47.0 à 49.0
+                    return $value >= 47.0 && $value <= 49.0;
+                },
+                'message' => 'Coordonnées GPS hors de la Bretagne'
+            ]);
 
         $validator
             ->decimal('gps_lng')
             ->requirePresence('gps_lng', 'create')
-            ->notEmptyString('gps_lng');
+            ->notEmptyString('gps_lng')
+            ->add('gps_lng', 'range', [
+                'rule' => function ($value) {
+                    // Bretagne : environ -5.5 à -0.5
+                    return $value >= -5.5 && $value <= -0.5;
+                },
+                'message' => 'Coordonnées GPS hors de la Bretagne'
+            ]);
 
         $validator
-            ->boolean('carpooling_area')
-            ->notEmptyString('carpooling_area');
+            ->scalar('type')
+            ->maxLength('type', 50)
+            ->requirePresence('type', 'create')
+            ->notEmptyString('type')
+            ->inList('type', \App\Model\Entity\Location::getAvailableTypes(), 'Type de lieu invalide');
 
         return $validator;
     }
@@ -103,7 +113,10 @@ class LocationsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['town_id'], 'Towns'), ['errorField' => 'town_id']);
+        $rules->add($rules->existsIn(['town_id'], 'Towns'), [
+            'errorField' => 'town_id',
+            'message' => 'La ville sélectionnée n\'existe pas'
+        ]);
 
         return $rules;
     }

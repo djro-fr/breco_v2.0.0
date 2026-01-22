@@ -20,10 +20,11 @@ class TownsFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
-                'zipcode' => '',
                 'name' => 'Lorem ipsum dolor sit amet',
-                'created' => '2026-01-14 13:11:24',
-                'modified' => '2026-01-14 13:11:24',
+                'postal_code' => '',
+                'insee_code' => '',
+                'created' => '2026-01-22 10:15:14',
+                'modified' => '2026-01-22 10:15:14',
             ],
         ];
         parent::init();

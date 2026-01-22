@@ -14,7 +14,7 @@ use Cake\ORM\Entity;
  * @property string $address
  * @property string $gps_lat
  * @property string $gps_lng
- * @property bool $carpooling_area
+ * @property string $type
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
  *
@@ -37,9 +37,14 @@ class Location extends Entity
         'address' => true,
         'gps_lat' => true,
         'gps_lng' => true,
-        'carpooling_area' => true,
+        'type' => true,
         'created' => true,
         'modified' => true,
         'town' => true,
     ];
+
+    public static function getAvailableTypes(): array
+    {
+        return ['Parking', 'Supermarché', 'Aire de covoiturage', 'Autre'];
+    }
 }

@@ -65,16 +65,30 @@ class TownsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('zipcode')
-            ->maxLength('zipcode', 5)
-            ->requirePresence('zipcode', 'create')
-            ->notEmptyString('zipcode');
-
-        $validator
             ->scalar('name')
             ->maxLength('name', 100)
             ->requirePresence('name', 'create')
             ->notEmptyString('name');
+
+            $validator
+            ->scalar('postal_code')
+            ->maxLength('postal_code', 5)
+            ->requirePresence('postal_code', 'create')
+            ->notEmptyString('postal_code')
+            ->add('postal_code', 'format', [
+                'rule' => ['custom', '/^[0-9]{5}$/'],
+                'message' => 'Code postal invalide (5 chiffres attendus)'
+            ]);
+
+        $validator
+            ->scalar('insee_code')
+            ->maxLength('insee_code', 5)
+            ->requirePresence('insee_code', 'create')
+            ->notEmptyString('insee_code')
+            ->add('insee_code', 'format', [
+                'rule' => ['custom', '/^[0-9]{5}$/'],
+                'message' => 'Code INSEE invalide (5 chiffres attendus)'
+            ]);
 
         return $validator;
     }

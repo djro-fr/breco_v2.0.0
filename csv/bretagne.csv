@@ -15,7 +15,7 @@ Pont de Baud;Pont de Baud. 56150 Baud;BAUD;56010;56150;Aire de covoiturage;-3.01
 Aire de covoiturage de Kermestre;Z.A. le dresséve. 56150 Baud;BAUD;56010;56150;Aire de covoiturage;-3.010244;47.89663
 Aire de covoiturage Lenn Veur;180 Rue Jean Marie Carer. 29300 Baye;BAYE;29005;29300;Aire de covoiturage;-3.605252657;47.85639796
 Parking salle de sport;Rue de la Vallée;BAZOUGE-LA-PÉROUSE;35019;35560;Aire de covoiturage;-1.57217338758439;48.4270692733778
-Mairie de Becherel;Mairie;BECHEREL;35022;35190;Parking;-1.945848333;48.29712467
+Mairie de Bécherel;Mairie;BÉCHEREL;35022;35190;Parking;-1.945848333;48.29712467
 Intercommunale;Rennes Métropole;BÉCHEREL;35022;35190;Aire de covoiturage;-1.94630004256493;48.2968974918323
 Aire de covoiturage de Poulhibet;;BERNE;56014;56240;Aire de covoiturage;-3.384107;47.94957
 La Haute Plesse;La Haute Plesse;BETTON;35024;35830;Aire de covoiturage;-1.62705866596866;48.1799018316766
@@ -119,8 +119,8 @@ Cimetière;D155;HIREL;35132;35120;Aire de covoiturage;-1.79802972162714;48.60644
 Aire de covoiturage Menez Bras;D14. 29690 Plouyé;HUELGOAT;29081;29690;Aire de covoiturage;-3.750106041;48.34839447
 Les 4 routes;Les 4 routes;IFFENDIC;35133;35750;Aire de covoiturage;-1.99768638870184;48.091902811892
 Rue du lavoir;Rue du lavoir;IRODOUËR;35135;35850;Aire de covoiturage;-1.9509383336427;48.2499584972596
-Aire de covoiturage Janzé Nord;Le Hardier;JANZE;35136;35150;Aire de covoiturage;-1.537484;47.971483
-Le Hardier;ZA le bois du teillay;JANZE;35136;35150;Aire de covoiturage;-1.53536158800324;47.9715840022118
+Aire de covoiturage Janzé Nord;Le Hardier;JANZÉ;35136;35150;Aire de covoiturage;-1.537484;47.971483
+Le Hardier;ZA le bois du teillay;JANZÉ;35136;35150;Aire de covoiturage;-1.53536158800324;47.9715840022118
 L'Aubinière Janzé Nord;Rue Jean-Marie Lacire;JANZÉ;35136;35150;Aire de covoiturage;-1.48840769717552;47.967827819154
 Champs-Blancs Janzé Est;sortie D41 Rd point D777;JANZÉ;35136;35150;Aire de covoiturage;-1.48775895020323;47.9507647822987
 Rue de L'écusson;17 Rue des Saulniers. 56120 Josselin;JOSSELIN;56091;56120;Aire de covoiturage;-2.553786;47.958677
@@ -194,8 +194,8 @@ Place du 8 mai 45;Place du 8 mai 45;LOUVIGNÉ-DU-DÉSERT;35162;35420;Aire de cov
 Aire de covoiturage de Loyat;D766. 56800 Loyat;LOYAT;56122;56800;Aire de covoiturage;-2.379918;47.975316
 Echangeur 30 - ZA Saint-Eustache;D3155 - La Bassetais;MAEN ROCH;35257;35460;Aire de covoiturage;-1.31243028894358;48.3997816853209
 Parking Super U;Parc d'Activités de la Chaussée. 56220 Malansac;MALANSAC;56123;56220;Supermarché;-2.300409;47.670036
-Echangeur Sud;Avenue du Général de Gaulle;MARTIGNE-FERCHAUD;35167;35640;Aire de covoiturage;-1.32166233409256;47.8201144600246
-Saint-Morand;Echangeur de Saint-Morand;MARTINE-FERCHAUD;35167;35640;Aire de covoiturage;-1.27719355160516;47.7995094491553
+Echangeur Sud;Avenue du Général de Gaulle;MARTIGNÉ-FERCHAUD;35167;35640;Aire de covoiturage;-1.32166233409256;47.8201144600246
+Saint-Morand;Echangeur de Saint-Morand;MARTIGNÉ-FERCHAUD;35167;35640;Aire de covoiturage;-1.27719355160516;47.7995094491553
 Aire de covoiturage Le Stade;RD13;MATIGNON;22143;22550;Aire de covoiturage;-2.296072962;48.59213544
 Bellevue;Bellevue;MAURE-DE-BRETAGNE;35168;35330;Aire de covoiturage;-1.9911113350743;47.9085381690682
 Aire de covoiturage de Voie Verte;La Grée Aga. 56430 Mauron;MAURON;56127;56430;Aire de covoiturage;-2.271058;48.079882
@@ -334,8 +334,8 @@ Aire de covoiturage Le Ruellou;RD 790-RD5;SAINT-NICOLAS-DU-PÉLEM;22321;22480;Ai
 Aire de covoiturage de Kerboulard;D775. 56250 Saint-Nolff;SAINT-NOLFF;56231;56250;Aire de covoiturage;-2.633671;47.695577
 Aire de covoiturage Tevenn Ar Reut;8 Rue de Theven Ar Reut. 29830 Saint-Pabu;SAINT-PABU;29257;29830;Aire de covoiturage;-4.611350472;48.56719854
 Aire de covoiturage de Saint-Péran;Rue de la Mairie;SAINT-PÉRAN;35305;35380;Aire de covoiturage;-2.05848088232042;48.052762758114
-Le Fort Saint-Père;Echangeur de Châteauneuf d'Ille-et-Vilaine;SAINT-PÈRE;35306;35430;Aire de covoiturage;-1.92342833858651;48.5653427535629
-SAINT PERE CENTRE;Rue Arthur Regnault;SAINT-PERE-MARC-EN-POULET;35306;35430;Aire de covoiturage;-1.92438708623697;48.5880966276264
+Le Fort Saint-Père;Echangeur de Châteauneuf d'Ille-et-Vilaine;SAINT-PÈRE-MARC-EN-POULET;35306;35430;Aire de covoiturage;-1.92342833858651;48.5653427535629
+Saint-Père Centre;Rue Arthur Regnault;SAINT-PÈRE-MARC-EN-POULET;35306;35430;Aire de covoiturage;-1.92438708623697;48.5880966276264
 Parking Angle Avenue de Bretagne Et Rue Général de Gaulle;6564 Rue de la Batterie. 56510 Saint-Pierre-Quiberon;SAINT-PIERRE-QUIBERON;56234;56510;Parking;-3.134753;47.513983
 Aire de covoiturage Ti Raden;Ty Raden. 29590 Saint-Ségal;SAINT-SÉGAL;29263;29590;Aire de covoiturage;-4.076218395;48.2249265
 Le Petit Rocher;Echangeur D137;SAINT-SYMPHORIEN;35317;35630;Aire de covoiturage;-1.80159382527405;48.2861508992112
@@ -344,7 +344,7 @@ Cossinade;Cossinade;SAINT-THURIAL;35319;35310;Aire de covoiturage;-1.92798163043
 Place de L'Eglise;15 Place de l'église. 29800 Saint-Urbain;SAINT-URBAIN;29270;29800;Parking;-4.228609424;48.39985286
 Parking Salle Polyvalente;7 Rue André Fleury. 56350 Saint-Vincent-sur-Oust;SAINT-VINCENT-SUR-OUST;56239;56350;Parking;-2.147792;47.699631
 Aire de covoiturage de Saint Colombier;St-Colombier Embranchement RD 780. 56370 Sarzeau;SARZEAU;56240;56370;Aire de covoiturage;-2.720736;47.546912
-Aire de covoiturage Sens-De-Bretagne;Stade Emile Logeais;SENS DE BRETAGNE;35326;35490;Aire de covoiturage;-1.527401756;48.33123115
+Aire de covoiturage Sens-De-Bretagne;Stade Emile Logeais;SENS-DE-BRETAGNE;35326;35490;Aire de covoiturage;-1.527401756;48.33123115
 Croix Couverte;Rue Philippe de Volvire;SENS-DE-BRETAGNE;35326;35490;Aire de covoiturage;-1.52762191380769;48.3311404465509
 Aire de covoiturage de Le Gros Chéne;D10. 56460 Sérent;SERENT;56244;56460;Aire de covoiturage;-2.435421;47.819795
 Gare;Halte SNCF;SERVON-SUR-VILAINE;35327;35530;Aire de covoiturage;-1.4654497106746;48.1117743941165

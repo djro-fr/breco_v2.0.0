@@ -34,11 +34,8 @@ pipeline {
                 echo "Linting..."
                 sh '''                    
                     cd frontend/breco
-                    apk add --no-cache curl bash
-                    curl -fsSL https://bun.sh/install | bash
-                    export PATH="/root/.bun/bin:$PATH"
-                    bun install --frozen-lockfile
-                    bun run lint
+                    npm ci
+                    npm run lint
                 '''
             }
         }

@@ -80,8 +80,29 @@ services:
     networks:
       - breco_network
 
+  # Jenkins CI/CD
+  jenkins:
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+    image: breco-jenkins:2.541.1
+    container_name: breco-jenkins
+    restart: unless-stopped
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - breco_network
+
 volumes:
   mysql_data:
+  jenkins-data:
+    external: true
 
 networks:
   breco_network:

@@ -178,15 +178,15 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh '''
-                        # Login to Docker Hub (automaticly mask password in logs)
+                        # Login to Docker Hub
                         echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-                        
+
                         # Push Frontend
                         docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
                         docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:latest
                         docker push ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}
                         docker push ${DOCKER_USERNAME}/breco-frontend:latest
-                        
+
                         # Push Backend
                         docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:${BUILD_NUMBER}
                         docker tag breco_v2_0_0_backend:latest ${DOCKER_USERNAME}/breco-backend:latest
@@ -196,16 +196,22 @@ pipeline {
                 }
                 
                 echo "Re-deploy on VPS..."
-                sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
-                    docker-compose down && docker-compose pull && docker-compose up -d"
-                '''
+                    sshagent(credentials: ['vps-ssh']) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
+                            docker-compose -f docker-compose.linux.yml down && \
+                            docker-compose -f docker-compose.linux.yml pull && \
+                            docker-compose -f docker-compose.linux.yml up -d"
+                        '''
+                    }
 
                 echo "Test results copy on VPS..."
-                sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "mkdir -p ~/breco_v2_0_0/frontend/breco/dist/test-results"
-                    scp -o StrictHostKeyChecking=no -r frontend/breco/dist/test-results/* ubuntu@37.59.101.232:~/breco_v2_0_0/frontend/breco/dist/test-results/
-                '''
+                sshagent(credentials: ['vps-ssh']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "mkdir -p ~/breco_v2_0_0/frontend/breco/dist/test-results"
+                        scp -o StrictHostKeyChecking=no -r frontend/breco/dist/test-results/* ubuntu@37.59.101.232:~/breco_v2_0_0/frontend/breco/dist/test-results/
+                    '''
+                }
             }
         }
         stage('Verify Deployment Version') {
@@ -225,6 +231,16 @@ pipeline {
                         echo "❌ WRONG version deployed! Expected ${BUILD_NUMBER}, got $BUILD_NUM"
                         exit 1
                     fi
+                '''
+            }
+        }
+        stage('Verify') {
+            steps {
+                echo "Deployment verification..."
+                sh '''
+                    sleep 10
+                    curl -f http://37.59.101.232:8081/health || exit 1
+                    echo "✅ Health check OK !"
                 '''
             }
         }

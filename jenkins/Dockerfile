@@ -38,7 +38,8 @@ RUN jenkins-plugin-cli --plugins \
     github \
     pipeline-stage-view \
     timestamper \
-    ws-cleanup
+    ws-cleanup \
+    ssh-agent
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 

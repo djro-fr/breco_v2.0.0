@@ -48,17 +48,14 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v bun-cache:/root/.bun -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
+                            args '-u root'
                         }
                     }
                     steps {
                         sh '''
-                            cd /app
-                            apk add --no-cache curl bash
-                            curl -fsSL https://bun.sh/install | bash
-                            export PATH="/root/.bun/bin:$PATH"
-                            bun install --frozen-lockfile
-                            bun run test:unit
+                            cd frontend/breco
+                            npm ci
+                            npm run test:unit
                         '''
                     }
                     post {
@@ -72,17 +69,14 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v bun-cache:/root/.bun -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
+                            args '-u root'
                         }
                     }
                     steps {
                         sh '''
-                            cd /app
-                            apk add --no-cache curl bash
-                            curl -fsSL https://bun.sh/install | bash
-                            export PATH="/root/.bun/bin:$PATH"
-                            bun install --frozen-lockfile
-                            bun run test:integration
+                            cd frontend/breco
+                            npm ci
+                            npm run test:integration
                         '''
                     }
                     post {
@@ -96,17 +90,14 @@ pipeline {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
-                            args '-u root -v bun-cache:/root/.bun -v /var/jenkins_home/workspace/breco@2/frontend/breco:/app'
+                            args '-u root'
                         }
                     }
                     steps {
                         sh '''
-                            cd /app
-                            apk add --no-cache curl bash
-                            curl -fsSL https://bun.sh/install | bash
-                            export PATH="/root/.bun/bin:$PATH"
-                            bun install --frozen-lockfile
-                            bun run test:ui
+                            cd frontend/breco
+                            npm ci
+                            npm run test:ui
                         '''
                     }
                     post {

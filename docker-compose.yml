@@ -58,10 +58,10 @@ services:
     container_name: breco_nginx
     ports:
       - "8081:80"    # Expose Nginx on host port 8081 instead of default 80
-    depends_on:
-      - backend
     networks:
       - breco_network
+    depends_on:
+      - backend
 
   # Frontend Vue 3
   frontend:

@@ -54,6 +54,8 @@ return function (RouteBuilder $routes): void {
     $routes->scope('/api', ['routeClass' => Route::class], function (RouteBuilder $routes): void {
         $routes->setExtensions(['json']);
 
+        $routes->connect('/health', ['controller' => 'Health', 'action' => 'index']);
+
         $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
         $routes->post('/auth/register', ['controller' => 'Auth', 'action' => 'register']);
         $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);

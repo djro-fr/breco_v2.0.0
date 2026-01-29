@@ -53,10 +53,10 @@ services:
     container_name: breco_nginx
     ports:
       - "8081:80"
-    depends_on:
-      - backend
     networks:
       - breco_network
+    depends_on:
+      - backend
 
   frontend:
     image: ${DOCKER_USERNAME}/breco-frontend:latest

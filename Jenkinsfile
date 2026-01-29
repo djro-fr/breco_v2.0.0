@@ -46,6 +46,7 @@ pipeline {
                         docker {
                             image 'node:25-alpine3.21'
                             args '-u root'
+                            reuseNode true
                         }
                     }
                     steps {
@@ -67,6 +68,7 @@ pipeline {
                         docker {
                             image 'node:25-alpine3.21'
                             args '-u root'
+                            reuseNode true
                         }
                     }
                     steps {
@@ -88,6 +90,7 @@ pipeline {
                         docker {
                             image 'node:25-alpine3.21'
                             args '-u root'
+                            reuseNode true
                         }
                     }
                     steps {

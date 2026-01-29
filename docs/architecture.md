@@ -1,48 +1,37 @@
-# Architecture Breco v2.0.0
+# Architecture - Breco v2.0.0
 
-Simplified Domain-Driven Design (DDD) architecture documentation
+Domain-Driven Design (DDD) simplified architecture
 
 ## Overview
 
-```markdown
-Composant Vue
-    ↓ utilise
-Composable (useUser)
-    ↓ utilise
-Repository (UserRepository)
-    ↓ utilise
-DataSource (ApiDataSource) + Model (UserModel)
-    ↓ utilise
-Entity (User)
+```text
+Component → Composable → Repository → DataSource + Model → Entity
 ```
 
 ---
 
-## Folder structure
+## Structure
 
-```markdown
+```text
 src/
 ├── domain/
-│   ├── entities/           # User.ts, Trajet.ts (logique métier + Zod)
-│   └── repositories/       # IUserRepository.ts (interfaces)
-│
+│   ├── entities/      # User.ts (business logic + Zod schemas)
+│   └── repositories/  # IUserRepository.ts (interfaces)
 ├── data/
-│   ├── datasources/        # ApiDataSource.ts, LocalStorageDataSource.ts
-│   ├── models/             # UserModel.ts (DTO + conversions)
-│   └── repositories/       # UserRepository.ts (implémentations)
-│
-├── composables/            # useUser.ts, useAuth.ts (état reactive)
-├── components/             # UserForm.vue (UI)
-└── utils/                  # validationSchemas.ts (Zod réutilisables)
+│   ├── datasources/   # ApiDataSource.ts, LocalStorageDataSource.ts
+│   ├── models/        # UserModel.ts (DTO conversions)
+│   └── repositories/  # UserRepository.ts (implementations)
+├── composables/       # useUser.ts (reactive state)
+└── components/        # UserForm.vue (UI)
 ```
 
 ---
 
 ## Layers
 
-### 1. Domain Entity
+### Entity (Domain)
 
-**File** : `src/domain/entities/User.ts`
+Business logic + Zod validation
 
 ```typescript
 import { z } from 'zod'
@@ -55,6 +44,8 @@ export const UserSchema = z.object({
   lastName: z.string().min(2),
   driver: z.boolean().default(false)
 })
+
+export const CreateUserSchema = UserSchema.omit({ id: true })
 
 export type UserData = z.infer<typeof UserSchema>
 export type CreateUserData = z.infer<typeof CreateUserSchema>
@@ -79,50 +70,32 @@ export class User {
 }
 ```
 
-**Contains** : Properties + Business Methods + Zod Schemas
-**Does not contain** : API calls, localStorage, DTO conversions
+### DataSource (Data)
 
----
-
-### 2. Domain Repository Interface
-
-**File** : `src/domain/repositories/IUserRepository.ts`
+API/localStorage communication
 
 ```typescript
-import type { User, CreateUserData, UpdateUserData } from '../entities/User'
+export class ApiDataSource {
+  async fetchUser(id: number): Promise<UserDTO> {
+    const response = await api.get(`/api/users/${id}`)
+    return response.data.user
+  }
 
-export interface IUserRepository {
-  getById(id: number): Promise<User>
-  getAll(): Promise<User[]>
-  create(userData: CreateUserData): Promise<User>
-  update(id: number, updates: Partial<UpdateUserData>): Promise<User>
-  delete(id: number): Promise<void>
+  async createUser(data: Partial<UserDTO>): Promise<UserDTO> {
+    const response = await api.post('/api/users', data)
+    return response.data.user
+  }
 }
 ```
 
-**Contains**: Contract (interface)  
-**Does not contain**: Implementation
+### Model (Data)
 
----
-
-### 3. Data Model (DTO)
-
-**File** : `src/data/models/UserModel.ts`
+DTO ↔️ Entity conversion with Zod validation
 
 ```typescript
-import { User, UserSchema } from '@/domain/entities/User'
-
-export interface UserDTO {
-  id: number
-  email: string
-  firstName: string
-  lastName: string
-  driver: boolean
-}
-
 export class UserModel {
   static fromJson(json: UserDTO): User {
-    const validated = UserSchema.parse(json)
+    const validated = UserSchema.parse(json) // Zod validation
     return new User(
       validated.id,
       validated.email,
@@ -144,105 +117,19 @@ export class UserModel {
 }
 ```
 
-*Contains**: DTO + DTO Conversions ↔️ Entity  
-**Does not contain** : Business logic, API calls
+### Repository (Data)
 
----
-
-### 4. DataSource
-
-**File** : `src/data/datasources/ApiDataSource.ts`
+Orchestrate DataSources + cache
 
 ```typescript
-import api from '@/services/api'
-import type { UserDTO } from '@/data/models/UserModel'
-
-export class ApiDataSource {
-  async fetchUser(id: number): Promise<UserDTO> {
-    const response = await api.get<{ user: UserDTO }>(`/api/users/${id}`)
-    return response.data.user
-  }
-
-  async fetchUsers(): Promise<UserDTO[]> {
-    const response = await api.get<{ users: UserDTO[] }>('/api/users')
-    return response.data.users
-  }
-
-  async createUser(data: Partial<UserDTO>): Promise<UserDTO> {
-    const response = await api.post<{ user: UserDTO }>('/api/users', data)
-    return response.data.user
-  }
-}
-
-export const apiDataSource = new ApiDataSource()
-```
-
-**File** : `src/data/datasources/LocalStorageDataSource.ts`
-
-```typescript
-export class LocalStorageDataSource {
-  private readonly prefix = 'breco_'
-
-  set<T>(key: string, data: T, ttlMinutes: number = 60): void {
-    const cached = {
-      data,
-      expiresAt: Date.now() + ttlMinutes * 60 * 1000
-    }
-    localStorage.setItem(`${this.prefix}${key}`, JSON.stringify(cached))
-  }
-
-  get<T>(key: string): T | null {
-    const item = localStorage.getItem(`${this.prefix}${key}`)
-    if (!item) return null
-
-    const cached = JSON.parse(item)
-    if (Date.now() > cached.expiresAt) {
-      this.remove(key)
-      return null
-    }
-    return cached.data
-  }
-
-  remove(key: string): void {
-    localStorage.removeItem(`${this.prefix}${key}`)
-  }
-}
-
-export const localStorageDataSource = new LocalStorageDataSource()
-```
-
-**Contains**: Raw communication with ONE source  
-**Does not contain**: Conversions, complex cache logic
-
----
-
-### 5. Data Repository
-
-**File** : `src/data/repositories/UserRepository.ts`
-
-```typescript
-import type { IUserRepository } from '@/domain/repositories/IUserRepository'
-import { User, type CreateUserData } from '@/domain/entities/User'
-import { UserModel, type UserDTO } from '@/data/models/UserModel'
-import { apiDataSource } from '@/data/datasources/ApiDataSource'
-import { localStorageDataSource } from '@/data/datasources/LocalStorageDataSource'
-
-export class UserRepository implements IUserRepository {
+export class UserRepository {
   async getById(id: number): Promise<User> {
-    // Cache
-    const cached = localStorageDataSource.get<UserDTO>(`user_${id}`)
+    const cached = localStorage.get(`user_${id}`)
     if (cached) return UserModel.fromJson(cached)
     
-    // API
     const dto = await apiDataSource.fetchUser(id)
-    localStorageDataSource.set(`user_${id}`, dto, 15)
-    
+    localStorage.set(`user_${id}`, dto)
     return UserModel.fromJson(dto)
-  }
-
-  async getAll(): Promise<User[]> {
-    const dtos = await apiDataSource.fetchUsers()
-    return dtos.map(dto => UserModel.fromJson(dto))
   }
 
   async create(userData: CreateUserData): Promise<User> {
@@ -250,80 +137,52 @@ export class UserRepository implements IUserRepository {
     return UserModel.fromJson(dto)
   }
 }
-
-export const userRepository = new UserRepository()
 ```
 
-**Contains**: DataSources Orchestration + Cache + Conversions  
-**Does not contain**: Business logic, reactive state
+### Composable (Presentation)
 
----
-
-### 6. Composable
-
-**File** : `src/composables/useUser.ts`
+Reactive state + Zod validation
 
 ```typescript
-import { ref } from 'vue'
-import { userRepository } from '@/data/repositories/UserRepository'
-import { User, CreateUserSchema, type CreateUserData } from '@/domain/entities/User'
 import { z } from 'zod'
 
 export function useUser() {
-  const currentUser = ref<User | null>(null)
+  const user = ref<User | null>(null)
   const loading = ref(false)
   const errors = ref<Record<string, string>>({})
-
-  const fetchUser = async (id: number) => {
-    loading.value = true
-    try {
-      currentUser.value = await userRepository.getById(id)
-    } finally {
-      loading.value = false
-    }
-  }
 
   const createUser = async (userData: CreateUserData) => {
     loading.value = true
     errors.value = {}
     
     try {
+      // Zod validation before API call
       const validated = CreateUserSchema.parse(userData)
-      currentUser.value = await userRepository.create(validated)
+      user.value = await userRepository.create(validated)
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach(err => {
-          errors.value[err.path[0] as string] = err.message
+          errors.value[err.path[0]] = err.message
         })
       }
-      throw error
     } finally {
       loading.value = false
     }
   }
 
-  return { currentUser, loading, errors, fetchUser, createUser }
+  return { user, loading, errors, createUser }
 }
 ```
 
-**Contains**: Reactive state + Validation + Orchestration  
-**Does not contain**: API calls, business logic
+### Component (Presentation)
 
----
-
-### 7. Vue Component
-
-**File** : `src/components/UserForm.vue`
+UI with error display
 
 ```vue
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useUser } from '@/composables/useUser'
-import type { CreateUserData } from '@/domain/entities/User'
+const { user, loading, errors, createUser } = useUser()
 
-const { createUser, loading, errors, currentUser } = useUser()
-
-const formData = ref<Partial<CreateUserData>>({
+const formData = ref({
   email: '',
   firstName: '',
   lastName: '',
@@ -331,119 +190,78 @@ const formData = ref<Partial<CreateUserData>>({
 })
 
 const handleSubmit = async () => {
-  await createUser(formData.value as CreateUserData)
-  console.log('Nom complet:', currentUser.value?.getFullName())
+  await createUser(formData.value)
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <input v-model="formData.email" placeholder="E-mail" />
-    <span v-if="errors.email">{{ errors.email }}</span>
+    <input v-model="formData.email" placeholder="Email" />
+    <span v-if="errors.email" class="error">{{ errors.email }}</span>
     
-    <button type="submit" :disabled="loading">Créer</button>
+    <input v-model="formData.firstName" placeholder="First Name" />
+    <span v-if="errors.firstName" class="error">{{ errors.firstName }}</span>
+    
+    <button type="submit" :disabled="loading">Create</button>
   </form>
 </template>
 ```
 
 ---
 
-## Simple rule: Where to put my code?
+## Quick Reference
 
-| Question |   | Location |
-|----------|---|--------------|
-| Business logic? |   | Domain Entity |
-| HTTP/localStorage call? |   | DataSource |
-| Orchestration sources? |   | Repository |
-| DTO Conversion ↔️ Entity? |   | Model |
-| Contract/Interface? |   | Domain Interface |
-| Reactive state? |   | Composable |
-| UI/Template? |   | Component View |
+| What? | Where? |
+| ----- | ------ |
+| Business logic | Entity |
+| Zod schemas | Entity |
+| API/localStorage | DataSource |
+| DTO conversion + validation | Model |
+| Cache + orchestration | Repository |
+| Reactive state + validation | Composable |
+| UI + error display | Component |
 
 ---
 
-## Data flow
+## Data Flow with Validation
 
-```markdown
-1. User clicks → Vue Component
-2. handleSubmit() → Composable useUser()
-3. createUser() → UserRepository
-4. create() → ApiDataSource + LocalStorageDataSource
-5. POST /api/users → Backend
-6. response → UserDTO
-7. fromJson() → User Entity
-8. return User with Business Methods
+```text
+User submits form
+  → Component calls Composable
+    → Composable validates with Zod (CreateUserSchema)
+      → If valid: Composable calls Repository
+        → Repository calls DataSource
+          → DataSource fetches data
+        → Repository validates response with Zod (UserSchema)
+        → Repository converts to Entity
+      → Composable updates reactive state
+    → If invalid: Composable sets errors
+  → Component displays result or errors
 ```
 
 ---
 
-## Key principle
+## Key Principle
 
-**Domain does not depend on ANYTHING.**
+Domain is independent - doesn't depend on anything.
 
-```markdown
-Data depends on Domain
-Composable depends on Domain + Data
-Component depends on Composable
-
-Independent domain
+```text
+Data → depends on Domain
+Composable → depends on Data
+Component → depends on Composable
 ```
 
----
+Validation happens at 2 points:
 
-## Auth Example with several sources
-
-```typescript
-// src/data/repositories/AuthRepository.ts
-export class AuthRepository implements IAuthRepository {
-  async login(input: LoginInput): Promise<AuthOutput> {
-    // 1. API
-    const dto = await apiDataSource.login(input)
-    
-    // 2. localStorage
-    localStorageDataSource.set('token', dto.token)
-    
-    // 3. Conversion
-    const user = UserModel.fromJson(dto.user)
-    
-    return { token: dto.token, user }
-  }
-}
-```
+1. Composable: Validate user input before sending
+2. Model: Validate API response before using
 
 ---
 
 ## Benefits
 
-- ✅ **Testable**: Testing Entity without API
-- ✅ **Flexible**: Change API = modify DataSource only
-- ✅ **Claire**: A File = a role
-- ✅ **Scalable**: Add features without breaking the existing
-
----
-
-## Checklist
-
-```typescript
-// ✅ Domain Entity
-getFullName(): string { return `${this.firstName} ${this.lastName}` }
-
-// ✅ DataSource
-async fetchUser(id: number): Promise<UserDTO> { ... }
-
-// ✅ Model
-static fromJson(dto: UserDTO): User { ... }
-
-// ✅ Repository
-async getById(id: number): Promise<User> {
-  const cached = cache.get()
-  if (cached) return cached
-  return api.fetch()
-}
-
-// ✅ Composable
-const { user, loading } = useUser()
-
-// ✅ Composant
-<template>{{ user.getFullName() }}</template>
-```
+- Type-safe: Zod ensures runtime type checking
+- Testable: Test entities without API
+- Flexible: Change API without touching business logic
+- Clear: One file = one responsibility
+- Scalable: Add features without breaking existing code

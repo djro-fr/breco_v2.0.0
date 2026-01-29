@@ -1,53 +1,151 @@
-# CakePHP Application Skeleton
+# Breco Backend
 
-![Build Status](https://github.com/cakephp/app/actions/workflows/ci.yml/badge.svg?branch=5.x)
-[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
-[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
+CakePHP 5.x API backend for the Breco carpooling platform.
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org) 5.x.
+## Tech Stack
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
+- **Framework**: CakePHP 5.x
+- **Database**: MySQL 8.0
+- **Authentication**: JWT (JSON Web Tokens)
+- **Email**: Mailhog (dev), SMTP (prod)
 
-## Installation
+## Quick Start
 
-1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
-
-If Composer is installed globally, run
+### Via Docker (Recommended)
 
 ```bash
-composer create-project --prefer-dist cakephp/app
+# From project root
+docker-compose up -d backend mysql
+
+# Run migrations
+docker-compose exec backend bin/cake migrations migrate
 ```
 
-In case you want to use a custom app dir name (e.g. `/myapp/`):
+Backend API available at: http://localhost:8765
+
+### Local Development (without Docker)
 
 ```bash
-composer create-project --prefer-dist cakephp/app myapp
-```
-
-You can now either use your machine's webserver to view the default home page, or start
-up the built-in webserver with:
-
-```bash
+composer install
 bin/cake server -p 8765
 ```
 
-Then visit `http://localhost:8765` to see the welcome page.
+## Project Structure
 
-## Update
+```text
+src/
+├── Controller/      # API controllers
+│   ├── AuthController.php
+│   ├── HealthController.php
+│   └── UsersController.php
+├── Model/           # Entities and Tables
+│   ├── Entity/
+│   └── Table/
+├── Service/         # Business logic services
+└── Middleware/      # Custom middleware
+config/
+├── app.php          # Main configuration
+├── app_local.php    # Local environment config
+└── routes.php       # API routes
+```
 
-Since this skeleton is a starting point for your application and various files
-would have been modified as per your needs, there isn't a way to provide
-automated upgrades, so you have to do any updates manually.
+## Documentation
 
-## Configuration
+For complete documentation, see the main [docs folder](../../docs/):
 
-Read and edit the environment specific `config/app_local.php` and set up the
-`'Datasources'` and any other configuration relevant for your application.
-Other environment agnostic settings can be changed in `config/app.php`.
+- [Getting Started](../../docs/getting-started.md)
+- [API Documentation](../../docs/api.md)
+- [Architecture](../../docs/architecture.md)
 
-## Layout
+## Database
 
-The app skeleton uses [Milligram](https://milligram.io/) (v1.3) minimalist CSS
-framework by default. You can, however, replace it with any other library or
-custom styles.
+### Run Migrations
+
+```bash
+docker-compose exec backend bin/cake migrations migrate
+```
+
+### Create Migration
+
+```bash
+docker-compose exec backend bin/cake bake migration CreateUsersTable
+```
+
+### Rollback
+
+```bash
+docker-compose exec backend bin/cake migrations rollback
+```
+
+## Testing
+
+### Run Tests
+
+```bash
+docker-compose exec backend vendor/bin/phpunit
+```
+
+### Run Specific Test
+
+```bash
+docker-compose exec backend vendor/bin/phpunit tests/TestCase/Controller/AuthControllerTest.php
+```
+
+## Environment Variables
+
+Configuration in `config/app_local.php`:
+
+- Database credentials
+- JWT secret
+- Email settings (SMTP)
+
+## API Endpoints
+
+### Health Check
+
+```bash
+curl http://localhost:8765/health
+```
+
+### Authentication
+
+See [API Documentation](../../docs/api.md) for complete endpoint list.
+
+## Common Tasks
+
+### Clear Cache
+
+```bash
+docker-compose exec backend bin/cake cache clear_all
+```
+
+### Debug Routes
+
+```bash
+docker-compose exec backend bin/cake routes
+```
+
+### Console Access
+
+```bash
+docker-compose exec backend bin/cake console
+```
+
+## Debugging
+
+Enable debug mode in `config/app_local.php`:
+
+```php
+'debug' => filter_var(env('DEBUG', true), FILTER_VALIDATE_BOOLEAN),
+```
+
+View logs:
+
+```bash
+docker logs breco_backend
+tail -f logs/error.log
+```
+
+---
+
+**Part of [Breco v2.0.0](../../README.md)**

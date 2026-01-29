@@ -1,103 +1,351 @@
 # Breco v2.0.0
 
-Carpooling app, for the Brittany region in France, built with Vue.js and CakePHP.
+> Carpooling application for the Brittany region, France
+
+Modern web platform allowing users to offer and search for carpooling trips in Brittany.
+
+---
+
+## Quick Start
+
+**New developer?** → [Getting Started Guide (5 min)](docs/getting-started.md)
+
+### Launch the application locally
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Check everything is working
+curl http://localhost:8081/api/health
+```
+
+Frontend: http://localhost:3001  
+API: http://localhost:8081/api  
+Mailhog: http://localhost:8025
+
+---
 
 ## Documentation
 
-- [Architecture](docs/architecture.md) - DDD architecture of the project
-- [Error Handling](docs/error-handling.md) - Error flow
+| Document | Description |
+| -------- | ----------- |
+| **[Documentation Index](docs/README.md)** | Complete overview |
+| **[Getting Started](docs/getting-started.md)** | Quick setup (5 min) |
+| [Architecture](docs/architecture.md) | DDD architecture |
+| [API](docs/api.md) | Routes and authentication |
+| [Endpoints](docs/endpoints.md) | Ports and services |
+| [Error Handling](docs/error-handling.md) | Error management |
+| [Production Checklist](docs/todo-prod.md) | Before deployment |
 
-## Technical stack
+---
 
-- **Frontend** : Vue.js 3, TypeScript, Tailwind CSS
-- **Backend** : CakePHP, MySQL
-- **DevOps** : Docker, Jenkins
+## Tech Stack
 
-## Local server, hot reload (port 5173)
+- **Frontend**: Vue.js 3, TypeScript, Tailwind CSS v4
+- **Backend**: CakePHP 5.x, MySQL 8.0
+- **DevOps**: Docker, Jenkins CI/CD, Nginx
 
-Terminal 1, Backend docker (sans frontend) :
-'''
+---
+
+## Development
+
+### Dev mode with hot reload (recommended)
+
+**Terminal 1** - Backend services:
+
+```bash
+# Windows
 docker-compose up -d backend mysql nginx mailhog
-(windows)
-ou
-docker-compose -f docker-compose.linux.yml up --build -d mysql backend nginx mailhog
-(ubuntu)
-'''
 
-Terminal 2, Frontend dev :
-'''
+# Linux
+docker-compose -f docker-compose.linux.yml up -d backend mysql nginx mailhog
+```
+
+**Terminal 2** - Frontend with hot reload:
+
+```bash
 cd frontend/breco
-bun run dev
-'''
+npm install
+npm run dev
+```
 
-## Compose docker containers locally
+Frontend available at: http://localhost:5173 (Vite dev server)
 
-Sur Linux :
-'''docker-compose -f docker-compose.linux.yml up -d'''
+### Local production mode (testing)
 
-Sur Windows :
-'''docker-compose up -d'''
+```bash
+# Windows
+docker-compose up -d
 
-## Local frontend docker image re-build (at the root of the application directory)
+# Linux
+docker-compose -f docker-compose.linux.yml up -d
+```
 
-'''
+Frontend available at: http://localhost:3001
+
+---
+
+## Useful Docker Commands
+
+### Service management
+
+```bash
+# View logs
+docker logs breco_backend
+docker logs breco_frontend
+docker logs breco_nginx
+
+# Restart a service
+docker-compose restart backend
+docker-compose restart nginx
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (⚠️ deletes database)
+docker-compose down -v
+```
+
+### Rebuild images
+
+**Frontend**:
+
+```bash
 docker build --build-arg BUILD_NUMBER=1 -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
 docker-compose down
 docker-compose up -d
-'''
+```
 
-## Local backend docker image re-build (at the root of the application directory)
+**Backend**:
 
-docker build --build-arg BUILD_NUMBER=1 -t local/breco-backend:latest -f backend/breco/Dockerfile-backend backend/breco
+```bash
+docker build --build-arg BUILD_NUMBER=1 -t local/breco-backend:latest -f frontend/breco/Dockerfile-backend backend/breco
+docker-compose down
+docker-compose up -d
+```
 
-## Test user (to remove in production)
+---
 
-'''test@test.com/Password123'''
+## Database
 
-## Empty user db
+### Migrations
 
-'''
-docker exec -it breco_mysql mysql -u root -p breco_db
-
-mysql> SELECT * FROM users;
-mysql> TRUNCATE TABLE users;
-'''
-
-## Delete user nr. 4
-
-'''
-docker exec -it breco_mysql mysql -u root -p breco_db
-
-mysql> SELECT * FROM users;
-mysql> DELETE FROM users WHERE id='4';
-'''
-
-## Migration DB with Docker
-
+```bash
+# Run migrations
 docker-compose exec backend bin/cake migrations migrate
 
-## Postman
+# Rollback
+docker-compose exec backend bin/cake migrations rollback
 
-'''
-POST
-http://localhost:8081/api/auth/register
-Body:
+# Create new migration
+docker-compose exec backend bin/cake bake migration MigrationName
+```
+
+### MySQL access
+
+```bash
+# Connect to MySQL
+docker exec -it breco_mysql mysql -u root -p breco_db
+# Password: root
+```
+
+### Useful MySQL commands
+
+```sql
+-- List all users
+SELECT * FROM users;
+
+-- Empty users table
+TRUNCATE TABLE users;
+
+-- Delete specific user
+DELETE FROM users WHERE id='4';
+
+-- View table structure
+DESCRIBE users;
+```
+
+---
+
+## Testing & Development
+
+### Test account
+
+⚠️ **Remove in production**
+
+```text
+Email    : test@test.com
+Password : Password123
+```
+
+### Test API (Postman/Insomnia)
+
+**Registration**:
+
+```http
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
 {
   "email": "test@example.com",
   "password": "Test1234!",
   "password_confirmation": "Test1234!",
   "firstName": "Jean",
   "lastName": "Dupont",
-  "phone":"0607080910"
+  "phone": "0607080910"
 }
-'''
+```
 
-'''
-POST
-http://localhost:8081/api/auth/login
-Body:
+**Login**:
+
+```http
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
 {
   "email": "test@example.com",
   "password": "Test1234!"
 }
-'''
+```
+
+**Health Check**:
+
+```bash
+curl http://localhost:8081/api/health
+```
+
+---
+
+## Environments
+
+### Local (development)
+
+| Service | URL |
+| ------- | --- |
+| Frontend (prod) | http://localhost:3001 |
+| Frontend (dev) | http://localhost:5173 |
+| API (nginx) | http://localhost:8081 |
+| API (direct) | http://localhost:8765 |
+| Mailhog | http://localhost:8025 |
+| MySQL | localhost:3307 |
+
+### VPS (staging)
+
+| Service | URL |
+| ------- | --- |
+| Frontend | http://37.59.101.232:3001 |
+| API | http://37.59.101.232:8081 |
+| Jenkins | http://37.59.101.232:8080 |
+| Mailhog | http://37.59.101.232:8025 |
+
+**SSH Access**: `ssh ubuntu@37.59.101.232`
+
+---
+
+## Quick Troubleshooting
+
+### Port already in use
+
+```bash
+docker-compose down
+lsof -ti:3001 | xargs kill -9  # Linux/Mac
+# Windows: Task Manager → Kill process
+docker-compose up -d
+```
+
+### Frontend cannot connect to backend
+
+Check `frontend/breco/src/services/api.ts`:
+
+```typescript
+const API_BASE_URL = 'http://localhost:8081/api'
+```
+
+### CORS error
+
+```bash
+# Check nginx
+docker ps | grep nginx
+docker logs breco_nginx
+
+# Restart nginx
+docker-compose restart nginx
+```
+
+### Complete database reset
+
+```bash
+docker-compose down -v
+docker-compose up -d
+docker-compose exec backend bin/cake migrations migrate
+```
+
+### npm issues
+
+```bash
+cd frontend/breco
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
+```
+
+---
+
+## Project Status
+
+- **Version**: 2.0.0
+- **Status**: In development
+- **Last updated**: January 29, 2026
+
+### Implemented features
+
+- JWT authentication
+- Email verification
+- DDD architecture
+- Jenkins CI/CD pipeline
+- Docker compose
+- Health check endpoint
+
+### TODO before production
+
+See [Production Checklist](docs/todo-prod.md) for complete list.
+
+Immediate priorities:
+
+- [ ] Disable Mailhog on VPS
+- [ ] Implement rate limiting
+- [ ] Add unit tests
+- [ ] Configure HTTPS
+
+---
+
+## Contributing
+
+### Branches
+
+```text
+main         # Production
+develop      # Development
+feature/*    # New features
+fix/*        # Bug fixes
+```
+
+### Commits
+
+```text
+feat: new feature
+fix: bug fix
+docs: documentation
+refactor: refactoring
+test: add tests
+chore: maintenance tasks
+```
+
+---
+
+## Support
+
+- [Complete documentation](docs/README.md)
+- [GitHub Issues](https://github.com/your-username/breco_v2_0_0/issues)
+- Contact: [your-email]

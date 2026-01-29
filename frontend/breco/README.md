@@ -1,54 +1,97 @@
-# VITE +
+# Breco Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Vue.js 3 frontend application for the Breco carpooling platform.
 
-## Recommended IDE Setup
+## Tech Stack
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Framework**: Vue.js 3 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS v4
+- **State Management**: Pinia (optional)
+- **Architecture**: Domain-Driven Design (DDD)
 
-## Recommended Browser Setup
+## Quick Start
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+### Development Server
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-bun install
+```bash
+npm install
+npm run dev
 ```
 
-### Compile and Hot-Reload for Development
+Frontend will be available at: http://localhost:5173
 
-```sh
-bun dev
+### Build for Production
+
+```bash
+npm run build
 ```
 
-### Type-Check, Compile and Minify for Production
+### Run Tests
 
-```sh
-bun run build
+```bash
+npm run test:unit
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Lint
 
-```sh
-bun test:unit
+```bash
+npm run lint
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Project Structure
 
-```sh
-bun lint
+```text
+src/
+├── domain/           # Business entities and interfaces
+│   ├── entities/     # User.ts, Trajet.ts
+│   └── repositories/ # IUserRepository.ts
+├── data/             # Data layer
+│   ├── datasources/  # API, localStorage
+│   ├── models/       # DTOs
+│   └── repositories/ # Repository implementations
+├── composables/      # Vue composables (useUser, useAuth)
+├── components/       # Vue components
+├── views/            # Page components
+└── services/         # API client
 ```
+
+## Documentation
+
+For complete documentation, see the main [docs folder](../../docs/):
+
+- [Getting Started](../../docs/getting-started.md)
+- [Architecture](../../docs/architecture.md)
+- [API Documentation](../../docs/api.md)
+
+## Environment Variables
+
+Create a `.env` file (see `.env.example`):
+
+```bash
+VITE_API_BASE_URL=http://localhost:8081/api
+```
+
+## VSCode Extensions
+
+Recommended:
+
+- Volar (Vue Language Features)
+- ESLint
+- Prettier
+- Tailwind CSS IntelliSense
+
+## Available Scripts
+
+| Command | Description |
+| ------- | ----------- |
+| `npm run dev` | Start dev server (hot reload) |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run test:unit` | Run unit tests |
+| `npm run lint` | Lint code |
+| `npm run format` | Format code with Prettier |
+
+---
+
+**Part of [Breco v2.0.0](../../README.md)**

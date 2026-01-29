@@ -2,7 +2,7 @@
 
 ## Custom error flow
 
-'''
+```text
 Backend returns { error: "E-mail déjà utilisé" }
                       ↓
          AuthRemoteDataSource.handleAxiosError()
@@ -20,4 +20,4 @@ Backend returns { error: "E-mail déjà utilisé" }
           RegisterPage.vue
       show globalError : "E-mail déjà utilisé"
 
-'''
+```

@@ -199,9 +199,10 @@ pipeline {
                     sshagent(credentials: ['vps-ssh']) {
                         sh '''
                             ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
-                            docker-compose -f docker-compose.linux.yml down && \
-                            docker-compose -f docker-compose.linux.yml pull && \
-                            docker-compose -f docker-compose.linux.yml up -d"
+                            docker-compose -f docker-compose.linux.yml stop frontend backend nginx mysql && \
+                            docker-compose -f docker-compose.linux.yml rm -f frontend backend nginx mysql && \
+                            docker-compose -f docker-compose.linux.yml pull frontend backend nginx mysql && \
+                            docker-compose -f docker-compose.linux.yml up -d frontend backend nginx mysql"
                         '''
                     }
 

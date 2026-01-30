@@ -347,5 +347,5 @@ chore: maintenance tasks
 ## Support
 
 - [Complete documentation](docs/README.md)
-- [GitHub Issues](https://github.com/your-username/breco_v2_0_0/issues)
-- Contact: [your-email]
+- [GitHub Issues](https://github.com/djro-fr/breco_v2.0.0/issues)
+- Contact: [syl.gi@laposte.net]

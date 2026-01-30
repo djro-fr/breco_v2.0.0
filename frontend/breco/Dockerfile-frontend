@@ -10,7 +10,7 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Dependency files first (for better Docker cache)
-COPY package.json bun.lock* ./
+COPY package.json bun.lock* package-lock.json* ./
 # Install dependencies with frozen lockfile to ensure consistency, and retry if it fails
 RUN bun install --frozen-lockfile || bun install --frozen-lockfile
 

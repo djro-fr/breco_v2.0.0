@@ -44,7 +44,7 @@ pipeline {
                 stage('Unit Tests') {
                     agent {
                         docker {
-                            image 'oven/bun:1-alpine'
+                            image 'node:25-alpine3.21'
                             args '-u root'
                             reuseNode true
                         }
@@ -52,8 +52,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile || bun install --frozen-lockfile
-                            bun run test:unit
+                            npm ci
+                            npm run test:unit
                         '''
                     }
                     post {
@@ -66,7 +66,7 @@ pipeline {
                 stage('Integration Tests') {
                    agent {
                         docker {
-                            image 'oven/bun:1-alpine'
+                            image 'node:25-alpine3.21'
                             args '-u root'
                             reuseNode true
                         }
@@ -74,8 +74,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile || bun install --frozen-lockfile
-                            bun run test:integration
+                            npm ci
+                            npm run test:integration
                         '''
                     }
                     post {
@@ -88,7 +88,7 @@ pipeline {
                 stage('UI Tests') {
                     agent {
                         docker {
-                            image 'oven/bun:1-alpine'
+                            image 'node:25-alpine3.21'
                             args '-u root'
                             reuseNode true
                         }
@@ -96,8 +96,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile || bun install --frozen-lockfile
-                            bun run test:ui
+                            npm ci
+                            npm run test:ui
                         '''
                     }
                     post {

@@ -1,34 +1,55 @@
 # frontend/breco/Dockerfile-frontend
-# Stage 1: Build
-FROM node:25-alpine3.21 AS builder
+
+# Stage 1: Build the application 
+# (with the latest 1.x version of Bun)
+FROM oven/bun:1-alpine AS builder
+
+# Install build dependencies for native modules
 RUN apk add --no-cache python3 make g++
+
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Dependency files first (for better Docker cache)
+COPY package.json bun.lock* ./
+# Install dependencies with frozen lockfile to ensure consistency
+RUN bun install --frozen-lockfile
+
 COPY . .
 
+# Build argument for API URL configuration
 ARG VITE_API_URL=http://localhost:8081/api
-RUN npm ci && \
-    VITE_API_URL=${VITE_API_URL} npm run build
+# Build the application with Vite
+RUN VITE_API_URL=${VITE_API_URL} bun run build
 
+# Verify dist folder was created
 RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 
-# Stage 2: Production
-FROM node:25-alpine3.21
+#--------------------------------------------------------------
+
+# Stage 2: Production-ready image
+FROM oven/bun:1-alpine
+
 WORKDIR /app
 
+# Build metadata
 ARG BUILD_NUMBER=unknown
 
-RUN npm install -g serve
+# Install serve globally to serve static files
+RUN bun install -g serve
 
+# Copy only built assets from builder stage
 COPY --from=builder /app/dist ./dist
 
+# Create build metadata files
 RUN echo "${BUILD_NUMBER}" > ./dist/BUILD_NUMBER.txt
 RUN echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > ./dist/BUILD_DATE.txt
 
+# Expose application port
 EXPOSE 3000
 
+# Health check configuration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
 
+# Start the production server
 CMD ["serve", "-s", "/app/dist", "-l", "3000"]

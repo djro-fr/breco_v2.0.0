@@ -30,6 +30,6 @@ coverage
 
 *.tsbuildinfo
 
-bun.lock
+# bun.lock
 
 test-results/

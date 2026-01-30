@@ -24,9 +24,9 @@ pipeline {
             } 
         }
         stage('Lint') {
-            agent {
+           agent {
                 docker {
-                    image 'node:25-alpine3.21'
+                    image 'oven/bun:1-alpine'
                     args '-u root'
                 }
             }
@@ -34,8 +34,8 @@ pipeline {
                 echo "Linting..."
                 sh '''                    
                     cd frontend/breco
-                    npm ci
-                    npm run lint
+                    bun install --frozen-lockfile
+                    bun run lint
                 '''
             }
         }
@@ -44,7 +44,7 @@ pipeline {
                 stage('Unit Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'oven/bun:1-alpine'
                             args '-u root'
                             reuseNode true
                         }
@@ -52,8 +52,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
-                            npm run test:unit
+                            bun install --frozen-lockfile
+                            bun run test:unit
                         '''
                     }
                     post {
@@ -64,9 +64,9 @@ pipeline {
                 }
 
                 stage('Integration Tests') {
-                    agent {
+                   agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'oven/bun:1-alpine'
                             args '-u root'
                             reuseNode true
                         }
@@ -74,8 +74,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
-                            npm run test:integration
+                            bun install --frozen-lockfile
+                            bun run test:integration
                         '''
                     }
                     post {
@@ -88,7 +88,7 @@ pipeline {
                 stage('UI Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'oven/bun:1-alpine'
                             args '-u root'
                             reuseNode true
                         }
@@ -96,8 +96,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
-                            npm run test:ui
+                            bun install --frozen-lockfile
+                            bun run test:ui
                         '''
                     }
                     post {
@@ -118,17 +118,14 @@ pipeline {
             //     steps {
             //         echo "Tests E2E (Selenium)..."
             //         sh '''
-            //             export DEBIAN_FRONTEND=noninteractive
-            //             apt-get update -qq && apt-get install -y firefox-esr wget netcat-openbsd
+            //             apk add --no-cache firefox wget netcat-openbsd
                         
             //             # Geckodriver
-            //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
-            //             tar -xzf geckodriver-v0.34.0-linux64.tar.gz
+            //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux-aarch64.tar.gz
+            //             tar -xzf geckodriver-v0.34.0-linux-aarch64.tar.gz
             //             mv geckodriver /usr/bin/
             //             chmod +x /usr/bin/geckodriver
                         
-            //             curl -fsSL https://bun.sh/install | bash
-            //             export PATH="/root/.bun/bin:$PATH"
             //             cd frontend/breco
             //             bun install --frozen-lockfile
             //             VITEST=true bun run test:e2e
@@ -265,7 +262,7 @@ pipeline {
         //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
         //             unzip -o -q apache-jmeter-5.6.3.zip
                     
-        //             # Lanuch test
+        //             # Launch test
         //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
                     
         //             # Generates the report
@@ -277,10 +274,10 @@ pipeline {
     }
     post {
         failure {
-            echo "❌ Pipeline échoué !"
+            echo "❌ Pipeline failed!"
         }
         success {
-            echo "✅ Pipeline réussi !"
+            echo "✅ Pipeline succeeded!"
         }
     }
 }

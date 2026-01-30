@@ -34,7 +34,7 @@ pipeline {
                 echo "Linting..."
                 sh '''                    
                     cd frontend/breco
-                    bun install --frozen-lockfile
+                    bun install --frozen-lockfile || bun install --frozen-lockfile
                     bun run lint
                 '''
             }
@@ -52,7 +52,7 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile
+                            bun install --frozen-lockfile || bun install --frozen-lockfile
                             bun run test:unit
                         '''
                     }
@@ -74,7 +74,7 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile
+                            bun install --frozen-lockfile || bun install --frozen-lockfile
                             bun run test:integration
                         '''
                     }
@@ -96,7 +96,7 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile
+                            bun install --frozen-lockfile || bun install --frozen-lockfile
                             bun run test:ui
                         '''
                     }

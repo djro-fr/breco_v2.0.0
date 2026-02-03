@@ -39,6 +39,7 @@ services:
       - "8765:9000"
     volumes:
       - ./backend/breco/src:/app/src
+      - ./csv:/app/csv
       - ./backend/breco/config:/app/config
       - ./backend/breco/webroot:/app/webroot
       - ./backend/breco/bin:/app/bin

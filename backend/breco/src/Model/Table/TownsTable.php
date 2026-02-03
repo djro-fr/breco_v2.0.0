@@ -102,7 +102,8 @@ class TownsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['zipcode', 'name']), ['errorField' => 'zipcode']);
+        // Ensure INSEE code is unique
+        $rules->add($rules->isUnique(['insee_code']), ['errorField' => 'insee_code']);
 
         return $rules;
     }

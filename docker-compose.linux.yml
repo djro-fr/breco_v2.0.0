@@ -36,6 +36,14 @@ services:
       - EMAIL_HOST=mailhog
       - EMAIL_PORT=1025
       - EMAIL_FROM=noreply@breco.fr
+    volumes:
+      - ./backend/breco/src:/app/src
+      - ./csv:/app/csv                     
+      - ./backend/breco/config:/app/config
+      - ./backend/breco/webroot:/app/webroot
+      - ./backend/breco/bin:/app/bin
+      - ./backend/breco/templates:/app/templates
+      - ./backend/breco/resources:/app/resources
     depends_on:
       - mysql
     networks:

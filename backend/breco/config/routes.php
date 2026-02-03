@@ -54,16 +54,25 @@ return function (RouteBuilder $routes): void {
     $routes->scope('/api', ['routeClass' => Route::class], function (RouteBuilder $routes): void {
         $routes->setExtensions(['json']);
 
+        // Health check route
         $routes->connect('/health', ['controller' => 'Health', 'action' => 'index']);
 
-        $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
+        // Auth routes
         $routes->post('/auth/register', ['controller' => 'Auth', 'action' => 'register']);
-        $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
-
-        $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
+        $routes->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
         $routes->get('/auth/verify-email/{token}', ['controller' => 'Auth', 'action' => 'verifyEmail'])
         ->setPatterns(['token' => '[a-zA-Z0-9]+'])
         ->setPass(['token']);
+        $routes->get('/auth/verify', ['controller' => 'Auth', 'action' => 'verify']);
+        $routes->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
+
+        // Towns routes
+        $routes->get('/towns', ['controller' => 'Towns', 'action' => 'index']);
+        $routes->get('/towns/search', ['controller' => 'Towns', 'action' => 'search']);
+        $routes->get('/towns/{id}', ['controller' => 'Towns', 'action' => 'view'])
+            ->setPass(['id']);
+
+
     });
 
     $routes->scope('/', function (RouteBuilder $builder): void {

@@ -10,6 +10,7 @@ class HealthController extends AppController
         parent::initialize();
     }
 
+    // GET /api/health - Health check endpoint
     public function index()
     {
         $this->autoRender = false;

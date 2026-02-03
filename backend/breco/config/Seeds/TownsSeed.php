@@ -1,6 +1,7 @@
 <?php
-
 declare(strict_types=1);
+
+//backend\breco\config\Seeds\TownsSeed.php
 
 use Migrations\BaseSeed;
 
@@ -21,7 +22,7 @@ class TownsSeed extends BaseSeed
      */
     public function run(): void
     {
-        $file = fopen(dirname(__DIR__, 2) . '/../../csv/towns_import.csv', 'r');
+        $file = fopen(dirname(__DIR__, 4) . '/app/csv/towns_import.csv', 'r');
 
         if (!$file) {
             echo "Erreur : fichier towns_import.csv introuvable\n";

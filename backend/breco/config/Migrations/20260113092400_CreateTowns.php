@@ -16,15 +16,22 @@ class CreateTowns extends BaseMigration
     public function change(): void
     {
         $table = $this->table('towns');
-        $table->addColumn('zipcode', 'char', [
-            'limit' => 5,
-            'null' => false,
-            'comment' => 'Code postal de la ville'
-        ])
-        ->addColumn('name', 'string', [
+        $table->addColumn('name', 'string', [
             'limit' => 100,
             'null' => false,
             'comment' => 'Nom de la ville'
+        ])
+        ->addColumn('postal_code', 'char', [
+            'limit' => 5,
+            'null' => false,
+            'default' => '',
+            'comment' => 'Code postal'
+        ])
+        ->addColumn('insee_code', 'char', [
+            'limit' => 5,
+            'null' => false,
+            'default' => '',
+            'comment' => 'Code INSEE de la commune'
         ])
         ->addColumn('created', 'datetime', [
             'default' => null,
@@ -34,9 +41,11 @@ class CreateTowns extends BaseMigration
             'default' => null,
             'null' => true,
         ])
-        ->addIndex(['zipcode'])
         ->addIndex(['name'])
-        ->addIndex(['zipcode', 'name'], ['unique' => true])
+        ->addIndex(['postal_code'])
+        ->addIndex(['insee_code'])
+        ->addIndex(['postal_code', 'name'])  // Composite index for faster searches
+        ->addIndex(['insee_code'], ['unique' => true])
         ->create();
     }
 }

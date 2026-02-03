@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+//backend\breco\config\Seeds\LocationsSeed.php
+
 use Migrations\BaseSeed;
 
 /**
@@ -33,7 +35,7 @@ class LocationsSeed extends BaseSeed
             return;
         }
 
-        $file = fopen(dirname(__DIR__, 2) . '/../../csv/locations_import.csv', 'r');
+        $file = fopen('/app/csv/locations_import.csv', 'r');
 
         if (!$file) {
             echo "Erreur : fichier locations_import.csv introuvable\n";

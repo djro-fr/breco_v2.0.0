@@ -72,7 +72,15 @@ return function (RouteBuilder $routes): void {
         $routes->get('/towns/{id}', ['controller' => 'Towns', 'action' => 'view'])
             ->setPass(['id']);
 
-
+        // Locations routes
+        $routes->get('/locations', ['controller' => 'Locations', 'action' => 'index']);
+        $routes->get('/locations/search', ['controller' => 'Locations', 'action' => 'search']);
+        $routes->get('/locations/by-town/{town_id}', ['controller' => 'Locations', 'action' => 'byTown'])
+            ->setPass(['town_id']);
+        $routes->get('/locations/by-type/{type}', ['controller' => 'Locations', 'action' => 'byType'])
+            ->setPass(['type']);
+        $routes->get('/locations/{id}', ['controller' => 'Locations', 'action' => 'view'])
+            ->setPass(['id']);
     });
 
     $routes->scope('/', function (RouteBuilder $builder): void {

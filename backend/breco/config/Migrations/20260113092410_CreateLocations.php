@@ -5,24 +5,15 @@ use Migrations\BaseMigration;
 
 class CreateLocations extends BaseMigration
 {
-    /**
-     * Change Method.
-     *
-     * More information on this method is available here:
-     * https://book.cakephp.org/migrations/4/en/migrations.html#the-change-method
-     *
-     * @return void
-     */
     public function change(): void
     {
         $table = $this->table('locations');
-
         $table->addColumn('town_id', 'integer', [
             'null' => false,
             'comment' => 'Référence vers la ville (FK)'
         ])
         ->addColumn('name', 'string', [
-            'limit' => 45,
+            'limit' => 255,
             'null' => false,
             'comment' => 'Nom du lieu'
         ])
@@ -31,18 +22,20 @@ class CreateLocations extends BaseMigration
             'null' => false,
         ])
         ->addColumn('gps_lat', 'decimal', [
-            'precision' => 10,  // Total number of digits
-            'scale' => 8,       // Number of decimal places
+            'precision' => 10,
+            'scale' => 8,
             'comment' => 'Latitude GPS'
         ])
         ->addColumn('gps_lng', 'decimal', [
-            'precision' => 11,  // Total number of digits (up to 180 degrees)
-            'scale' => 8,       // Number of decimal places
+            'precision' => 11,
+            'scale' => 8,
             'comment' => 'Longitude GPS'
         ])
-        ->addColumn('carpooling_area', 'boolean', [
-            'default' => false,
-            'comment' => 'vrai si zone de covoiturage officielle'
+        ->addColumn('type', 'string', [
+            'limit' => 50,
+            'null' => false,
+            'default' => 'Parking',
+            'comment' => 'Type de lieu (Aire de covoiturage, Parking, etc.)'
         ])
         ->addColumn('created', 'datetime', [
             'default' => null,
@@ -53,11 +46,12 @@ class CreateLocations extends BaseMigration
             'null' => true,
         ])
         ->addForeignKey('town_id', 'towns', 'id', [
-            'delete' => 'RESTRICT',  // Prevents deletion of a town if locations reference it
-            'update' => 'CASCADE'    // Automatically update town_id on locations if the referenced town's id changes
+            'delete' => 'RESTRICT',
+            'update' => 'CASCADE'
         ])
         ->addIndex(['town_id'])
         ->addIndex(['name'])
+        ->addIndex(['type'])
         ->create();
     }
 }

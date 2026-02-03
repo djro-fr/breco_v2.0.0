@@ -8,6 +8,7 @@ use Cake\I18n\DateTime; // A CakePHP class to manipulate dates/times in an immut
 
 class AuthController extends AppController
 {
+    // Common setup for all actions
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -27,7 +28,7 @@ class AuthController extends AppController
         }
     }
 
-    // Login
+    // POST /api/auth/login - User login with JWT token
     public function login()
     {
         $this->request->allowMethod(['post']);
@@ -75,7 +76,7 @@ class AuthController extends AppController
                 'iat' => time(),
                 'exp' => time() + (7 * 24 * 60 * 60) // 7 days
             ],
-            env('JWT_SECRET', 'your-secret-key'),
+            $this->getJwtSecret(),
             'HS256'
         );
 
@@ -88,7 +89,7 @@ class AuthController extends AppController
         ]));
     }
 
-    // Register
+    // POST /api/auth/register - User registration
     public function register()
     {
         $this->request->allowMethod(['post']);
@@ -188,7 +189,7 @@ class AuthController extends AppController
             ]));
     }
 
-    // Verify email with token
+    // POST /api/auth/verify-email/:token - verify email with token
     public function verifyEmail($token = null)
     {
         error_log("=== VERIFY EMAIL CALLED WITH TOKEN: " . ($token ?? 'NULL') . " ===");
@@ -245,7 +246,7 @@ class AuthController extends AppController
             ]));
     }
 
-    // Check the token
+    // POST /api/auth/verify - check the token
     public function verify()
     {
         $this->request->allowMethod(['get']);
@@ -265,7 +266,7 @@ class AuthController extends AppController
         $token = str_replace('Bearer ', '', $token);
 
         try {
-            $decoded = JWT::decode($token, new \Firebase\JWT\Key(env('JWT_SECRET', 'your-secret-key'), 'HS256'));
+            $decoded = JWT::decode($token, new \Firebase\JWT\Key($this->getJwtSecret(), 'HS256'));
 
             $usersTable = $this->fetchTable('Users');
             $user = $usersTable->get($decoded->sub);
@@ -294,7 +295,7 @@ class AuthController extends AppController
         }
     }
 
-    // Logout
+    // POST /api/auth/logout - User logout
     public function logout()
     {
         $this->request->allowMethod(['post']);
@@ -306,16 +307,23 @@ class AuthController extends AppController
         ]));
     }
 
-    // Test
+    // POST /api/auth/test - test endpoint
     public function test()
     {
         $this->response = $this->response->withType('application/json');
         return $this->response->withStringBody(json_encode(['message' => 'OK']));
     }
 
+    // Handle OPTIONS requests
     public function options()
     {
         $this->autoRender = false;
         return $this->response->withStatus(200)->withStringBody('');
+    }
+
+    // Helper function to get JWT secret
+    private function getJwtSecret(): string
+    {
+        return env('JWT_SECRET', 'your-secret-key');
     }
 }

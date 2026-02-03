@@ -15,7 +15,7 @@ class CreateUsers extends BaseMigration
         'comment' => 'Référence vers la ville'
         ])
             ->addColumn('email', 'string', ['limit' => 45, 'null' => false])
-            ->addColumn('password', 'string', ['limit' => 20, 'null' => false])
+            ->addColumn('password', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('last_name', 'string', ['limit' => 45, 'null' => false])
             ->addColumn('first_name', 'string', ['limit' => 45, 'null' => false])
             ->addColumn('phone', 'string', ['limit' => 20, 'null' => false])

@@ -146,6 +146,13 @@ class AuthController extends AppController
             'verification_token_expires' => $expiresAt
         ]);
 
+        // error_log('=== DEBUG REGISTER ===');
+        // error_log('Received data: ' . print_r($data, true));
+        // error_log('User entity: ' . print_r($user->toArray(), true));
+        // if ($user->getErrors()) {
+        //     error_log('Validation errors: ' . print_r($user->getErrors(), true));
+        // }
+
         if (!$usersTable->save($user)) {
             return $this->response
                 ->withStatus(500)

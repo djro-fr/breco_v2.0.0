@@ -13,16 +13,6 @@ use Cake\Http\Exception\NotFoundException;
  */
 class TownsController extends AppController
 {
-    /**
-     * Initialization hook method
-     */
-    public function initialize(): void
-    {
-        parent::initialize();
-
-        // Allow public access to towns data
-        $this->Authentication->addUnauthenticatedActions(['index', 'view', 'search']);
-    }
 
     /**
      * List all towns

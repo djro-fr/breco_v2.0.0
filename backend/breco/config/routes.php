@@ -81,6 +81,9 @@ return function (RouteBuilder $routes): void {
             ->setPass(['type']);
         $routes->get('/locations/{id}', ['controller' => 'Locations', 'action' => 'view'])
             ->setPass(['id']);
+
+        // Users routes
+        $routes->get('/users', ['controller' => 'Users', 'action' => 'index']);
     });
 
     $routes->scope('/', function (RouteBuilder $builder): void {

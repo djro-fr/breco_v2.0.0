@@ -5,11 +5,6 @@ namespace App\Controller;
 
 class HealthController extends AppController
 {
-    public function initialize(): void
-    {
-        parent::initialize();
-    }
-
     // GET /api/health - Health check endpoint
     public function index()
     {

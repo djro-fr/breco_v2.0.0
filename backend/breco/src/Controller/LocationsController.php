@@ -14,16 +14,6 @@ use Cake\Http\Exception\NotFoundException;
  */
 class LocationsController extends AppController
 {
-    /**
-     * Initialization hook method
-     */
-    public function initialize(): void
-    {
-        parent::initialize();
-
-        // Allow public access to locations data by type
-        $this->Authentication->addUnauthenticatedActions(['index', 'view', 'search', 'byTown', 'byType']);
-    }
 
     /**
      * List all locations

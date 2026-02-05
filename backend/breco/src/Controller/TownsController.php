@@ -91,9 +91,9 @@ class TownsController extends AppController
             $townsTable = $this->fetchTable('Towns');
 
             $towns = $townsTable->find()
-                ->where(['Towns.name LIKE' => '%' . $query . '%'])
+                ->where(['Towns.name LIKE' => $query . '%'])
                 ->orderBy(['Towns.name' => 'ASC'])
-                ->limit(20)
+                ->limit(10)
                 ->all();
 
             $result = [];

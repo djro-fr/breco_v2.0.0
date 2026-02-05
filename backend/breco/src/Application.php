@@ -34,6 +34,14 @@ class Application extends BaseApplication
         if (PHP_SAPI !== 'cli') {
             FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
         }
+
+        // Swagger/OpenAPI documentation
+        try {
+            if (!$this->getPlugins()->has('SwaggerBake')) {
+                $this->addPlugin('SwaggerBake');
+            }
+        } catch (\Exception $e) {
+        }
     }
 
     /**

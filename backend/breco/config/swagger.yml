@@ -1,0 +1,101 @@
+openapi: "3.0.0"
+info:
+  title: Breco API
+  description: |
+    REST API for the Breco carpooling app.
+    Allows you to manage users, trips and carpooling places in Brittany.
+  version: 2.0.0
+  contact:
+    name: Support Breco
+    email: syl@djro.fr
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8081/api
+    description: Local development - Nginx reverse proxy
+  - url: http://localhost:8765/api
+    description: Local development - PHP-FPM direct access
+  - url: http://37.59.101.232:8081/api
+    description: VPS production - Nginx reverse proxy
+  - url: http://37.59.101.232:8765/api
+    description: VPS production - PHP-FPM direct access
+
+tags:
+  - name: Authentication
+    description: Authentication endpoints (registration, login, verification)
+  - name: Locations
+    description: Management of carpooling places
+  - name: Towns
+    description: Management of Breton cities
+
+paths: {}
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Exception:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        url:
+          type: string
+          example: /url/path
+        message:
+          type: string
+          example: Internal Error
+      xml:
+        name: response
+    OperationResult:
+      type: object
+      properties:
+        result:
+          type: boolean
+      xml:
+        name: response
+x-swagger-bake:
+  components:
+    schemas:
+      Generic-Collection:
+        type: object
+        x-data-element: data
+        properties:
+          collection:
+            type: object
+            properties:
+              url:
+                type: string
+                format: url
+                example: /index
+              count:
+                type: integer
+                example: 20
+              total:
+                type: integer
+                example: 200
+              pages:
+                type: integer
+                example: 10
+              next:
+                type: string
+                format: url
+                example: /index?page=:number
+              prev:
+                type: string
+                format: url
+                example: /index?page=:number
+              first:
+                type: string
+                format: url
+                example: /index
+              last:
+                type: string
+                format: url
+                example: /index?page=:number

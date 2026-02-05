@@ -51,6 +51,11 @@ return function (RouteBuilder $routes): void {
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    $routes->connect(
+        '/swagger', # this will be the "homepage" for your Swagger or Redoc UI
+        ['plugin' => 'SwaggerBake', 'controller' => 'Swagger', 'action' => 'index']
+    );
+
     $routes->scope('/api', ['routeClass' => Route::class], function (RouteBuilder $routes): void {
         $routes->setExtensions(['json']);
 

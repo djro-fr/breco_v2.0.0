@@ -1,5 +1,6 @@
-# docker-compose.linux.yml
+# docker-compose.yml
 services:
+  # MySQL Database
   mysql:
     image: mysql:8.0
     container_name: breco_mysql
@@ -11,7 +12,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3307:3306"
+      - "3307:3306"  # Expose MySQL on host port 3307 instead of default 3306
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -20,52 +21,54 @@ services:
       timeout: 5s
       retries: 5
 
+  # Backend CakePHP
   backend:
-    image: djrofr/breco-backend:latest    
+    image: ${DOCKER_USERNAME}/breco-backend:latest
     build:
       context: ./backend/breco
       dockerfile: Dockerfile-backend
     container_name: breco_backend
+    environment:
+      DOCKER_ENV: "true"
+      DEBUG: "false"
+      DATABASE_URL: "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DB}"
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
+      EMAIL_FROM: noreply@breco.fr
     ports:
       - "8765:9000"
-    environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DB=${MYSQL_DB}
-      - EMAIL_HOST=mailhog
-      - EMAIL_PORT=1025
-      - EMAIL_FROM=noreply@breco.fr
     volumes:
       - ./backend/breco/src:/app/src
-      - ./csv:/app/csv                     
+      - ./csv:/app/csv
       - ./backend/breco/config:/app/config
       - ./backend/breco/webroot:/app/webroot
       - ./backend/breco/bin:/app/bin
       - ./backend/breco/templates:/app/templates
       - ./backend/breco/resources:/app/resources
+      - ./backend/breco/vendor:/app/vendor
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - breco_network
-    healthcheck:
-      test: ["CMD", "php", "-r", "exit(file_exists('/app/logs') ? 0 : 1);"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
+  # Nginx (Reverse Proxy for Backend)
   nginx:
     build:
       context: .
       dockerfile: Dockerfile.nginx
     container_name: breco_nginx
     ports:
-      - "8081:80"
+      - "8081:80"    # Expose Nginx on host port 8081 instead of default 80
+    volumes:
+      - ./backend/breco/webroot:/app/webroot
     networks:
       - breco_network
     depends_on:
       - backend
 
+  # Frontend Vue 3
   frontend:
     image: ${DOCKER_USERNAME}/breco-frontend:latest
     build:
@@ -75,9 +78,9 @@ services:
         VITE_API_URL: ${VITE_API_URL}
     container_name: breco_frontend
     environment:
-      VITE_API_URL: ${VITE_API_URL}
+      VITE_API_URL: ${VITE_API_URL} # e.g., http://localhost:8081/api
     ports:
-      - "3001:3000"
+      - "3001:3000"    # Expose Frontend on host port 3001 instead of default 3000
     depends_on:
       - backend
     networks:
@@ -93,29 +96,8 @@ services:
     networks:
       - breco_network
 
-  # Jenkins CI/CD
-  jenkins:
-    build:
-      context: ./jenkins
-      dockerfile: Dockerfile
-    image: breco-jenkins:2.541.1
-    container_name: breco-jenkins
-    restart: unless-stopped
-    privileged: true
-    user: root
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins-data:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - breco_network
-
 volumes:
   mysql_data:
-  jenkins-data:
-    external: true
 
 networks:
   breco_network:

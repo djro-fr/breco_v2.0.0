@@ -65,7 +65,9 @@ require CAKE . 'functions.php';
  * security risks. See https://github.com/josegonzalez/php-dotenv#general-security-information
  * for more information for recommended practices.
 */
-if (file_exists(CONFIG . '.env')) {
+
+// load .env only if docker environment variable is not set, to avoid conflicts with Docker's environment variable handling
+if (file_exists(CONFIG . '.env') && !getenv('DOCKER_ENV')) {
     if (class_exists('\josegonzalez\Dotenv\Loader')) {
         $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
         $dotenv->parse()
@@ -95,6 +97,17 @@ try {
 if (file_exists(CONFIG . 'app_local.php')) {
     Configure::load('app_local', 'default');
 }
+
+
+/*
+ * Load SwaggerBake configuration
+ */
+try {
+    Configure::load('swagger_bake', 'default');
+} catch (\Exception $e) {
+    // SwaggerBake config not found, skip
+}
+
 
 /*
  * When debug = true the metadata cache should only last for a short time.

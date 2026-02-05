@@ -74,9 +74,9 @@ class LocationsController extends AppController
     }
 
     /**
-     * Search locations by name
+     * Search locations by town name or town postal code beginning
      *
-     * GET /api/locations/search?q=Parking
+     * GET /api/locations/search?q=Ren or /api/locations/search?q=35
      *
      * @return \Cake\Http\Response
      */
@@ -100,10 +100,18 @@ class LocationsController extends AppController
             $locationsTable = $this->fetchTable('Locations');
 
             $locations = $locationsTable->find()
-                ->contain(['Towns'])
-                ->where(['Locations.name LIKE' => '%' . $query . '%'])
-                ->orderBy(['Locations.name' => 'ASC'])
-                ->limit(50)
+                ->contain(['Towns']) // automatically joins the Towns table
+                ->where([
+                    'OR' => [
+                        'Towns.name LIKE' => $query . '%',
+                        'Towns.postal_code LIKE' => $query . '%'
+                    ]
+                ])
+                ->orderBy([
+                    'Towns.name' => 'ASC',
+                    'Locations.name' => 'ASC'
+                ])
+                ->limit(10)
                 ->all();
 
             $result = [];

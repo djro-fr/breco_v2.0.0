@@ -29,6 +29,7 @@ services:
       dockerfile: Dockerfile-backend
     container_name: breco_backend
     environment:
+      DOCKER_ENV: "true"
       DEBUG: "false"
       DATABASE_URL: "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DB}"
       JWT_SECRET: ${JWT_SECRET}
@@ -45,6 +46,7 @@ services:
       - ./backend/breco/bin:/app/bin
       - ./backend/breco/templates:/app/templates
       - ./backend/breco/resources:/app/resources
+      - ./backend/breco/vendor:/app/vendor
     depends_on:
       mysql:
         condition: service_healthy
@@ -58,7 +60,9 @@ services:
       dockerfile: Dockerfile.nginx
     container_name: breco_nginx
     ports:
-      - "8081:80"    # Expose Nginx on host port 8081 instead of default 80
+      - "8081:80"    # Expose Nginx on host port 8081 instead of default 80    
+    volumes:
+      - ./backend/breco/webroot:/app/webroot 
     networks:
       - breco_network
     depends_on:

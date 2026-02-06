@@ -15,19 +15,19 @@
     },
     "servers": [
         {
-            "url": "http:\/\/localhost:8081\/api",
+            "url": "http:\/\/localhost:8081",
             "description": "Local development - Nginx reverse proxy"
         },
         {
-            "url": "http:\/\/localhost:8765\/api",
+            "url": "http:\/\/localhost:8765",
             "description": "Local development - PHP-FPM direct access"
         },
         {
-            "url": "http:\/\/37.59.101.232:8081\/api",
+            "url": "http:\/\/37.59.101.232:8081",
             "description": "VPS production - Nginx reverse proxy"
         },
         {
-            "url": "http:\/\/37.59.101.232:8765\/api",
+            "url": "http:\/\/37.59.101.232:8765",
             "description": "VPS production - PHP-FPM direct access"
         }
     ],

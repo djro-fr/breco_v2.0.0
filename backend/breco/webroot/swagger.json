@@ -33,7 +33,7 @@
     ],
     "tags": [
         {
-            "name": "Authentication",
+            "name": "Auth",
             "description": "Authentication endpoints (registration, login, verification)"
         },
         {

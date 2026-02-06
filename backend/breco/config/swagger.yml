@@ -23,7 +23,7 @@ servers:
     description: VPS production - PHP-FPM direct access
 
 tags:
-  - name: Authentication
+  - name: Auth
     description: Authentication endpoints (registration, login, verification)
   - name: Locations
     description: Management of carpooling places

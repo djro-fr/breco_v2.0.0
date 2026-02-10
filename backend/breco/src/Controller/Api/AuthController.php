@@ -1,27 +1,45 @@
 <?php
-// backend\breco\src\Controller\Api\AuthController.php
+declare(strict_types=1);
+
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
-use Firebase\JWT\JWT;
-use App\Service\EmailService;
-use Cake\I18n\DateTime; // A CakePHP class to manipulate dates/times in an immutable way, to create expiration times (24h)
+use App\Service\Auth\AuthService;
+use App\Dto\Auth\LoginRequest;
+use App\Dto\Auth\RegisterRequest;
+use Cake\Http\Response;
 
+/**
+ * Auth Controller
+ *
+ * Handles authentication operations
+ */
 class AuthController extends AppController
 {
-    // Common setup for all actions
+    private AuthService $authService;
+
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->authService = new AuthService();
+    }
+
+    /**
+     * Handle JSON body parsing
+     */
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
 
         $this->response = $this->response->withType('application/json');
 
-        // Handle OPTIONS
+        // Handle OPTIONS for CORS
         if ($this->request->getMethod() === 'OPTIONS') {
             $this->autoRender = false;
             return;
         }
 
+        // Parse JSON body
         if ($this->request->is('json')) {
             $this->request = $this->request->withParsedBody(
                 json_decode((string)$this->request->getBody(), true) ?? []
@@ -29,309 +47,215 @@ class AuthController extends AppController
         }
     }
 
-    // POST /api/auth/login - User login with JWT token
-    public function login()
+    /**
+     * Login user
+     * POST /api/auth/login
+     */
+    public function login(): Response
     {
         $this->request->allowMethod(['post']);
-        $this->response = $this->response->withType('application/json');
 
-        $data = $this->request->getData();
+        try {
+            $data = $this->request->getData();
 
-        // Validate data
-        if (empty($data['email']) || empty($data['password'])) {
+            $loginRequest = new LoginRequest(
+                $data['email'] ?? '',
+                $data['password'] ?? ''
+            );
+
+            $result = $this->authService->login($loginRequest);
+
+            return $this->response
+                ->withStatus(200)
+                ->withStringBody(json_encode($result));
+
+        } catch (\InvalidArgumentException $e) {
             return $this->response
                 ->withStatus(422)
                 ->withStringBody(json_encode([
-                    'error' => 'E-mail et mot de passe requis'
+                    'error' => $e->getMessage()
+                ]));
+
+        } catch (\RuntimeException $e) {
+            return $this->response
+                ->withStatus($e->getCode() ?: 500)
+                ->withStringBody(json_encode([
+                    'error' => $e->getMessage()
+                ]));
+
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), 'error');
+
+            return $this->response
+                ->withStatus(500)
+                ->withStringBody(json_encode([
+                    'error' => 'Server error'
                 ]));
         }
+    }
 
-        // Search for the user
-        $usersTable = $this->fetchTable('Users');
-        $user = $usersTable->find()
-            ->where(['email' => $data['email']])
-            ->first();
+    /**
+     * Register new user
+     * POST /api/auth/register
+     */
+    public function register(): Response
+    {
+        $this->request->allowMethod(['post']);
 
-        if (!$user || !password_verify($data['password'], $user->password)) {
+        try {
+            $data = $this->request->getData();
+
+            $registerRequest = new RegisterRequest(
+                $data['email'] ?? '',
+                $data['password'] ?? '',
+                $data['firstName'] ?? '',
+                $data['lastName'] ?? '',
+                $data['phone'] ?? '',
+                $data['gender'] ?? null,
+                isset($data['age']) ? (int)$data['age'] : null
+            );
+
+            $result = $this->authService->register($registerRequest);
+
+            return $this->response
+                ->withStatus(201)
+                ->withStringBody(json_encode($result));
+
+        } catch (\InvalidArgumentException $e) {
+            return $this->response
+                ->withStatus(422)
+                ->withStringBody(json_encode([
+                    'error' => $e->getMessage()
+                ]));
+
+        } catch (\RuntimeException $e) {
+            return $this->response
+                ->withStatus($e->getCode() ?: 500)
+                ->withStringBody(json_encode([
+                    'error' => $e->getMessage()
+                ]));
+
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), 'error');
+
+            return $this->response
+                ->withStatus(500)
+                ->withStringBody(json_encode([
+                    'error' => 'Server error'
+                ]));
+        }
+    }
+
+    /**
+     * Verify email with token
+     * GET /api/auth/verify-email/{token}
+     */
+    public function verifyEmail($token = null): Response
+    {
+        $this->request->allowMethod(['get']);
+
+        try {
+            if (!$token) {
+                throw new \InvalidArgumentException('Token is required');
+            }
+
+            $result = $this->authService->verifyEmail($token);
+
+            return $this->response
+                ->withStatus(200)
+                ->withStringBody(json_encode($result));
+
+        } catch (\InvalidArgumentException $e) {
+            return $this->response
+                ->withStatus(400)
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]));
+
+        } catch (\RuntimeException $e) {
+            return $this->response
+                ->withStatus($e->getCode() ?: 500)
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]));
+
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), 'error');
+
+            return $this->response
+                ->withStatus(500)
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'Server error'
+                ]));
+        }
+    }
+
+    /**
+     * Verify JWT token
+     * GET /api/auth/verify
+     */
+    public function verify(): Response
+    {
+        $this->request->allowMethod(['get']);
+
+        try {
+            $token = $this->request->getHeaderLine('Authorization');
+
+            if (empty($token)) {
+                throw new \RuntimeException('Token required', 401);
+            }
+
+            // Remove "Bearer " prefix
+            $token = str_replace('Bearer ', '', $token);
+
+            $user = $this->authService->verifyToken($token);
+
+            return $this->response
+                ->withStatus(200)
+                ->withStringBody(json_encode($user));
+
+        } catch (\RuntimeException $e) {
+            return $this->response
+                ->withStatus($e->getCode() ?: 401)
+                ->withStringBody(json_encode([
+                    'error' => $e->getMessage()
+                ]));
+
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), 'error');
+
             return $this->response
                 ->withStatus(401)
                 ->withStringBody(json_encode([
-                    'error' => 'E-mail ou mot de passe incorrect'
+                    'error' => 'Invalid token'
                 ]));
         }
-
-        // Check if email is verified
-        if (!$user->email_verified) {
-            return $this->response
-                ->withStatus(403)
-                ->withStringBody(json_encode([
-                    'error' => 'Veuillez vérifier votre adresse e-mail avant de vous connecter'
-                ]));
-        }
-
-        // Generate the JWT token
-        $token = JWT::encode(
-            [
-                'sub' => $user->id,
-                'email' => $user->email,
-                'iat' => time(),
-                'exp' => time() + (7 * 24 * 60 * 60) // 7 days
-            ],
-            $this->getJwtSecret(),
-            'HS256'
-        );
-
-        return $this->response->withStringBody(json_encode([
-            'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'email' => $user->email,
-            ]
-        ]));
     }
 
-    // POST /api/auth/register - User registration
-    public function register()
+    /**
+     * Logout (client-side token removal)
+     * POST /api/auth/logout
+     */
+    public function logout(): Response
     {
         $this->request->allowMethod(['post']);
-        $this->response = $this->response->withType('application/json');
-
-        $data = $this->request->getData();
-
-        // Validate data
-        if (empty($data['email']) || empty($data['password']) ||
-            empty($data['firstName']) || empty($data['lastName']) ||
-            empty($data['phone'])) {
-            return $this->response
-                ->withStatus(422)
-                ->withStringBody(json_encode([
-                    'error' => 'Tous les champs sont requis'
-                ]));
-        }
-
-        $usersTable = $this->fetchTable('Users');
-
-        // Check if the email already exists
-        $existingUser = $usersTable->find()
-            ->where(['email' => $data['email']])
-            ->first();
-
-        if ($existingUser) {
-            return $this->response
-                ->withStatus(422)
-                ->withStringBody(json_encode([
-                    'error' => 'E-mail déjà utilisé'
-                ]));
-        }
-
-        // Generate verification token
-        $verificationToken = bin2hex(random_bytes(32));
-        $expiresAt = new DateTime('+24 hours');
-
-        // Create a new user
-        $user = $usersTable->newEntity([
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'password' => password_hash($data['password'], PASSWORD_BCRYPT),
-            'first_name' => $data['firstName'],
-            'last_name' => $data['lastName'],
-            'driver' => $data['driver'] ?? false,
-            'gender' => $data['gender'] ?? null,
-            'zip_code' => $data['zipCode'] ?? null,
-            'town' => $data['town'] ?? null,
-            'car_model' => $data['carModel'] ?? null,
-            'car_color' => $data['carColor'] ?? null,
-            'car_seat_nb' => $data['carSeatNb'] ?? null,
-            'email_verified' => false,
-            'verification_token' => $verificationToken,
-            'verification_token_expires' => $expiresAt
-        ]);
-
-        // error_log('=== DEBUG REGISTER ===');
-        // error_log('Received data: ' . print_r($data, true));
-        // error_log('User entity: ' . print_r($user->toArray(), true));
-        // if ($user->getErrors()) {
-        //     error_log('Validation errors: ' . print_r($user->getErrors(), true));
-        // }
-
-        if (!$usersTable->save($user)) {
-            return $this->response
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'error' => 'Erreur lors de l\'inscription'
-                ]));
-        }
-
-        error_log('=== DEBUG EMAIL ===');
-        error_log('User email: ' . $user->email);
-        error_log('Token: ' . $verificationToken);
-        error_log('First name: ' . $user->first_name);
-
-        // Send verification email
-        $emailService = new EmailService();
-        $emailSent = $emailService->sendVerificationEmail(
-            $user->email,
-            $verificationToken,
-            $user->first_name
-        );
-
-        error_log('Email sent result: ' . ($emailSent ? 'TRUE' : 'FALSE'));
-
-        if (!$emailSent) {
-            // User created but email could not be sent
-            return $this->response
-                ->withStatus(201)
-                ->withStringBody(json_encode([
-                    'success' => true,
-                    'message' => 'Inscription réussie, mais l\'email de vérification n\'a pas pu être envoyé. Contactez le support.',
-                    'requiresVerification' => true
-                ]));
-        }
-
-        return $this->response
-            ->withStatus(201)
-            ->withStringBody(json_encode([
-                'success' => true,
-                'message' => 'Inscription réussie ! Un email de vérification a été envoyé à votre adresse.',
-                'requiresVerification' => true
-            ]));
-    }
-
-    // POST /api/auth/verify-email/:token - verify email with token
-    public function verifyEmail($token = null)
-    {
-        error_log("=== VERIFY EMAIL CALLED WITH TOKEN: " . ($token ?? 'NULL') . " ===");
-        $this->request->allowMethod(['get']);
-        $this->response = $this->response->withType('application/json');
-
-        if (!$token) {
-            return $this->response
-                ->withStatus(400)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Token manquant'
-                ]));
-        }
-
-        $usersTable = $this->fetchTable('Users');
-
-        // Find user with this token and check if it's not expired
-        $user = $usersTable->find()
-            ->where([
-                'verification_token' => $token,
-                'verification_token_expires >' => new DateTime()
-            ])
-            ->first();
-
-        if (!$user) {
-            return $this->response
-                ->withStatus(400)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Token invalide ou expiré'
-                ]));
-        }
-
-        // Verify email
-        $user->email_verified = true;
-        $user->verification_token = null;
-        $user->verification_token_expires = null;
-
-        if (!$usersTable->save($user)) {
-            return $this->response
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Erreur lors de la vérification'
-                ]));
-        }
 
         return $this->response
             ->withStatus(200)
             ->withStringBody(json_encode([
-                'success' => true,
-                'message' => 'Email vérifié avec succès ! Vous pouvez maintenant vous connecter.'
+                'message' => 'Logout successful'
             ]));
     }
 
-    // POST /api/auth/verify - check the token
-    public function verify()
-    {
-        $this->request->allowMethod(['get']);
-        $this->response = $this->response->withType('application/json');
-
-        $token = $this->request->getHeaderLine('Authorization');
-
-        if (empty($token)) {
-            return $this->response
-                ->withStatus(401)
-                ->withStringBody(json_encode([
-                    'error' => 'Token requis'
-                ]));
-        }
-
-        // Remove "Bearer " from token
-        $token = str_replace('Bearer ', '', $token);
-
-        try {
-            $decoded = JWT::decode($token, new \Firebase\JWT\Key($this->getJwtSecret(), 'HS256'));
-
-            $usersTable = $this->fetchTable('Users');
-            $user = $usersTable->get($decoded->sub);
-
-            return $this->response->withStringBody(json_encode([
-                'id' => $user->id,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'firstName' => $user->first_name,
-                'lastName' => $user->last_name,
-                'driver' => $user->driver,
-                'createdAt' => $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : null,
-                'gender' => $user->gender,
-                'zipCode' => $user->zip_code,
-                'town' => $user->town,
-                'carModel' => $user->car_model,
-                'carColor' => $user->car_color,
-                'carSeatNb' => $user->car_seat_nb,
-            ]));
-        } catch (\Exception $e) {
-            return $this->response
-                ->withStatus(401)
-                ->withStringBody(json_encode([
-                    'error' => 'Token invalide'
-                ]));
-        }
-    }
-
-    // POST /api/auth/logout - User logout
-    public function logout()
-    {
-        $this->request->allowMethod(['post']);
-        $this->response = $this->response->withType('application/json');
-
-        // The logout is done on the frontend side (remove the token)
-        return $this->response->withStringBody(json_encode([
-            'message' => 'Déconnexion réussie'
-        ]));
-    }
-
-    // POST /api/auth/test - test endpoint
-    public function test()
-    {
-        $this->response = $this->response->withType('application/json');
-        return $this->response->withStringBody(json_encode(['message' => 'OK']));
-    }
-
-    // Handle OPTIONS requests
+    /**
+     * Handle OPTIONS requests for CORS
+     */
     public function options()
     {
         $this->autoRender = false;
         return $this->response->withStatus(200)->withStringBody('');
-    }
-
-    // Helper function to get JWT secret
-    private function getJwtSecret(): string
-    {
-        return env('JWT_SECRET', 'your-secret-key');
     }
 }

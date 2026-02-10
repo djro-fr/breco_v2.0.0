@@ -24,6 +24,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.12.2",
     "chromedriver": "^141.0.4",

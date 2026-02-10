@@ -9,6 +9,7 @@ import { UserSchema } from '@/domain/entities/User'
 import type { CreateUserData } from '@/domain/entities/User'
 import { ZodError } from 'zod'
 
+
 type RegisterFormField = keyof CreateUserData | 'password'
 
 const router = useRouter()
@@ -17,6 +18,10 @@ const authStore = useAuthStore()
 const email = ref('')
 const phone = ref('')
 const password = ref('')
+const passwordFieldType = ref<'password' | 'text'>('password')
+const passwordConfirmFieldType = ref<'password' | 'text'>('password')
+const passwordConfirm = ref('')
+
 const firstName = ref('')
 const lastName = ref('')
 const driver = ref(false)
@@ -28,7 +33,6 @@ const carColor = ref('')
 const carSeatNb = ref(0)
 
 const currentStep = ref(1)
-const passwordConfirm = ref('')
 
 // Errors per field
 const errors = ref<Record<string, string>>({})
@@ -85,6 +89,16 @@ const validateField = (field: RegisterFormField, value: string | number | boolea
 
 const handleBlur = (field: RegisterFormField, value: string | number | boolean) => {
   validateField(field, value)
+}
+
+const togglePasswordVisibility = () => {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
+}
+
+const togglePasswordConfirmVisibility = () => {
+  passwordConfirmFieldType.value =
+    passwordConfirmFieldType.value === 'password' ? 'text' : 'password'
+
 }
 
 // Step by step validation
@@ -211,7 +225,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
 
 <template>
   <div
-    class="flex self-center flex-col mx-auto px-6 pt-6 pb-9.5 w-full max-w-[580px] bg-white rounded-md shadow-window"
+    class="flex self-center flex-col mx-auto px-6 pt-6 pb-9.5 w-full max-w-145 bg-white rounded-md shadow-window"
   >
     <div class="max-w-full w-full">
       <h1 class="text-center pb-9 mt-0 leading-none font-black text-2xl">Créer un compte Breco</h1>
@@ -251,7 +265,9 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
             Étape {{ currentStep }}/4 : <strong>{{ stepLabels[currentStep - 1] }}</strong>
           </p>
         </div>
-        <div class="-mx-6 mt-4 -mb-3 h-2 bg-white-dark border-t border-dotted border-gray-light"></div>
+        <div
+          class="-mx-6 mt-4 -mb-3 h-2 bg-white-dark border-t border-dotted border-gray-light"
+        ></div>
       </div>
 
       <!-- Step 1: Contact -->
@@ -275,30 +291,52 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
           Nous vous enverrons un e-mail de confirmation
         </p>
 
-        <div class="mb-4">
+        <div class="mb-4 relative">
           <FormInput
             v-model="password"
-            type="password"
+            :type="passwordFieldType"
             placeholder="Mot de passe (min 8 caractères)"
             label="Mot de passe"
             aria-label="Mot de passe"
             required
             :hasError="Boolean(errors.password)"
             @blur="handleBlur('password', password)"
+            class="h-full"
           />
+          <button
+            v-if="password.valueOf().length > 0"
+            type="button"
+            class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
+            @click="togglePasswordVisibility"
+            aria-label="Afficher/masquer le mot de passe"
+          >
+            <i v-if="passwordFieldType === 'password'" class="mdi mdi-eye text-xl"></i>
+            <i v-else class="mdi mdi-eye-off text-xl"></i>
+          </button>
           <p v-if="errors.password" class="error-text mt-1">{{ errors.password }}</p>
         </div>
 
-        <div class="mb-4">
+        <div class="mb-4 relative">
           <FormInput
             v-model="passwordConfirm"
-            type="password"
+            :type="passwordConfirmFieldType"
             placeholder="Confirmez le mot de passe"
             label="Confirmez le mot de passe"
             aria-label="Confirmez le mot de passe"
             required
             :hasError="Boolean(passwordConfirmError)"
+            class="h-full"
           />
+          <button
+            v-if="passwordConfirm.valueOf().length > 0"
+            type="button"
+            class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
+            @click="togglePasswordConfirmVisibility"
+            aria-label="Afficher/masquer la confirmation du mot de passe"
+          >
+            <i v-if="passwordConfirmFieldType === 'password'" class="mdi mdi-eye text-xl"></i>
+            <i v-else class="mdi mdi-eye-off text-xl"></i>
+          </button>
           <p v-if="passwordConfirmError" class="error-text mt-1">{{ passwordConfirmError }}</p>
         </div>
 
@@ -498,20 +536,32 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
       <!-- Step 5: Email Verification -->
       <div v-if="currentStep === 5" class="mb-7.5 text-center">
         <div class="mb-6 flex justify-center">
-          <svg class="h-20 w-20 text-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          <svg
+            class="h-20 w-20 text-primary-light"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            />
           </svg>
         </div>
 
         <h2 class="text-2xl mb-4 text-black font-medium">Vérifiez votre email</h2>
 
         <p class="text-gray-dark mb-6 text-lg">
-          Un email de vérification a été envoyé à <strong class="text-black">{{ email }}</strong>.
+          Un email de vérification a été envoyé à <strong class="text-black">{{ email }}</strong
+          >.
         </p>
 
         <div class="p-4 rounded mb-6 bg-primary-light/10 border border-primary-light">
           <p class="text-md text-gray-dark">
-            📧 Cliquez sur le lien dans l'email pour activer votre compte et commencer à utiliser Breco.
+            📧 Cliquez sur le lien dans l'email pour activer votre compte et commencer à utiliser
+            Breco.
           </p>
         </div>
 
@@ -535,7 +585,12 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
       </div>
 
       <div class="flex gap-3 mb-4" v-if="currentStep < 5">
-        <button v-if="currentStep > 1" type="button" class="btn-secondary max-[768px]:w-[40%]" @click="previousStep">
+        <button
+          v-if="currentStep > 1"
+          type="button"
+          class="btn-secondary max-[768px]:w-[40%]"
+          @click="previousStep"
+        >
           &lt;&nbsp;&nbsp;Retour
         </button>
 

@@ -12,6 +12,7 @@ const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const passwordFieldType = ref<'password' | 'text'>('password')
 
 // Errors per field
 const errors = ref<Record<string, string>>({})
@@ -47,6 +48,11 @@ const handleBlur = (field: string, value: string) => {
     validateField(field, value)
   }
 }
+
+const togglePasswordVisibility = () => {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
+}
+
 
 const handleLogin = async () => {
   // Errors reset
@@ -102,17 +108,28 @@ const handleLogin = async () => {
         <p v-if="errors.email" class="error-text mt-0 mb-4">{{ errors.email }}</p>
       </div>
 
-      <div class="mb-2 max-w-96 block mx-auto">
+      <div class="mb-2 max-w-96 block mx-auto relative">
         <FormInput
           v-model="password"
-          type="password"
+          :type="passwordFieldType"
           placeholder="Mot de passe"
           label="Mot de passe"
           aria-label="Mot de passe"
           required
           :hasError="Boolean(errors.password)"
           @blur="handleBlur('password', password)"
-        />
+          class="h-full"
+          />
+          <button
+            v-if="password.valueOf().length > 0"
+            type="button"
+            class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
+            @click="togglePasswordVisibility"
+            aria-label="Afficher/masquer la confirmation du mot de passe"
+          >
+            <i v-if="passwordFieldType === 'password'" class="mdi mdi-eye text-xl"></i>
+            <i v-else class="mdi mdi-eye-off text-xl"></i>
+          </button>
         <p v-if="errors.password" class="error-text mt-0 mb-4">{{ errors.password }}</p>
       </div>
 

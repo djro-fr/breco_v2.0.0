@@ -135,4 +135,17 @@ class UserRepository
             'verification_token_expires' => $expiresAt
         ]);
     }
+
+    /**
+     * Find all users
+     *
+     * @return array
+     */
+    public function findAll(): array
+    {
+        return $this->table->find()
+            ->enableHydration(false)
+            ->toArray();
+    }
+
 }

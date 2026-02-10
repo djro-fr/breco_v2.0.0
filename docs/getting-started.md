@@ -191,12 +191,34 @@ docker-compose down -v
 # Connect to MySQL
 docker exec -it breco_mysql mysql -u root -p breco_db
 # Password: root
+```
 
+```bash
 # Migrations
 docker-compose exec backend bin/cake migrations migrate
+```
 
+```bash
 # Empty users table
-docker exec -it breco_mysql mysql -u root -p -e "TRUNCATE TABLE users;" breco_db
+docker exec -it breco_mysql mysql -u root -p breco_db
+```
+
+```sql
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE drivers;
+TRUNCATE TABLE passengers;
+TRUNCATE TABLE bookings;
+TRUNCATE TABLE users;
+SET FOREIGN_KEY_CHECKS = 1;
+```
+
+```bash
+# Check empty users table
+docker exec -it breco_mysql mysql -u root -p breco_db
+```
+
+```sql
+SELECT COUNT(*) FROM users;
 ```
 
 ### Tests

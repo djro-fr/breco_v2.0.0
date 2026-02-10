@@ -22,7 +22,7 @@ class RegisterRequest
         ?string $gender = null,
         ?int $age = null
     ) {
-        $this->validate($email, $password, $firstName, $lastName, $phone);
+        $this->validate($email, $password, $firstName, $lastName, $phone, $gender);
 
         $this->email = trim($email);
         $this->password = $password;
@@ -38,11 +38,12 @@ class RegisterRequest
         string $password,
         string $firstName,
         string $lastName,
-        string $phone
+        string $phone,
+        ?string $gender
     ): void {
         // Email
         if (empty($email)) {
-            throw new \InvalidArgumentException('Email is required');
+            throw new \InvalidArgumentException("L'e-mail est obligatoire");
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException('Invalid email format');
@@ -50,34 +51,49 @@ class RegisterRequest
 
         // Password
         if (empty($password)) {
-            throw new \InvalidArgumentException('Password is required');
+            throw new \InvalidArgumentException("Le mot de passe est obligatoire");
         }
-        if (strlen($password) < 6) {
-            throw new \InvalidArgumentException('Password must be at least 6 characters');
+        if (strlen($password) < 8) {
+            throw new \InvalidArgumentException("Le mot de passe doit contenir au moins 8 caractères");
+        }
+        if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/', $password)) {
+            throw new \InvalidArgumentException("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre");
         }
 
         // First name
         if (empty($firstName)) {
-            throw new \InvalidArgumentException('First name is required');
+            throw new \InvalidArgumentException("Le prénom est obligatoire");
         }
-        if (strlen($firstName) < 2) {
-            throw new \InvalidArgumentException('First name must be at least 2 characters');
+        if (strlen($firstName) > 50) {
+            throw new \InvalidArgumentException("Le prénom ne peut pas dépasser 50 caractères");
+        }
+        if (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $firstName)) {
+            throw new \InvalidArgumentException("Le prénom contient des caractères invalides");
         }
 
         // Last name
         if (empty($lastName)) {
-            throw new \InvalidArgumentException('Last name is required');
+            throw new \InvalidArgumentException("Le nom de famille est obligatoire");
         }
-        if (strlen($lastName) < 2) {
-            throw new \InvalidArgumentException('Last name must be at least 2 characters');
+        if (strlen($lastName) > 50) {
+            throw new \InvalidArgumentException("Le nom de famille ne peut pas dépasser 50 caractères");
+        }
+        if (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $lastName)) {
+            throw new \InvalidArgumentException("Le nom de famille contient des caractères invalides");
         }
 
         // Phone
         if (empty($phone)) {
-            throw new \InvalidArgumentException('Phone is required');
+            throw new \InvalidArgumentException('Le numéro de téléphone est obligatoire');
         }
-        if (!preg_match('/^[0-9]{10,15}$/', preg_replace('/[\s\-\.]/', '', $phone))) {
-            throw new \InvalidArgumentException('Invalid phone format');
+        $cleanedPhone = preg_replace('/\s/', '', $phone);
+        if (!preg_match('/^0[1-9][0-9]{8}$/', $cleanedPhone)) {
+            throw new \InvalidArgumentException("Format téléphone invalide (10 chiffres commençant par 0)");
+        }
+
+        // Gender
+        if ($gender !== null && !in_array($gender, ['Homme', 'Femme', 'Ne pas dire'])) {
+            throw new \InvalidArgumentException("Genre invalide");
         }
     }
 

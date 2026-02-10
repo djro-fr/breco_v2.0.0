@@ -20,13 +20,13 @@ class LocationSearchRequest
     {
         if (strlen($query) < 2) {
             throw new \InvalidArgumentException(
-                'Search query must be at least 2 characters'
+                'La recherche doit contenir au moins 2 caractères'
             );
         }
 
         if ($limit < 1 || $limit > 50) {
             throw new \InvalidArgumentException(
-                'Limit must be between 1 and 50'
+                'La limite doit être entre 1 et 50'
             );
         }
     }

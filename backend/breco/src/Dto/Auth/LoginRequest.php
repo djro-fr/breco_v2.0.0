@@ -19,19 +19,21 @@ class LoginRequest
     private function validate(string $email, string $password): void
     {
         if (empty($email)) {
-            throw new \InvalidArgumentException('Email is required');
+            throw new \InvalidArgumentException("L'e-mail est obligatoire");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Invalid email format');
+            throw new \InvalidArgumentException("Le format d'e-mail n'est pas bon");
         }
 
         if (empty($password)) {
-            throw new \InvalidArgumentException('Password is required');
+            throw new \InvalidArgumentException("Le mot de passe est obligatoire");
         }
-
-        if (strlen($password) < 6) {
-            throw new \InvalidArgumentException('Password must be at least 6 characters');
+        if (strlen($password) < 8) {
+            throw new \InvalidArgumentException("Le mot de passe doit contenir au moins 8 caractères");
+        }
+        if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/', $password)) {
+            throw new \InvalidArgumentException("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre");
         }
     }
 

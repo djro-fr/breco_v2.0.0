@@ -28,7 +28,6 @@ export const emailSchema = z
     message: "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre"
   })
 
-  // nameSchema factory to customize field name in error messages
   export const nameSchema = (fieldName: string) =>
     z
       .string({ message: `Le ${fieldName} est requis` })
@@ -37,3 +36,11 @@ export const emailSchema = z
       .refine((val) => /^[a-zA-ZÀ-ÿ\s'-]+$/.test(val), {
         message: `Le ${fieldName} contient des caractères invalides`
       })
+
+  export const hourSchema = z
+  .string()
+  .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+    message: "Format d'heure invalide (HH:MM)"
+  })
+  .optional()
+

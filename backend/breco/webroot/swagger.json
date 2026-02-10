@@ -40,7 +40,7 @@
     "paths": {
         "\/api\/auth\/login": {
             "post": {
-                "operationId": "auth:login:post",
+                "operationId": "api:auth:login:post",
                 "summary": "",
                 "description": "",
                 "tags": [
@@ -63,7 +63,7 @@
         },
         "\/api\/auth\/logout": {
             "post": {
-                "operationId": "auth:logout:post",
+                "operationId": "api:auth:logout:post",
                 "summary": "",
                 "description": "",
                 "tags": [
@@ -86,7 +86,7 @@
         },
         "\/api\/auth\/register": {
             "post": {
-                "operationId": "auth:register:post",
+                "operationId": "api:auth:register:post",
                 "summary": "",
                 "description": "",
                 "tags": [
@@ -109,7 +109,7 @@
         },
         "\/api\/auth\/verify": {
             "get": {
-                "operationId": "auth:verify:get",
+                "operationId": "api:auth:verify:get",
                 "summary": "",
                 "description": "",
                 "tags": [
@@ -132,7 +132,7 @@
         },
         "\/api\/auth\/verify-email\/{token}": {
             "get": {
-                "operationId": "auth:verifyemail:get",
+                "operationId": "api:auth:verifyemail:get",
                 "summary": "",
                 "description": "",
                 "tags": [
@@ -164,7 +164,7 @@
         },
         "\/api\/locations": {
             "get": {
-                "operationId": "locations:index:get",
+                "operationId": "api:locations:index:get",
                 "summary": "List all locations",
                 "description": "GET \/api\/locations",
                 "tags": [
@@ -187,7 +187,7 @@
         },
         "\/api\/locations\/by-town\/{town_id}": {
             "get": {
-                "operationId": "locations:bytown:get",
+                "operationId": "api:locations:bytown:get",
                 "summary": "Get locations by town",
                 "description": "GET \/api\/locations\/by-town\/:town_id",
                 "tags": [
@@ -219,7 +219,7 @@
         },
         "\/api\/locations\/by-type\/{type}": {
             "get": {
-                "operationId": "locations:bytype:get",
+                "operationId": "api:locations:bytype:get",
                 "summary": "Get locations by type",
                 "description": "GET \/api\/locations\/by-type\/:type",
                 "tags": [
@@ -251,7 +251,7 @@
         },
         "\/api\/locations\/search": {
             "get": {
-                "operationId": "locations:search:get",
+                "operationId": "api:locations:search:get",
                 "summary": "Search locations by town name or town postal code beginning",
                 "description": "GET \/api\/locations\/search?q=Ren or \/api\/locations\/search?q=35",
                 "tags": [
@@ -274,7 +274,7 @@
         },
         "\/api\/locations\/{id}": {
             "get": {
-                "operationId": "locations:view:get",
+                "operationId": "api:locations:view:get",
                 "summary": "View a single location",
                 "description": "GET \/api\/locations\/:id",
                 "tags": [
@@ -306,9 +306,9 @@
         },
         "\/api\/towns": {
             "get": {
-                "operationId": "towns:index:get",
+                "operationId": "api:towns:index:get",
                 "summary": "List all towns",
-                "description": "GET \/api\/towns",
+                "description": "GET \/api\/towns\nGET \/api\/towns?limit=50&offset=0",
                 "tags": [
                     "Towns"
                 ],
@@ -329,9 +329,9 @@
         },
         "\/api\/towns\/search": {
             "get": {
-                "operationId": "towns:search:get",
-                "summary": "Search towns by name",
-                "description": "GET \/api\/towns\/search?q=Rennes",
+                "operationId": "api:towns:search:get",
+                "summary": "Search towns by name or postal code",
+                "description": "GET \/api\/towns\/search?q=Rennes&limit=10",
                 "tags": [
                     "Towns"
                 ],
@@ -352,7 +352,7 @@
         },
         "\/api\/towns\/{id}": {
             "get": {
-                "operationId": "towns:view:get",
+                "operationId": "api:towns:view:get",
                 "summary": "View a single town",
                 "description": "GET \/api\/towns\/:id",
                 "tags": [
@@ -384,7 +384,7 @@
         },
         "\/api\/users": {
             "get": {
-                "operationId": "users:index:get",
+                "operationId": "api:users:index:get",
                 "summary": "List all users",
                 "description": "GET \/api\/users",
                 "tags": [

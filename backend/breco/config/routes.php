@@ -56,7 +56,7 @@ return function (RouteBuilder $routes): void {
         ['plugin' => 'SwaggerBake', 'controller' => 'Swagger', 'action' => 'index']
     );
 
-    $routes->scope('/api', ['routeClass' => Route::class], function (RouteBuilder $routes): void {
+    $routes->scope('/api', ['prefix' => 'Api', 'routeClass' => Route::class], function (RouteBuilder $routes): void {
         $routes->setExtensions(['json']);
 
         // Health check route

@@ -1,7 +1,8 @@
 <?php
-// backend\breco\src\Controller\AuthController.php
-namespace App\Controller;
+// backend\breco\src\Controller\Api\AuthController.php
+namespace App\Controller\Api;
 
+use App\Controller\AppController;
 use Firebase\JWT\JWT;
 use App\Service\EmailService;
 use Cake\I18n\DateTime; // A CakePHP class to manipulate dates/times in an immutable way, to create expiration times (24h)

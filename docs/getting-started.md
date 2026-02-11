@@ -15,9 +15,10 @@ Check that you have installed:
 docker --version          # 20.10+
 docker-compose --version  # 2.0+
 
-# Node.js & npm
+# Node.js & npm + bun
 node --version           # 18.0+
 npm --version            # 9.0+
+bun --version            # 1.3+
 
 # Git
 git --version            # 2.0+
@@ -83,7 +84,7 @@ You should see:
 curl http://localhost:8081/api/health
 
 # Should return:
-# {"status":"ok","service":"breco-backend","timestamp":"...","version":"2.0.0"}
+# {"status":"ok","service":"breco-backend","timestamp":"..."}
 ```
 
 ### Frontend
@@ -116,8 +117,8 @@ docker-compose -f docker-compose.linux.yml up -d backend mysql nginx mailhog
 
 ```bash
 cd frontend/breco
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Frontend will be available at: http://localhost:5173 (Vite dev server)
@@ -132,31 +133,68 @@ Frontend will be available at: http://localhost:5173 (Vite dev server)
 ```text
 breco_v2_0_0/
 ├── frontend/
-│   └── breco/              # Vue.js application
+│   └── breco/              # Vue.js application (TypeScript + Vite)
 │       ├── src/
-│       │   ├── domain/     # Entities, Repositories (interfaces)
-│       │   ├── data/       # DataSources, Models, Repositories (impls)
-│       │   ├── composables/# Reactive logic (useUser, useAuth)
-│       │   ├── components/ # Vue components
-│       │   └── views/      # Pages
-│       └── package.json
+│       │   ├── domain/
+│       │   │   ├── entities/      # Zod schemas (User.ts, Town.ts)
+│       │   │   ├── repositories/  # Interfaces (IAuthRepository.ts)
+│       │   │   └── exceptions/    # AppException.ts
+│       │   ├── application/
+│       │   │   └── usecases/      # LoginUseCase.ts, RegisterUseCase.ts
+│       │   ├── data/
+│       │   │   ├── datasources/   # API calls (AuthRemoteDataSource.ts)
+│       │   │   ├── models/        # UserModel.ts (DTO ↔ Entity + Zod)
+│       │   │   └── repositories/  # AuthRepositoryImpl.ts
+│       │   ├── presentation/
+│       │   │   ├── composables/   # useAuth.ts (reactive state)
+│       │   │   └── features/      # LoginForm.vue, RegisterForm.vue
+│       │   ├── shared/
+│       │   │   └── api/           # axiosInstance.ts
+│       │   └── utils/             # validationSchemas.ts (Zod)
+│       ├── public/
+│       ├── package.json
+│       └── vite.config.ts
 │
 ├── backend/
-│   └── breco/              # CakePHP application
+│   └── breco/              # CakePHP 5 application (PHP 8.3)
 │       ├── src/
-│       │   ├── Controller/ # API controllers
-│       │   ├── Model/      # Entities, Tables
-│       │   └── Service/    # Business services
-│       ├── config/         # Configuration
-│       └── composer.json
+│       │   ├── Controller/
+│       │   │   └── Api/           # TownsController.php (HTTP)
+│       │   ├── Service/
+│       │   │   ├── Auth/          # AuthService.php (business logic)
+│       │   │   ├── Town/          # TownSearchService.php
+│       │   │   ├── Location/      # LocationSearchService.php
+│       │   │   └── User/          # UserService.php
+│       │   ├── Repository/        # TownRepository.php (SQL queries)
+│       │   ├── Dto/
+│       │   │   ├── Auth/          # LoginRequest.php (validation)
+│       │   │   ├── Town/          # TownSearchRequest.php
+│       │   │   └── Location/      # LocationSearchRequest.php
+│       │   └── Model/
+│       │       ├── Entity/        # User.php, Town.php (CakePHP ORM)
+│       │       └── Table/         # UsersTable.php, TownsTable.php
+│       ├── config/
+│       │   ├── routes.php
+│       │   ├── app.php
+│       │   └── .env
+│       ├── logs/
+│       ├── tmp/
+│       ├── vendor/
+│       ├── composer.json
+│       └── Dockerfile-backend
 │
 ├── nginx/
-│   └── default.conf        # Nginx configuration
+│   └── default.conf        # Nginx reverse proxy configuration
 │
-├── docker-compose.yml      # Docker Windows
-├── docker-compose.linux.yml# Docker Linux
-├── Jenkinsfile             # CI/CD pipeline
-└── docs/                   # Documentation
+├── mysql/
+│   └── init.sql            # Database initialization
+│
+├── docker-compose.yml      # Docker Windows (Dev)
+├── docker-compose.linux.yml# Docker Linux (VPS)
+├── Jenkinsfile             # CI/CD pipeline (build + deploy)
+└── docs/
+    ├── ARCHITECTURE.md     # Clean Architecture documentation
+    └── API.md              # API endpoints documentation
 ```
 
 ---
@@ -190,7 +228,7 @@ docker-compose down -v
 ```bash
 # Connect to MySQL
 docker exec -it breco_mysql mysql -u root -p breco_db
-# Password: root
+# With root password
 ```
 
 ```bash
@@ -241,7 +279,7 @@ docker-compose exec backend vendor/bin/phpunit
 
 ### 1. Create a user account
 
-**Via Postman/Insomnia**:
+**Via Postman**:
 
 ```http
 POST http://localhost:8081/api/auth/register
@@ -258,7 +296,7 @@ Content-Type: application/json
 **Via the interface**:
 
 1. Open http://localhost:5173
-2. Go to "Sign up"
+2. Go to "Inscription (register)'"
 3. Fill in the form
 
 ### 2. Verify email
@@ -396,15 +434,6 @@ Create `.vscode/settings.json`:
 }
 ```
 
-### Git Hooks (optional)
-
-```bash
-# Install husky for pre-commit hooks
-cd frontend/breco
-npm install -D husky
-npx husky init
-```
-
 ---
 
 ## Development Workflow
@@ -440,4 +469,4 @@ docker-compose up -d
 
 ---
 
-**Last updated**: January 29, 2026
+**Last updated**: February 11, 2026

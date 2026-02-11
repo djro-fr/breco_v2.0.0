@@ -1,16 +1,34 @@
 <script setup lang="ts">
+// frontend\breco\src\presentation\app\pages\SearchPage.vue
+
 import { hourSchema } from '@/utils/validationSchemas'
 import { ref } from 'vue'
 import { ZodError } from 'zod'
+import TownAutocomplete from '@/presentation/features/search/components/TownAutocomplete.vue'
+import type { Town } from '@/domain/entities/Town'
 
 type SearchFormField = 'heureDepart' | 'heureArrivee'
 
-// Form data
+const villeDepart = ref('')
+const villeArrivee = ref('')
+const townDepartId = ref<number | null>(null)
+const townArriveeId = ref<number | null>(null)
 const heureDepart = ref('')
 const heureArrivee = ref('')
 
 // Errors per field
 const errors = ref<Record<string, string>>({})
+
+// Handle town selection
+const handleDepartSelect = (town: Town) => {
+  townDepartId.value = town.id
+  console.log('Ville de départ sélectionnée:', town.name, town.id)
+}
+
+const handleArriveeSelect = (town: Town) => {
+  townArriveeId.value = town.id
+  console.log('Ville d\'arrivée sélectionnée:', town.name, town.id)
+}
 
 // Auto-format time as user types (HH:MM)
 const formatTimeInput = (value: string): string => {
@@ -104,8 +122,16 @@ const handleSubmit = (event: Event) => {
     if (heureArrivee.value) {
       hourSchema.parse(heureArrivee.value)
     }
+    // prepare search data for backend
+    const searchData = {
+      townDepartId: townDepartId.value,
+      townArriveeId: townArriveeId.value,
+      heureDepart: heureDepart.value,
+      heureArrivee: heureArrivee.value
+    }
     // Send data to backend
-    console.log('Formulaire valide !', { heureDepart: heureDepart.value, heureArrivee: heureArrivee.value })
+    console.log('Formulaire valide !', { searchData })
+    // TODO: Envoyer au backend pour rechercher les trajets
   } catch (error) {
     if (error instanceof ZodError) {
       // Global error handling
@@ -137,11 +163,13 @@ const handleSubmit = (event: Event) => {
               <label for="villeDepart" class="text-primary-dark text-md font-semibold"
                 >Depuis</label
               >
-              <input type="text" id="villeDepart" name="villeDepart" autocomplete="off" class="focus:border-action" />
-              <ul
-                id="listeDepart"
-                class="hidden absolute z-2 w-[calc(90%+4px)] shadow-window t-[37px] bg-white pl-0"
-              ></ul>
+              <TownAutocomplete
+                id="villeDepart"
+                name="villeDepart"
+                v-model="villeDepart"
+                placeholder="Rechercher une ville..."
+                @select="handleDepartSelect"
+              />
             </div>
             <div class="relative w-20 flex flex-col">
               <label for="heureDepart" class="text-primary-dark text-md font-semibold">À</label>
@@ -154,12 +182,12 @@ const handleSubmit = (event: Event) => {
                 placeholder="00:00"
                 :class="{
                   'focus:border-action': !errors.heureDepart,
-                  'border-red-500': errors.heureDepart
+                  'border-error': errors.heureDepart
                 }"
                 @input="handleTimeInput('heureDepart', $event)"
                 @blur="handleBlur('heureDepart')"
               />
-              <span v-if="errors.heureDepart" class="text-red-500 text-xs mt-1">
+              <span v-if="errors.heureDepart" class="text-error text-xs mt-1">
                 {{ errors.heureDepart }}
               </span>
             </div>
@@ -167,11 +195,13 @@ const handleSubmit = (event: Event) => {
           <div id="Arrivee" class="flex flex-row w-full mb-10">
             <div class="relative w-full pr-[5vw] sm:pr-6 flex flex-col">
               <label for="villeArrivee" class="text-primary-dark text-md font-semibold">Vers</label>
-              <input type="text" id="villeArrivee" name="villeArrivee" autocomplete="off"  class="focus:border-action"  />
-              <ul
-                id="listeArrivee"
-                class="hidden absolute z-2 w-[calc(90%+4px)] shadow-window t-[37px] bg-white pl-0"
-              ></ul>
+              <TownAutocomplete
+                id="villeArrivee"
+                name="villeArrivee"
+                v-model="villeArrivee"
+                placeholder="Rechercher une ville..."
+                @select="handleArriveeSelect"
+              />
             </div>
             <div class="relative w-20 flex flex-col">
               <label for="heureArrivee" class="text-primary-dark text-md font-semibold">À</label>
@@ -184,12 +214,12 @@ const handleSubmit = (event: Event) => {
                 placeholder="00:00"
                 :class="{
                   'focus:border-action': !errors.heureArrivee,
-                  'border-red-500': errors.heureArrivee
+                  'border-error': errors.heureArrivee
                 }"
                 @input="handleTimeInput('heureArrivee', $event)"
                 @blur="handleBlur('heureArrivee')"
               />
-              <span v-if="errors.heureArrivee" class="text-red-500 text-xs mt-1">
+              <span v-if="errors.heureArrivee" class="text-error text-xs mt-1">
                 {{ errors.heureArrivee }}
               </span>
             </div>
@@ -235,18 +265,6 @@ const handleSubmit = (event: Event) => {
 </template>
 
 <style scoped>
-#listeDepart li,
-#listeArrivee li {
-  padding: 10px;
-  list-style: none;
-  font-size: var(--fontS);
-}
-#listeDepart li:hover,
-#listeArrivee li:hover {
-  background-color: var(--dark-white);
-  color: var(--green);
-  cursor: pointer;
-}
 
 #jours input[type='checkbox']:checked + label  {
   background-color: var(--color-primary-lightest);

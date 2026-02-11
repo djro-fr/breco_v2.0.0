@@ -1,6 +1,6 @@
-# Breco v2.0.0 Documentation
+# Breco, covoiturage breton
 
-> Complete documentation for the Breco carpooling application for Brittany
+Welcome in the demo version of Breco, the carpooling application for Brittany
 
 ---
 
@@ -9,62 +9,6 @@
 **New developer?** Start here: [Getting Started Guide](getting-started.md)
 
 **Production deployment?** Check the [Production Checklist](todo-prod.md)
-
----
-
-## Documentation by Theme
-
-### For Developers
-
-| Document | Description |
-| -------- | ----------- |
-| [Getting Started](getting-started.md) | Development environment setup |
-| [Architecture](architecture.md) | Detailed DDD architecture |
-| [Error Handling](error-handling.md) | Application error management |
-
-### API & Integration
-
-| Document | Description |
-| -------- | ----------- |
-| [API Documentation](api.md) | API routes, JWT authentication, examples |
-| [Endpoints & Ports](endpoints.md) | Docker ports and services configuration |
-
-### DevOps & Production
-
-| Document | Description |
-| -------- | ----------- |
-| [Production Checklist](todo-prod.md) | Complete checklist before production |
-
----
-
-## By Use Case
-
-### I want to
-
-#### Start the project locally
-
-→ [Getting Started](getting-started.md)
-
-#### Understand the architecture
-
-→ [DDD Architecture](architecture.md)
-
-#### Develop a new feature
-
-1. [Architecture](architecture.md) - Understand where to place code
-2. [API Documentation](api.md) - See existing routes
-3. [Error Handling](error-handling.md) - Handle errors
-
-#### Deploy to production
-
-1. [Endpoints & Ports](endpoints.md) - Check configuration
-2. [Production Checklist](todo-prod.md) - Follow the checklist
-
-#### Debug an issue
-
-1. [Endpoints & Ports](endpoints.md) - Check services
-2. [Error Handling](error-handling.md) - Understand errors
-3. Docker logs: `docker logs breco_backend`
 
 ---
 
@@ -135,8 +79,8 @@ docs/
 ```bash
 cd frontend/breco
 rm -rf node_modules
-npm install
-npm run dev
+bun install
+bun run dev 
 ```
 
 #### **Docker "port already in use" error**
@@ -193,9 +137,8 @@ fix/*        # Bug fixes
 
 ## Project Metrics
 
-- **Lines of code**: ~15,000
-- **Tests**: Unit, Integration, UI
 - **Coverage**: In development
+- **Tests**: Unit, Integration, UI
 - **CI/CD**: Jenkins 8 stages
 - **Deployment**: Automatic to VPS
 
@@ -203,5 +146,5 @@ fix/*        # Bug fixes
 
 ## Last Update
 
-**Date**: January 29, 2026  
+**Date**: February 11, 2026  
 **Status**: In development

@@ -19,18 +19,19 @@ const emit = defineEmits<{
   'select': [town: Town]
 }>()
 
-// Composable
+const DEBOUNCE_DELAY_MS = 200
+const BLUR_DELAY_MS = 200
+
 const { towns, isLoading, searchTowns, clearSearch } = useTownSearch()
 
-// State
 const inputValue = ref(props.modelValue)
 const showResults = ref(false)
 const selectedIndex = ref(-1)
-const isSelecting = ref(false)
 let debounceTimeout: ReturnType<typeof setTimeout>
 
 const isCompleteTown = computed(() => /^.+\s\(\d{5}\)$/.test(inputValue.value))
 const isSearchable = computed(() => inputValue.value.length >= 2 && !isCompleteTown.value)
+const hasVisibleResults = computed(() => showResults.value && towns.value.length > 0)
 const shouldShowNoResults = computed(() =>
   showResults.value &&
   !isLoading.value &&
@@ -38,20 +39,21 @@ const shouldShowNoResults = computed(() =>
   isSearchable.value
 )
 
-// Watch input changes
-watch(inputValue, (newValue) => {
-  // Skip if selecting
-  if (isSelecting.value) {
-    isSelecting.value = false
-    return
-  }
+const hideResults = () => {
+  showResults.value = false
+  selectedIndex.value = -1
+}
+const resetSearch = () => {
+  hideResults()
+  clearSearch()
+}
 
+watch(inputValue, (newValue) => {
   emit('update:modelValue', newValue)
 
   // Don't search if complete town
   if (isCompleteTown.value) {
-    showResults.value = false
-    clearSearch()
+    resetSearch()
     return
   }
 
@@ -62,33 +64,29 @@ watch(inputValue, (newValue) => {
       await searchTowns(newValue)
       showResults.value = true
     } else {
-      showResults.value = false
-      clearSearch()
+      resetSearch()
     }
-  }, 300)
+  }, DEBOUNCE_DELAY_MS)
 })
 
-// Select town
 const selectTown = (town: Town) => {
   clearTimeout(debounceTimeout)
-  isSelecting.value = true
 
   inputValue.value = town.getDisplayName()
   emit('update:modelValue', town.getDisplayName())
   emit('select', town)
 
-  showResults.value = false
-  clearSearch()
+  resetSearch()
 }
 
-// Handle blur
+// Handle blur - user clicks outside
+// timeout is needed to allow click events on results
+// before hiding the dropdown
 const handleBlur = () => {
-  setTimeout(() => {
-    showResults.value = false
-  }, 200)
+  setTimeout(hideResults, BLUR_DELAY_MS)
 }
 
-// Handle focus
+// Handle focus - user clicks inside
 const handleFocus = () => {
   if (isSearchable.value) {
     showResults.value = true
@@ -97,7 +95,7 @@ const handleFocus = () => {
 
 // Keyboard navigation
 const handleKeydown = (event: KeyboardEvent) => {
-  if (!showResults.value || towns.value.length === 0) return
+  if (!hasVisibleResults.value) return
 
   switch (event.key) {
     case 'ArrowDown':
@@ -116,7 +114,7 @@ const handleKeydown = (event: KeyboardEvent) => {
       }
       break
     case 'Escape':
-      showResults.value = false
+      hideResults()
       break
   }
 }
@@ -137,14 +135,12 @@ const handleKeydown = (event: KeyboardEvent) => {
       @keydown="handleKeydown"
     />
 
-    <!-- Loading indicator -->
     <div v-if="isLoading" class="absolute right-3 top-1/2 -translate-y-1/2">
       <div class="animate-spin h-4 w-4 border-2 border-primary-dark border-t-transparent rounded-full"></div>
     </div>
 
-    <!-- Results dropdown -->
     <ul
-      v-if="showResults && towns.length > 0"
+      v-if="hasVisibleResults"
       class="absolute z-10 w-full mt-1 bg-white shadow-window rounded max-h-60 overflow-y-auto"
     >
       <li
@@ -152,7 +148,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         :key="town.id"
         :class="[
           'px-4 py-2 cursor-pointer transition-colors',
-          index === selectedIndex ? 'bg-primary-lightest text-primary-dark' : 'hover:bg-primary-lightest20'
+          index === selectedIndex ? 'bg-primary-lightest40' : 'hover:bg-primary-lightest20'
         ]"
         @click="selectTown(town)"
       >
@@ -160,7 +156,6 @@ const handleKeydown = (event: KeyboardEvent) => {
       </li>
     </ul>
 
-    <!-- No results message -->
     <div
       v-if="shouldShowNoResults"
       class="absolute z-10 w-full mt-1 bg-white shadow-window rounded px-4 py-2 text-gray-500"

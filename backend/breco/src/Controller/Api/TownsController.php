@@ -8,14 +8,6 @@ use App\Service\Town\TownSearchService;
 use App\Dto\Town\TownSearchRequest;
 use Cake\Http\Response;
 
-/**
- * Towns Controller
- * (HTTP API controller for managing towns,
- * uses TownSearchService for business logic)
- *
- * Handles town operations including listing
- * and searching Breton towns.
- */
 class TownsController extends AppController
 {
     private TownSearchService $townSearchService;
@@ -23,162 +15,130 @@ class TownsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-
-        // Inject the service
         $this->townSearchService = new TownSearchService();
     }
 
     /**
-     * List all towns
-     *
-     * GET /api/towns
-     * GET /api/towns?limit=50&offset=0
-     *
-     * @return Response
+     * Helper to return JSON with UTF-8 support
      */
-    public function index(): Response
+    private function jsonResponse(array $data, int $status = 200): Response
     {
-        $this->request->allowMethod(['get']);
-
-        try {
-            $limit = $this->request->getQuery('limit');
-            $offset = (int) $this->request->getQuery('offset', 0);
-
-            // Convert limit to int if provided
-            if ($limit !== null) {
-                $limit = (int) $limit;
-            }
-
-            $towns = $this->townSearchService->listAll($limit, $offset);
-
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(200)
-                ->withStringBody(json_encode([
-                    'success' => true,
-                    'data' => $towns,
-                    'count' => count($towns)
-                ]));
-
-        } catch (\Exception $e) {
-            $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Server error'
-                ]));
-        }
+        return $this->response
+            ->withType('application/json')
+            ->withCharset('UTF-8')
+            ->withStatus($status)
+            ->withStringBody(
+                json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            );
     }
 
     /**
-     * Search towns by name or postal code
+     * GET /api/towns/search?q=...&limit=...
      *
-     * GET /api/towns/search?q=Rennes&limit=10
-     *
-     * @return Response
+     * Search for towns by name with optional limit (default 10)
+     * Returns JSON with matching towns and total count     *
      */
-    public function search(): Response
+    public function search()
     {
         $this->request->allowMethod(['get']);
 
+        $query = $this->request->getQuery('q');
+        $limit = (int)($this->request->getQuery('limit') ?? 10);
+
         try {
-            $query = $this->request->getQuery('q', '');
-            $limit = (int) $this->request->getQuery('limit', 10);
+            $request = new TownSearchRequest($query, $limit);
+            $result = $this->townSearchService->search($request);
 
-            // Create DTO (automatic validation)
-            $searchRequest = new TownSearchRequest($query, $limit);
-
-            // Execute service
-            $results = $this->townSearchService->search($searchRequest);
-
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(200)
-                ->withStringBody(json_encode([
-                    'success' => true,
-                    'data' => $results,
-                    'count' => count($results),
-                    'query' => $query
-                ]));
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $result['towns'],
+                'count' => $result['count'],
+                'query' => $result['query']
+            ]);
 
         } catch (\InvalidArgumentException $e) {
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(400)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ]));
+            return $this->jsonResponse([
+                'error' => $e->getMessage()
+            ], 422);
 
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Server error'
-                ]));
+            return $this->jsonResponse([
+                'error' => 'Server error'
+            ], 500);
         }
     }
 
     /**
-     * View a single town
+     * GET /api/towns?limit=...&offset=...
      *
-     * GET /api/towns/:id
-     *
-     * @param int|null $id Town ID
-     * @return Response
+     * List all towns with pagination
+     * Returns JSON with towns, total count, limit and offset
      */
-    public function view($id = null): Response
+    public function index()
+    {
+        $this->request->allowMethod(['get']);
+
+        $limit = (int)($this->request->getQuery('limit') ?? 50);
+        $offset = (int)($this->request->getQuery('offset') ?? 0);
+
+        try {
+            $result = $this->townSearchService->listAll($limit, $offset);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $result['towns'],
+                'count' => $result['count'],
+                'limit' => $limit,
+                'offset' => $offset
+            ]);
+
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), 'error');
+            return $this->jsonResponse([
+                'error' => 'Server error'
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/towns/{id}
+     *
+     * Get town details by ID
+     * Returns JSON with town data or error if not found
+     */
+    public function view($id = null)
     {
         $this->request->allowMethod(['get']);
 
         try {
-            if ($id === null) {
-                return $this->response
-                    ->withType('application/json')
-                    ->withStatus(400)
-                    ->withStringBody(json_encode([
-                        'success' => false,
-                        'message' => 'Town ID is required'
-                    ]));
+            if (!$id) {
+                throw new \InvalidArgumentException('ID required');
             }
 
             $town = $this->townSearchService->getById((int)$id);
 
             if (!$town) {
-                return $this->response
-                    ->withType('application/json')
-                    ->withStatus(404)
-                    ->withStringBody(json_encode([
-                        'success' => false,
-                        'message' => 'Town not found'
-                    ]));
+                return $this->jsonResponse([
+                    'error' => 'Town not found'
+                ], 404);
             }
 
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(200)
-                ->withStringBody(json_encode([
-                    'success' => true,
-                    'data' => $town
-                ]));
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $town
+            ]);
+
+        } catch (\InvalidArgumentException $e) {
+            return $this->jsonResponse([
+                'error' => $e->getMessage()
+            ], 400);
 
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withType('application/json')
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Server error'
-                ]));
+            return $this->jsonResponse([
+                'error' => 'Server error'
+            ], 500);
         }
     }
 }

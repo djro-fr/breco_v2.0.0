@@ -38,10 +38,10 @@ while (($row = fgetcsv($input, 0, $delimiter)) !== false) {
         continue;
     }
     
-    $townName = ucwords(strtolower($townName));
+    $townName = mb_convert_case(mb_strtolower($townName, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
     $townKey = $inseeCode;
     
-    // Villes uniques
+    // Unique towns
     if (!isset($towns[$townKey])) {
         $towns[$townKey] = [
             'name' => $townName,
@@ -52,7 +52,7 @@ while (($row = fgetcsv($input, 0, $delimiter)) !== false) {
         ];
     }
     
-    // Type par défaut si vide
+    // Default type if empty
     if (empty($locationType)) {
         $locationType = 'Parking';
     }
@@ -74,6 +74,8 @@ fclose($input);
 
 // towns file
 $outputTowns = fopen($outputTownsFile, 'w');
+// Write UTF-8 BOM for Excel compatibility
+fprintf($outputTowns, chr(0xEF).chr(0xBB).chr(0xBF));
 fputcsv($outputTowns, ['name', 'postal_code', 'insee_code', 'latitude', 'longitude']);
 
 foreach ($towns as $town) {
@@ -90,6 +92,8 @@ fclose($outputTowns);
 
 // locations file
 $outputLocations = fopen($outputLocationsFile, 'w');
+// Write UTF-8 BOM for Excel compatibility
+fprintf($outputLocations, chr(0xEF).chr(0xBB).chr(0xBF));
 fputcsv($outputLocations, ['name', 'address', 'gps_lat', 'gps_lng', 'town_name', 'type']);
 
 foreach ($locations as $location) {

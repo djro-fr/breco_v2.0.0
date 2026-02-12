@@ -31,7 +31,12 @@ class TownSearchService
     public function listAll(?int $limit = null, int $offset = 0): array
     {
         $results = $this->townRepository->findAll($limit, $offset);
-        return $this->formatResults($results);
+        $formatted = $this->formatResults($results);
+
+        return [
+            'towns' => $formatted,
+            'count' => count($formatted)
+        ];
     }
 
     /**
@@ -53,7 +58,13 @@ class TownSearchService
             $results = $this->townRepository->findByPostalCode($query);
         }
 
-        return $this->formatResults($results);
+        $formatted = $this->formatResults($results);
+
+        return [
+            'towns' => $formatted,
+            'count' => count($formatted),
+            'query' => $query
+        ];
     }
 
     /**

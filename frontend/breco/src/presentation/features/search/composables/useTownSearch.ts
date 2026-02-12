@@ -18,7 +18,7 @@ export function useTownSearch() {
   const hasTowns = computed(() => towns.value.length > 0)
   const hasError = computed(() => error.value !== '')
 
-  // orchesstrates communication with the backend
+  // orchestrates communication with the backend
   const searchTowns = async (query: string, limit: number = 10) => {
     error.value = ''
 

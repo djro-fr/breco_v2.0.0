@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useTownSearch } from '../composables/useTownSearch'
 import type { Town } from '@/domain/entities/Town'
 
@@ -20,45 +20,82 @@ const emit = defineEmits<{
 }>()
 
 // Composable
-const { towns, isLoading, searchTowns } = useTownSearch()
+const { towns, isLoading, searchTowns, clearSearch } = useTownSearch()
 
+// State
 const inputValue = ref(props.modelValue)
 const showResults = ref(false)
 const selectedIndex = ref(-1)
-
-// Watch input changes. The debounce avoid making too many requests while typing
-// and only search when there are at least 2 characters, waiting 300ms after the last keystroke
+const isSelecting = ref(false)
 let debounceTimeout: ReturnType<typeof setTimeout>
+
+const isCompleteTown = computed(() => /^.+\s\(\d{5}\)$/.test(inputValue.value))
+const isSearchable = computed(() => inputValue.value.length >= 2 && !isCompleteTown.value)
+const shouldShowNoResults = computed(() =>
+  showResults.value &&
+  !isLoading.value &&
+  towns.value.length === 0 &&
+  isSearchable.value
+)
+
+// Watch input changes
 watch(inputValue, (newValue) => {
+  // Skip if selecting
+  if (isSelecting.value) {
+    isSelecting.value = false
+    return
+  }
+
   emit('update:modelValue', newValue)
+
+  // Don't search if complete town
+  if (isCompleteTown.value) {
+    showResults.value = false
+    clearSearch()
+    return
+  }
+
+  // Debounced search
   clearTimeout(debounceTimeout)
   debounceTimeout = setTimeout(async () => {
-    if (newValue.length >= 2) {
+    if (isSearchable.value) {
       await searchTowns(newValue)
       showResults.value = true
     } else {
       showResults.value = false
+      clearSearch()
     }
   }, 300)
 })
 
 // Select town
 const selectTown = (town: Town) => {
+  clearTimeout(debounceTimeout)
+  isSelecting.value = true
+
   inputValue.value = town.getDisplayName()
   emit('update:modelValue', town.getDisplayName())
   emit('select', town)
+
   showResults.value = false
+  clearSearch()
 }
 
 // Handle blur
 const handleBlur = () => {
-  // Delay to allow click on results
   setTimeout(() => {
     showResults.value = false
   }, 200)
 }
 
-// Keyboard navigation for accessibility
+// Handle focus
+const handleFocus = () => {
+  if (isSearchable.value) {
+    showResults.value = true
+  }
+}
+
+// Keyboard navigation
 const handleKeydown = (event: KeyboardEvent) => {
   if (!showResults.value || towns.value.length === 0) return
 
@@ -73,11 +110,9 @@ const handleKeydown = (event: KeyboardEvent) => {
       break
     case 'Enter':
       event.preventDefault()
-      if (selectedIndex.value >= 0) {
-        const selectedTown = towns.value[selectedIndex.value]
-        if (selectedTown) {
-          selectTown(selectedTown)
-        }
+      const selectedTown = towns.value[selectedIndex.value]
+      if (selectedTown) {
+        selectTown(selectedTown)
       }
       break
     case 'Escape':
@@ -98,14 +133,16 @@ const handleKeydown = (event: KeyboardEvent) => {
       :placeholder="placeholder"
       class="focus:border-action"
       @blur="handleBlur"
-      @focus="showResults = inputValue.length >= 2"
+      @focus="handleFocus"
       @keydown="handleKeydown"
     />
 
+    <!-- Loading indicator -->
     <div v-if="isLoading" class="absolute right-3 top-1/2 -translate-y-1/2">
       <div class="animate-spin h-4 w-4 border-2 border-primary-dark border-t-transparent rounded-full"></div>
     </div>
 
+    <!-- Results dropdown -->
     <ul
       v-if="showResults && towns.length > 0"
       class="absolute z-10 w-full mt-1 bg-white shadow-window rounded max-h-60 overflow-y-auto"
@@ -123,8 +160,9 @@ const handleKeydown = (event: KeyboardEvent) => {
       </li>
     </ul>
 
+    <!-- No results message -->
     <div
-      v-if="showResults && !isLoading && towns.length === 0 && inputValue.length >= 2"
+      v-if="shouldShowNoResults"
       class="absolute z-10 w-full mt-1 bg-white shadow-window rounded px-4 py-2 text-gray-500"
     >
       Aucune ville trouvée

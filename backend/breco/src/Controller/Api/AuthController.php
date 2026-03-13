@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Api;
@@ -8,6 +9,7 @@ use App\Service\Auth\AuthService;
 use App\Dto\Auth\LoginRequest;
 use App\Dto\Auth\RegisterRequest;
 use Cake\Http\Response;
+use SwaggerBake\Lib\Attribute as Swag;
 
 /**
  * Auth Controller
@@ -48,56 +50,17 @@ class AuthController extends AppController
     }
 
     /**
-     * Login user
-     * POST /api/auth/login
-     */
-    public function login(): Response
-    {
-        $this->request->allowMethod(['post']);
-
-        try {
-            $data = $this->request->getData();
-
-            $loginRequest = new LoginRequest(
-                $data['email'] ?? '',
-                $data['password'] ?? ''
-            );
-
-            $result = $this->authService->login($loginRequest);
-
-            return $this->response
-                ->withStatus(200)
-                ->withStringBody(json_encode($result));
-
-        } catch (\InvalidArgumentException $e) {
-            return $this->response
-                ->withStatus(422)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
-
-        } catch (\RuntimeException $e) {
-            return $this->response
-                ->withStatus($e->getCode() ?: 500)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
-
-        } catch (\Exception $e) {
-            $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'error' => 'Server error'
-                ]));
-        }
-    }
-
-    /**
-     * Register new user
+     * 1. Register new user
      * POST /api/auth/register
      */
+    #[Swag\OpenApiRequestBody(mimeTypes: ['application/json'], required: true, description: 'Registration data')]
+    #[Swag\OpenApiForm(name: 'email', type: 'string', description: 'User email', example: 'user@example.com', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'phone', type: 'string', description: 'Phone number', example: '0612345678', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'password', type: 'string', description: 'User password', example: 'Password123', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'firstName', type: 'string', description: 'First name', example: 'Jean', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'lastName', type: 'string', description: 'Last name', example: 'Dupont', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'driver', type: 'boolean', description: 'Driver ?', example: 'false', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'gender', type: 'string', description: 'Gender: Homme, Femme, Ne pas dire', example: 'Homme', isRequired: false)]
     public function register(): Response
     {
         $this->request->allowMethod(['post']);
@@ -120,21 +83,18 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(201)
                 ->withStringBody(json_encode($result));
-
         } catch (\InvalidArgumentException $e) {
             return $this->response
                 ->withStatus(422)
                 ->withStringBody(json_encode([
                     'error' => $e->getMessage()
                 ]));
-
         } catch (\RuntimeException $e) {
             return $this->response
                 ->withStatus($e->getCode() ?: 500)
                 ->withStringBody(json_encode([
                     'error' => $e->getMessage()
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -147,7 +107,7 @@ class AuthController extends AppController
     }
 
     /**
-     * Verify email with token
+     * 2. Verify email with token
      * GET /api/auth/verify-email/{token}
      */
     public function verifyEmail($token = null): Response
@@ -164,7 +124,6 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(200)
                 ->withStringBody(json_encode($result));
-
         } catch (\InvalidArgumentException $e) {
             return $this->response
                 ->withStatus(400)
@@ -172,7 +131,6 @@ class AuthController extends AppController
                     'success' => false,
                     'message' => $e->getMessage()
                 ]));
-
         } catch (\RuntimeException $e) {
             return $this->response
                 ->withStatus($e->getCode() ?: 500)
@@ -180,7 +138,6 @@ class AuthController extends AppController
                     'success' => false,
                     'message' => $e->getMessage()
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -194,9 +151,57 @@ class AuthController extends AppController
     }
 
     /**
-     * Verify JWT token
+     * 3. Login user
+     * POST /api/auth/login
+     */
+    #[Swag\OpenApiRequestBody(mimeTypes: ['application/json'], required: true, description: 'Login credentials')]
+    #[Swag\OpenApiForm(name: 'email', type: 'string', description: 'User email', example: 'user@example.com', isRequired: true)]
+    #[Swag\OpenApiForm(name: 'password', type: 'string', description: 'User password', example: 'Password123', isRequired: true)]
+    public function login(): Response
+    {
+        $this->request->allowMethod(['post']);
+
+        try {
+            $data = $this->request->getData();
+
+            $loginRequest = new LoginRequest(
+                $data['email'] ?? '',
+                $data['password'] ?? ''
+            );
+
+            $result = $this->authService->login($loginRequest);
+
+            return $this->response
+                ->withStatus(200)
+                ->withStringBody(json_encode($result));
+        } catch (\InvalidArgumentException $e) {
+            return $this->response
+                ->withStatus(422)
+                ->withStringBody(json_encode([
+                    'error' => $e->getMessage()
+                ]));
+        } catch (\RuntimeException $e) {
+            return $this->response
+                ->withStatus($e->getCode() ?: 500)
+                ->withStringBody(json_encode([
+                    'error' => $e->getMessage()
+                ]));
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), 'error');
+
+            return $this->response
+                ->withStatus(500)
+                ->withStringBody(json_encode([
+                    'error' => 'Server error'
+                ]));
+        }
+    }
+
+    /**
+     * 4. Verify JWT token
      * GET /api/auth/verify
      */
+    #[Swag\OpenApiSecurity(name: 'bearerAuth')]
     public function verify(): Response
     {
         $this->request->allowMethod(['get']);
@@ -216,14 +221,12 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(200)
                 ->withStringBody(json_encode($user));
-
         } catch (\RuntimeException $e) {
             return $this->response
                 ->withStatus($e->getCode() ?: 401)
                 ->withStringBody(json_encode([
                     'error' => $e->getMessage()
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -236,7 +239,7 @@ class AuthController extends AppController
     }
 
     /**
-     * Logout (client-side token removal)
+     * 5. Logout (client-side token removal)
      * POST /api/auth/logout
      */
     public function logout(): Response

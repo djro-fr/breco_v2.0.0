@@ -21,10 +21,12 @@ servers:
 tags:
   - name: Auth
     description: Authentication endpoints (registration, login, verification)
-  - name: Locations
-    description: Management of carpooling places
+  - name: Users
+    description: User management
   - name: Towns
     description: Management of Breton cities
+  - name: Locations
+    description: Management of carpooling places
 
 paths: {}
 

@@ -1,3 +1,12 @@
+/*
+ * Calls API to search for towns by name or postal code
+ * (implements ITownRepository)
+ *
+ * Converts API DTOs to Domain Entities with validation
+ */
+
+
+
 import type { ITownRepository, TownSearchResult } from '@/domain/repositories/ITownRepository'
 import { TownRemoteDataSource } from '@/data/datasources/remote/TownRemoteDataSource'
 import { TownModel } from '@/data/models/TownModel'

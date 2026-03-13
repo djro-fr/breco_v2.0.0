@@ -29,23 +29,54 @@
             "description": "Authentication endpoints (registration, login, verification)"
         },
         {
-            "name": "Locations",
-            "description": "Management of carpooling places"
+            "name": "Users",
+            "description": "User management"
         },
         {
             "name": "Towns",
             "description": "Management of Breton cities"
+        },
+        {
+            "name": "Locations",
+            "description": "Management of carpooling places"
         }
     ],
     "paths": {
         "\/api\/auth\/login": {
             "post": {
                 "operationId": "api:auth:login:post",
-                "summary": "",
+                "summary": "3. Login user\nPOST \/api\/auth\/login",
                 "description": "",
                 "tags": [
                     "Auth"
                 ],
+                "requestBody": {
+                    "description": "Login credentials",
+                    "content": {
+                        "application\/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "example": "user@example.com",
+                                        "type": "string",
+                                        "description": "User email"
+                                    },
+                                    "password": {
+                                        "example": "Password123",
+                                        "type": "string",
+                                        "description": "User password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -64,7 +95,7 @@
         "\/api\/auth\/logout": {
             "post": {
                 "operationId": "api:auth:logout:post",
-                "summary": "",
+                "summary": "5. Logout (client-side token removal)\nPOST \/api\/auth\/logout",
                 "description": "",
                 "tags": [
                     "Auth"
@@ -87,11 +118,67 @@
         "\/api\/auth\/register": {
             "post": {
                 "operationId": "api:auth:register:post",
-                "summary": "",
+                "summary": "1. Register new user\nPOST \/api\/auth\/register",
                 "description": "",
                 "tags": [
                     "Auth"
                 ],
+                "requestBody": {
+                    "description": "Registration data",
+                    "content": {
+                        "application\/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "phone",
+                                    "password",
+                                    "firstName",
+                                    "lastName",
+                                    "driver"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "example": "user@example.com",
+                                        "type": "string",
+                                        "description": "User email"
+                                    },
+                                    "phone": {
+                                        "example": "0612345678",
+                                        "type": "string",
+                                        "description": "Phone number"
+                                    },
+                                    "password": {
+                                        "example": "Password123",
+                                        "type": "string",
+                                        "description": "User password"
+                                    },
+                                    "firstName": {
+                                        "example": "Jean",
+                                        "type": "string",
+                                        "description": "First name"
+                                    },
+                                    "lastName": {
+                                        "example": "Dupont",
+                                        "type": "string",
+                                        "description": "Last name"
+                                    },
+                                    "driver": {
+                                        "example": "false",
+                                        "type": "boolean",
+                                        "description": "Driver ?"
+                                    },
+                                    "gender": {
+                                        "example": "Homme",
+                                        "type": "string",
+                                        "description": "Gender: Homme, Femme, Ne pas dire"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -110,7 +197,7 @@
         "\/api\/auth\/verify": {
             "get": {
                 "operationId": "api:auth:verify:get",
-                "summary": "",
+                "summary": "4. Verify JWT token\nGET \/api\/auth\/verify",
                 "description": "",
                 "tags": [
                     "Auth"
@@ -127,13 +214,18 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "\/api\/auth\/verify-email\/{token}": {
             "get": {
                 "operationId": "api:auth:verifyemail:get",
-                "summary": "",
+                "summary": "2. Verify email with token\nGET \/api\/auth\/verify-email\/{token}",
                 "description": "",
                 "tags": [
                     "Auth"
@@ -165,8 +257,8 @@
         "\/api\/locations": {
             "get": {
                 "operationId": "api:locations:index:get",
-                "summary": "List all locations",
-                "description": "GET \/api\/locations",
+                "summary": "List all locations\nGET \/api\/locations?limit=50&offset=0",
+                "description": "",
                 "tags": [
                     "Locations"
                 ],
@@ -188,8 +280,8 @@
         "\/api\/locations\/by-town\/{town_id}": {
             "get": {
                 "operationId": "api:locations:bytown:get",
-                "summary": "Get locations by town",
-                "description": "GET \/api\/locations\/by-town\/:town_id",
+                "summary": "Get locations by town ID\nGET \/api\/locations\/by-town\/{town_id}",
+                "description": "",
                 "tags": [
                     "Locations"
                 ],
@@ -220,8 +312,8 @@
         "\/api\/locations\/by-type\/{type}": {
             "get": {
                 "operationId": "api:locations:bytype:get",
-                "summary": "Get locations by type",
-                "description": "GET \/api\/locations\/by-type\/:type",
+                "summary": "Get locations by type\nGET \/api\/locations\/by-type\/{type}",
+                "description": "",
                 "tags": [
                     "Locations"
                 ],
@@ -229,10 +321,12 @@
                     {
                         "in": "path",
                         "name": "type",
-                        "required": true,
+                        "description": "Location type: Aire de covoiturage, Parking, Supermarch\u00e9",
+                        "required": false,
                         "schema": {
                             "type": "string"
-                        }
+                        },
+                        "example": "Parking"
                     }
                 ],
                 "responses": {
@@ -252,12 +346,33 @@
         "\/api\/locations\/search": {
             "get": {
                 "operationId": "api:locations:search:get",
-                "summary": "Search locations by town name or town postal code beginning",
-                "description": "GET \/api\/locations\/search?q=Ren or \/api\/locations\/search?q=35",
+                "summary": "Search locations by town name or postal code\nGET \/api\/locations\/search?q=Quimper&limit=10",
+                "description": "",
                 "tags": [
                     "Locations"
                 ],
-                "parameters": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "description": "Search term (town name or postal code)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "quimper"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Max results (default 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "10"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -275,8 +390,8 @@
         "\/api\/locations\/{id}": {
             "get": {
                 "operationId": "api:locations:view:get",
-                "summary": "View a single location",
-                "description": "GET \/api\/locations\/:id",
+                "summary": "View a single location\nGET \/api\/locations\/{id}",
+                "description": "",
                 "tags": [
                     "Locations"
                 ],
@@ -307,8 +422,8 @@
         "\/api\/towns": {
             "get": {
                 "operationId": "api:towns:index:get",
-                "summary": "List all towns",
-                "description": "GET \/api\/towns\nGET \/api\/towns?limit=50&offset=0",
+                "summary": "GET \/api\/towns?limit=...&offset=...\n\nList all towns with pagination\nReturns JSON with towns, total count, limit and offset",
+                "description": "",
                 "tags": [
                     "Towns"
                 ],
@@ -330,12 +445,33 @@
         "\/api\/towns\/search": {
             "get": {
                 "operationId": "api:towns:search:get",
-                "summary": "Search towns by name or postal code",
-                "description": "GET \/api\/towns\/search?q=Rennes&limit=10",
+                "summary": "GET \/api\/towns\/search?q=...&limit=...\n\nSearch for towns by name with optional limit (default 10)\nReturns JSON with matching towns and total count",
+                "description": "",
                 "tags": [
                     "Towns"
                 ],
-                "parameters": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "description": "Search term (town name beginning with)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "ren"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Max results (default 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "10"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -353,8 +489,8 @@
         "\/api\/towns\/{id}": {
             "get": {
                 "operationId": "api:towns:view:get",
-                "summary": "View a single town",
-                "description": "GET \/api\/towns\/:id",
+                "summary": "GET \/api\/towns\/{id}",
+                "description": "Get town details by ID\nReturns JSON with town data or error if not found",
                 "tags": [
                     "Towns"
                 ],
@@ -385,8 +521,8 @@
         "\/api\/users": {
             "get": {
                 "operationId": "api:users:index:get",
-                "summary": "List all users",
-                "description": "GET \/api\/users",
+                "summary": "List all users\nGET \/api\/users",
+                "description": "",
                 "tags": [
                     "Users"
                 ],
@@ -402,7 +538,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         }
     },

@@ -7,6 +7,7 @@ use App\Controller\AppController;
 use App\Service\Town\TownSearchService;
 use App\Dto\Town\TownSearchRequest;
 use Cake\Http\Response;
+use SwaggerBake\Lib\Attribute as Swag;
 
 class TownsController extends AppController
 {
@@ -36,13 +37,16 @@ class TownsController extends AppController
      * GET /api/towns/search?q=...&limit=...
      *
      * Search for towns by name with optional limit (default 10)
-     * Returns JSON with matching towns and total count     *
+     * Returns JSON with matching towns and total count
+     *
      */
+    #[Swag\OpenApiQueryParam(name: 'q', type: 'string', description: 'Search term (town name beginning with)', example: 'ren', isRequired: false)]
+    #[Swag\OpenApiQueryParam(name: 'limit', type: 'integer', description: 'Max results (default 10)', example: '10', isRequired: false)]
     public function search()
     {
         $this->request->allowMethod(['get']);
 
-        $query = $this->request->getQuery('q');
+        $query = $this->request->getQuery('q') ?? '';
         $limit = (int)($this->request->getQuery('limit') ?? 10);
 
         try {

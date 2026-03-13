@@ -7,6 +7,7 @@ use App\Controller\AppController;
 use App\Service\User\UserService;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
+use SwaggerBake\Lib\Attribute as Swag;
 
 /**
  * Users Controller
@@ -50,6 +51,8 @@ class UsersController extends AppController
      * List all users
      * GET /api/users
      */
+
+    #[Swag\OpenApiSecurity(name: 'bearerAuth')]
     public function index(): Response
     {
         $this->request->allowMethod(['get']);

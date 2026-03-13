@@ -29,7 +29,9 @@ class TownSearchRequest
                 'La recherche doit contenir au moins 2 caractères'
             );
         }
-
+        if (preg_match('/[@#<>?&+!]/', $query)) {
+            throw new \InvalidArgumentException('Caractères non autorisés dans la recherche');
+        }
         if ($limit < 1 || $limit > 50) {
             throw new \InvalidArgumentException(
                 'La limite doit être entre 1 et 50'

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Api;
@@ -7,6 +8,7 @@ use App\Controller\AppController;
 use App\Service\Location\LocationSearchService;
 use App\Dto\Location\LocationSearchRequest;
 use Cake\Http\Response;
+use SwaggerBake\Lib\Attribute as Swag;
 
 /**
  * Locations Controller
@@ -49,7 +51,6 @@ class LocationsController extends AppController
                     'data' => $locations,
                     'count' => count($locations)
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -65,8 +66,10 @@ class LocationsController extends AppController
 
     /**
      * Search locations by town name or postal code
-     * GET /api/locations/search?q=Rennes&limit=10
+     * GET /api/locations/search?q=Quimper&limit=10
      */
+    #[Swag\OpenApiQueryParam(name: 'q', type: 'string', description: 'Search term (town name or postal code)', example: 'quimper', isRequired: false)]
+    #[Swag\OpenApiQueryParam(name: 'limit', type: 'integer', description: 'Max results (default 10)', example: '10', isRequired: false)]
     public function search(): Response
     {
         $this->request->allowMethod(['get']);
@@ -87,7 +90,6 @@ class LocationsController extends AppController
                     'count' => count($results),
                     'query' => $query
                 ]));
-
         } catch (\InvalidArgumentException $e) {
             return $this->response
                 ->withType('application/json')
@@ -96,7 +98,6 @@ class LocationsController extends AppController
                     'success' => false,
                     'message' => $e->getMessage()
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -140,7 +141,6 @@ class LocationsController extends AppController
                     'count' => count($locations),
                     'town_id' => (int)$townId
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -158,6 +158,7 @@ class LocationsController extends AppController
      * Get locations by type
      * GET /api/locations/by-type/{type}
      */
+    #[Swag\OpenApiPathParam(name: 'type', type: 'string', description: 'Location type: Aire de covoiturage, Parking, Supermarché', example: 'Parking')]
     public function byType($type = null): Response
     {
         $this->request->allowMethod(['get']);
@@ -184,7 +185,6 @@ class LocationsController extends AppController
                     'count' => count($locations),
                     'type' => $type
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 
@@ -236,7 +236,6 @@ class LocationsController extends AppController
                     'success' => true,
                     'data' => $location
                 ]));
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
 

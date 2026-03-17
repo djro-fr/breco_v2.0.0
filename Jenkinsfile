@@ -38,7 +38,9 @@ pipeline {
                     bun run lint
                 '''
             }
-        }
+        }        
+        // stage('SonarQube Analysis') {
+        // }
         stage('Tests') {
             parallel {
                 stage('Unit Tests') {
@@ -255,6 +257,8 @@ pipeline {
                 '''
             }
         }
+        // stage('Security:Owasp ZAP Scan') {
+        // }
         
         // stage('Performance: JMeter Tests') {
         //     agent {

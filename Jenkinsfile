@@ -137,6 +137,8 @@ pipeline {
             //         '''
             //     }
             // }
+            // stage('Test: PHP Unit Tests') {
+            // }
         }
         stage('Copy Test Results to Frontend') {
             // http://37.59.101.232:3001/test-results/unit-results.xml
@@ -186,6 +188,8 @@ pipeline {
                 '''
             }
         }
+        // stage('Swagger Bake: API Documentation') {
+        // }        
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {

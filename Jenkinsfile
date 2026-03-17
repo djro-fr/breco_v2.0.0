@@ -44,7 +44,7 @@ pipeline {
                 stage('Unit Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'oven/bun:1-alpine'
                             args '-u root'
                             
                         }

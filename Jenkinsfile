@@ -90,7 +90,7 @@ pipeline {
                 stage('UI Tests') {
                     agent {
                         docker {
-                            image 'oven/bun:1-alpine'
+                            image 'node:25-alpine3.21'
                             args '-u root'
                             
                         }
@@ -98,8 +98,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            bun install --frozen-lockfile
-                            bun run test:ui
+                            npm ci
+                            npm run test:ui
                         '''
                     }
                     post {

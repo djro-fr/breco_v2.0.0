@@ -142,7 +142,7 @@ pipeline {
                     echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/dist/test-results
                     
-                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null  && echo '✅ Copy succeed' || true
+                    cp frontend/breco/test-results/*.xml frontend/breco/dist/test-results/ 2>/dev/null  && echo '✅ Copy succeed'
                     
                     echo "Verification:"
                     ls -la frontend/breco/dist/test-results/

@@ -59,6 +59,7 @@ pipeline {
                     post {
                         always {
                             junit 'frontend/breco/test-results/unit-results.xml'
+                            stash name: 'unit-results', includes: 'frontend/breco/test-results/unit-results.xml'
                         }
                     }
                 }
@@ -81,6 +82,7 @@ pipeline {
                     post {
                         always {
                             junit 'frontend/breco/test-results/integration-results.xml'
+                            stash name: 'integration-results', includes: 'frontend/breco/test-results/integration-results.xml'
                         }
                     }
                 }
@@ -102,7 +104,8 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/ui-results.xml'
+                            junit 'frontend/breco/test-results/ui-results.xml'                            
+                            stash name: 'ui-results', includes: 'frontend/breco/test-results/ui-results.xml'
                         }
                     }
                 }
@@ -138,6 +141,9 @@ pipeline {
             // http://37.59.101.232:3001/test-results/integration-results.xml
             // http://37.59.101.232:3001/test-results/ui-results.xml
             steps {
+                unstash 'unit-results'
+                unstash 'integration-results'
+                unstash 'ui-results'
                 sh '''
                     echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/dist/test-results

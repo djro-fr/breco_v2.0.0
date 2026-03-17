@@ -52,8 +52,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
-                            npm run test:unit
+                            bun install --frozen-lockfile
+                            bun run test:unit
                         '''
                     }
                     post {

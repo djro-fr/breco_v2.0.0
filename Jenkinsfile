@@ -136,6 +136,7 @@ pipeline {
                         docker {
                             image 'djrofr/breco-phptest:8.4'
                             args '-u root'
+                            alwaysPull true
                         }
                     }
                     steps {

@@ -24,6 +24,10 @@
         <bootstrap class="Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
     </extensions>
 
+    <logging>
+        <junit outputFile="test-results/phpunit-results.xml"/>
+    </logging>
+
     <!-- Ignore vendor tests in code coverage reports -->
     <source>
         <include>

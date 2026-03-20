@@ -137,8 +137,31 @@ pipeline {
             //         '''
             //     }
             // }
-            // stage('Test: PHP Unit Tests') {
-            // }
+            stage('Test: PHP Unit Tests') {
+                agent {
+                    docker {
+                        image 'php:8.3-cli-alpine'
+                        args '-u root'
+                    }
+                }
+                steps {
+                    sh '''
+                        cd backend/breco
+                        apk add --no-cache sqlite sqlite-dev curl
+                        docker-php-ext-install pdo pdo_sqlite
+                        curl -sS https://getcomposer.org/installer | php
+                        php composer.phar install --no-interaction
+                        mkdir -p test-results
+                        php composer.phar test
+                    '''
+                }
+                post {
+                    always {
+                        junit 'backend/breco/test-results/phpunit-results.xml'
+                        stash name: 'phpunit-results', includes: 'backend/breco/test-results/phpunit-results.xml'
+                    }
+                }
+            }
         }
         stage('Copy Test Results to Frontend') {
             // http://37.59.101.232:3001/test-results/unit-results.xml

@@ -43,7 +43,6 @@ class CreateTowns extends BaseMigration
         ])
         ->addIndex(['name'])
         ->addIndex(['postal_code'])
-        ->addIndex(['insee_code'])
         ->addIndex(['postal_code', 'name'])  // Composite index for faster searches
         ->addIndex(['insee_code'], ['unique' => true])
         ->create();

@@ -16,7 +16,7 @@ class TripRequestsTableTest extends TestCase
      *
      * @var \App\Model\Table\TripRequestsTable
      */
-    protected $TripRequests;
+    protected $tripRequests;
 
     /**
      * Fixtures
@@ -26,8 +26,8 @@ class TripRequestsTableTest extends TestCase
     protected array $fixtures = [
         'app.TripRequests',
         'app.Users',
-        'app.DepartureLocations',
-        'app.ArrivalLocations',
+        'app.Towns',
+        'app.Locations',
         'app.Bookings',
     ];
 
@@ -40,7 +40,7 @@ class TripRequestsTableTest extends TestCase
     {
         parent::setUp();
         $config = $this->getTableLocator()->exists('TripRequests') ? [] : ['className' => TripRequestsTable::class];
-        $this->TripRequests = $this->getTableLocator()->get('TripRequests', $config);
+        $this->tripRequests = $this->getTableLocator()->get('TripRequests', $config);
     }
 
     /**

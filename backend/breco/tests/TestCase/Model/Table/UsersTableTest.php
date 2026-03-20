@@ -16,7 +16,7 @@ class UsersTableTest extends TestCase
      *
      * @var \App\Model\Table\UsersTable
      */
-    protected $Users;
+    protected $users;
 
     /**
      * Fixtures
@@ -24,6 +24,7 @@ class UsersTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
+        'app.Towns',
         'app.Users',
     ];
 
@@ -36,7 +37,7 @@ class UsersTableTest extends TestCase
     {
         parent::setUp();
         $config = $this->getTableLocator()->exists('Users') ? [] : ['className' => UsersTable::class];
-        $this->Users = $this->getTableLocator()->get('Users', $config);
+        $this->users = $this->getTableLocator()->get('Users', $config);
     }
 
     /**

@@ -27,9 +27,9 @@ use Migrations\TestSuite\Migrator;
  * Add additional configuration/setup your application needs when running
  * unit tests in this file.
  */
-require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-require dirname(__DIR__) . '/config/bootstrap.php';
+require_once dirname(__DIR__) . '/config/bootstrap.php';
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
     Configure::write('App.fullBaseUrl', 'http://localhost');
@@ -55,7 +55,7 @@ Chronos::setTestNow(Chronos::now());
 // Fixate sessionid early on, as php7.2+
 // does not allow the sessionid to be set after stdout
 // has been written to.
-session_id('cli');
+// session_id('cli');
 
 // Connection aliasing needs to happen before migrations are run.
 // Otherwise, table objects inside migrations would use the default datasource
@@ -72,4 +72,5 @@ ConnectionHelper::addTestAliases();
 // use Cake\TestSuite\Fixture\SchemaLoader;
 // (new SchemaLoader())->loadSqlFiles('./tests/schema.sql', 'test');
 
-(new Migrator())->run();
+(new Migrator())->run(['drop' => true]);
+// Re-run the migrations to ensure the test database is up to date or drop the database if the migration state differs from the migration history in files.

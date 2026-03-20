@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Test\Fixture;
@@ -21,16 +22,16 @@ class UsersFixture extends TestFixture
             [
                 'id' => 1,
                 'town_id' => 1,
-                'email' => 'Lorem ipsum dolor sit amet',
+                'email' => 'test@breco.fr',
                 'email_verified' => 1,
-                'verification_token' => 'Lorem ipsum dolor sit amet',
-                'verification_token_expires' => '2026-01-14 13:11:39',
-                'password' => 'Lorem ipsum dolor ',
-                'last_name' => 'Lorem ipsum dolor sit amet',
-                'first_name' => 'Lorem ipsum dolor sit amet',
-                'phone' => 'Lorem ipsum dolor ',
-                'age' => 1,
-                'gender' => 'Lorem ipsum dolor sit amet',
+                'verification_token' => 'abc123token',
+                'verification_token_expires' => '2026-12-31 23:59:59',
+                'password' => '$2Y10abc',
+                'last_name' => 'Dupont',
+                'first_name' => 'Jean',
+                'phone' => '0612345678',
+                'age' => 30,
+                'gender' => 'Homme',
                 'created' => '2026-01-14 13:11:39',
                 'modified' => '2026-01-14 13:11:39',
             ],

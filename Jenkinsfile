@@ -140,13 +140,13 @@ pipeline {
                     }
                     steps {
                         sh '''
-                        cd backend/breco
-                        apk add --no-cache sqlite sqlite-dev curl
-                        docker-php-ext-install pdo pdo_sqlite
-                        curl -sS https://getcomposer.org/installer | php
-                        php composer.phar install --no-interaction
-                        mkdir -p test-results
-                        php composer.phar test
+                            cd backend/breco
+                            apk add --no-cache sqlite sqlite-dev curl icu-dev
+                            docker-php-ext-install pdo pdo_sqlite intl
+                            curl -sS https://getcomposer.org/installer | php
+                            php composer.phar install --no-interaction --ignore-platform-req=ext-intl
+                            mkdir -p test-results
+                            php composer.phar test
                     '''
                     }
                     post {

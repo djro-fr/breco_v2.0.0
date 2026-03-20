@@ -47,14 +47,14 @@ pipeline {
                 stage('Unit Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'djrofr/breco-vitest:latest'
                             args '-u root'
+                            alwaysPull true
                         }
                     }
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
                             npm run test:unit
                         '''
                     }
@@ -68,14 +68,14 @@ pipeline {
                 stage('Integration Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'djrofr/breco-vitest:latest'
                             args '-u root'
+                            alwaysPull true
                         }
                     }
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
                             npm run test:integration
                         '''
                     }
@@ -89,14 +89,14 @@ pipeline {
                 stage('UI Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'djrofr/breco-vitest:latest'
                             args '-u root'
+                            alwaysPull true
                         }
                     }
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm ci
                             npm run test:ui
                         '''
                     }

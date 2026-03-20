@@ -107,7 +107,7 @@ pipeline {
                         }
                     }
                 }
-                // stage('Test: E2E Tests') {
+                // stage('E2E Tests') {
                 //     agent {
                 //         docker {
                 //             image 'node:25-alpine3.21'
@@ -131,7 +131,7 @@ pipeline {
                 //             '''
                 //     }
                 // }
-                stage('Test: PHP Unit Tests') {
+                stage('PHP Unit Tests') {
                     agent {
                         docker {
                             image 'php:8.3-cli-alpine'

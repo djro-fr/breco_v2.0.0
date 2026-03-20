@@ -1,3 +1,4 @@
+/* groovylint-disable CompileStatic, GStringExpressionWithinString */
 pipeline {
     agent any
     environment {
@@ -21,24 +22,24 @@ pipeline {
                     mkdir -p frontend/breco/test-results
                 '''
                 checkout scm
-            } 
+            }
         }
         stage('Lint') {
-           agent {
+            agent {
                 docker {
                     image 'oven/bun:1-alpine'
                     args '-u root'
                 }
             }
             steps {
-                echo "Linting..."
-                sh '''                    
+                echo 'Linting...'
+                sh '''
                     cd frontend/breco
                     bun install --frozen-lockfile || bun install --frozen-lockfile
                     bun run lint
                 '''
             }
-        }        
+        }
         // stage('SonarQube Analysis') {
         // }
         stage('Tests') {
@@ -48,7 +49,6 @@ pipeline {
                         docker {
                             image 'node:25-alpine3.21'
                             args '-u root'
-                            
                         }
                     }
                     steps {
@@ -65,13 +65,11 @@ pipeline {
                         }
                     }
                 }
-
                 stage('Integration Tests') {
-                   agent {
+                    agent {
                         docker {
                             image 'node:25-alpine3.21'
                             args '-u root'
-                            
                         }
                     }
                     steps {
@@ -88,13 +86,11 @@ pipeline {
                         }
                     }
                 }
-
                 stage('UI Tests') {
                     agent {
                         docker {
                             image 'node:25-alpine3.21'
                             args '-u root'
-                            
                         }
                     }
                     steps {
@@ -106,46 +102,44 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'frontend/breco/test-results/ui-results.xml'                            
+                            junit 'frontend/breco/test-results/ui-results.xml'
                             stash name: 'ui-results', includes: 'frontend/breco/test-results/ui-results.xml'
                         }
                     }
                 }
-            }
-        
-            // stage('Test: E2E Tests') {
-            //     agent {
-            //         docker {
-            //             image 'node:25-alpine3.21'
-            //             args '-u root'
-            //         }
-            //     }
-            //     steps {
-            //         echo "Tests E2E (Selenium)..."
-            //         sh '''
-            //             apk add --no-cache firefox wget netcat-openbsd
-                        
-            //             # Geckodriver
-            //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux-aarch64.tar.gz
-            //             tar -xzf geckodriver-v0.34.0-linux-aarch64.tar.gz
-            //             mv geckodriver /usr/bin/
-            //             chmod +x /usr/bin/geckodriver
-                        
-            //             cd frontend/breco
-            //             bun install --frozen-lockfile
-            //             VITEST=true bun run test:e2e
-            //         '''
-            //     }
-            // }
-            stage('Test: PHP Unit Tests') {
-                agent {
-                    docker {
-                        image 'php:8.3-cli-alpine'
-                        args '-u root'
+                // stage('Test: E2E Tests') {
+                //     agent {
+                //         docker {
+                //             image 'node:25-alpine3.21'
+                //             args '-u root'
+                //         }
+                //     }
+                //     steps {
+                //         echo "Tests E2E (Selenium)..."
+                //         sh '''
+                //             apk add --no-cache firefox wget netcat-openbsd
+
+                //             # Geckodriver
+                //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux-aarch64.tar.gz
+                //             tar -xzf geckodriver-v0.34.0-linux-aarch64.tar.gz
+                //             mv geckodriver /usr/bin/
+                //             chmod +x /usr/bin/geckodriver
+
+                //                 cd frontend/breco
+                //                 bun install --frozen-lockfile
+                //                 VITEST=true bun run test:e2e
+                //             '''
+                //     }
+                // }
+                stage('Test: PHP Unit Tests') {
+                    agent {
+                        docker {
+                            image 'php:8.3-cli-alpine'
+                            args '-u root'
+                        }
                     }
-                }
-                steps {
-                    sh '''
+                    steps {
+                        sh '''
                         cd backend/breco
                         apk add --no-cache sqlite sqlite-dev curl
                         docker-php-ext-install pdo pdo_sqlite
@@ -154,11 +148,12 @@ pipeline {
                         mkdir -p test-results
                         php composer.phar test
                     '''
-                }
-                post {
-                    always {
-                        junit 'backend/breco/test-results/phpunit-results.xml'
-                        stash name: 'phpunit-results', includes: 'backend/breco/test-results/phpunit-results.xml'
+                    }
+                    post {
+                        always {
+                            junit 'backend/breco/test-results/phpunit-results.xml'
+                            stash name: 'phpunit-results', includes: 'backend/breco/test-results/phpunit-results.xml'
+                        }
                     }
                 }
             }
@@ -174,21 +169,21 @@ pipeline {
                 sh '''
                     echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/dist/test-results
-                    
+
                     cp frontend/breco/test-results/unit-results.xml \
                     frontend/breco/test-results/integration-results.xml \
                     frontend/breco/test-results/ui-results.xml \
                     frontend/breco/dist/test-results/
                     echo '✅ Copy succeed'
-                    
+
                     echo "Verification:"
                     ls -la frontend/breco/dist/test-results/
                 '''
             }
-        } 
+        }
         stage('Build') {
             steps {
-                echo "Docker images build..."
+                echo 'Docker images build...'
                 sh '''
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
 
@@ -200,19 +195,19 @@ pipeline {
                       -t breco_v2_0_0_frontend:latest \
                       -f frontend/breco/Dockerfile-frontend \
                       frontend/breco
-                    
-                    # Backend Build 
+
+                    # Backend Build
                     docker build \
                       --no-cache \
                       -t breco_v2_0_0_backend:${BUILD_NUMBER} \
                       -t breco_v2_0_0_backend:latest \
                       -f backend/breco/Dockerfile-backend \
-                      backend/breco                           
+                      backend/breco
                 '''
             }
         }
         // stage('Swagger Bake: API Documentation') {
-        // }        
+        // }
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -233,8 +228,8 @@ pipeline {
                         docker push ${DOCKER_USERNAME}/breco-backend:latest
                     '''
                 }
-                
-                echo "Re-deploy on VPS..."
+
+                echo 'Re-deploy on VPS...'
                     sshagent(credentials: ['vps-ssh']) {
                         sh '''
                             ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
@@ -245,7 +240,7 @@ pipeline {
                         '''
                     }
 
-                echo "Test results copy on VPS..."
+                echo 'Test results copy on VPS...'
                 sshagent(credentials: ['vps-ssh']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "mkdir -p ~/breco_v2_0_0/frontend/breco/dist/test-results"
@@ -260,11 +255,11 @@ pipeline {
                     sleep 30
                     BUILD_NUM=$(curl -s http://37.59.101.232:3001/BUILD_NUMBER.txt 2>/dev/null | tr -d '\n')
                     BUILD_DATE=$(curl -s http://37.59.101.232:3001/BUILD_DATE.txt 2>/dev/null | tr -d '\n')
-                    
+
                     echo "Build Number: $BUILD_NUM"
                     echo "Build Date: $BUILD_DATE"
                     echo "Jenkins Build: ${BUILD_NUMBER}"
-                    
+
                     if [ "$BUILD_NUM" = "${BUILD_NUMBER}" ]; then
                         echo "✅ Correct version deployed!"
                     else
@@ -276,7 +271,7 @@ pipeline {
         }
         stage('Verify') {
             steps {
-                echo "Deployment verification..."
+                echo 'Deployment verification...'
                 sh '''
                     sleep 10
                     curl -f http://37.59.101.232:8081/api/health || exit 1
@@ -286,7 +281,7 @@ pipeline {
         }
         // stage('Security:Owasp ZAP Scan') {
         // }
-        
+
         // stage('Performance: JMeter Tests') {
         //     agent {
         //         docker {
@@ -294,31 +289,30 @@ pipeline {
         //             args '-u root'
         //         }
         //     }
-        //     steps {        
+        //     steps {
         //         sh '''
         //             apt-get update -qq
         //             apt-get install -y wget unzip
-                    
+
         //             # Download JMeter
         //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
         //             unzip -o -q apache-jmeter-5.6.3.zip
-                    
+
         //             # Launch test
         //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
-                    
-        //             # Generates the report
-        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
-        //         '''
-        //     }
-        // }
 
+    //             # Generates the report
+    //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
+    //         '''
+    //     }
+    // }
     }
     post {
         failure {
-            echo "❌ Pipeline failed!"
+            echo '❌ Pipeline failed!'
         }
         success {
-            echo "✅ Pipeline succeeded!"
+            echo '✅ Pipeline succeeded!'
         }
     }
 }

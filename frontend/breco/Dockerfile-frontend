@@ -41,8 +41,8 @@ RUN bun install -g serve
 COPY --from=builder /app/dist ./dist
 
 # Create build metadata files
-RUN echo "${BUILD_NUMBER}" > ./dist/BUILD_NUMBER.txt
-RUN echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > ./dist/BUILD_DATE.txt
+RUN echo "${BUILD_NUMBER}" > ./dist/BUILD_NUMBER.txt && \
+    echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > ./dist/BUILD_DATE.txt  
 
 # Expose application port
 EXPOSE 3000

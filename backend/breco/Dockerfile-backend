@@ -1,6 +1,6 @@
 # backend\breco\Dockerfile-backend
 # Stage 1: Build dependencies
-FROM php:8.2-fpm AS builder
+FROM php:8.4-fpm AS builder
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -37,28 +37,20 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Stage 2: Runtime
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
-# Install system dependencies
+# Install system dependencies & PHP extensions, then configure PHP-FPM
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     libzip-dev \
     libicu-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    zip \
-    intl
-
-# Configure PHP-FPM
-RUN echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.conf
-RUN echo "pm.start_servers = 5" >> /usr/local/etc/php-fpm.conf
-RUN echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.conf
-RUN echo "pm.max_spare_servers = 10" >> /usr/local/etc/php-fpm.conf
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install pdo pdo_mysql zip intl \
+    && echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.conf \
+    && echo "pm.start_servers = 5" >> /usr/local/etc/php-fpm.conf \
+    && echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.conf \
+    && echo "pm.max_spare_servers = 10" >> /usr/local/etc/php-fpm.conf
 
 # Set working directory
 WORKDIR /app
@@ -66,17 +58,11 @@ WORKDIR /app
 # Copy from builder
 COPY --from=builder /app /app
 
-# Create necessary directories
+# Create necessary directories and create .env file with default values
 RUN mkdir -p logs tmp cache && \
     chown -R www-data:www-data logs tmp cache && \
-    chmod -R 750 logs tmp cache
-
-# Create .env file with default values
-RUN echo "DEBUG=false" > .env && \
-    echo "APP_NAME=Breco" >> .env && \
-    echo "APP_ENCODING=UTF-8" >> .env && \
-    echo "APP_DEFAULT_LOCALE=en_US" >> .env && \
-    echo "APP_DEFAULT_TIMEZONE=UTC" >> .env
+    chmod -R 750 logs tmp cache && \
+    printf "DEBUG=false\nAPP_NAME=Breco\nAPP_ENCODING=UTF-8\nAPP_DEFAULT_LOCALE=en_US\nAPP_DEFAULT_TIMEZONE=UTC\n" > .env
 
 # Expose port
 EXPOSE 9000

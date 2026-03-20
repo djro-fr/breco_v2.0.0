@@ -5,7 +5,7 @@
     "type": "project",
     "homepage": "https://cakephp.org",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.4",
         "cakephp/authentication": "^3.3",
         "cakephp/cakephp": "5.2.*",
         "cakephp/migrations": "^4.0.0",

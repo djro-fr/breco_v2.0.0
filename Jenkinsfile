@@ -134,17 +134,15 @@ pipeline {
                 stage('PHP Unit Tests') {
                     agent {
                         docker {
-                            image 'php:8.3-cli-alpine'
+                            image 'djrofr/breco-phptest:8.4'
                             args '-u root'
                         }
                     }
                     steps {
                         sh '''
                             cd backend/breco
-                            apk add --no-cache sqlite sqlite-dev curl icu-dev
-                            docker-php-ext-install pdo pdo_sqlite intl
                             curl -sS https://getcomposer.org/installer | php
-                            php composer.phar install --no-interaction --ignore-platform-req=ext-intl
+                            php composer.phar install --no-interaction 
                             mkdir -p test-results
                             php composer.phar test
                     '''

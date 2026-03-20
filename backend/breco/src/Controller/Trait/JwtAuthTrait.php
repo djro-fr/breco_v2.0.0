@@ -44,15 +44,13 @@ trait JwtAuthTrait
 
         try {
             // Decodes it with the secret key
-            $decoded = JWT::decode(
+            return JWT::decode(
                 $token,
                 new Key(
                     $this->getJwtSecret(),
                     'HS256'
                 )
             );
-            // If no exception, token is valid
-            return $decoded;
 
         } catch (\Exception $e) {
             return null;

@@ -1,0 +1,22 @@
+FROM php:8.4-fpm
+# Install system dependencies and PHP extensions
+
+# build-essential: C/C++ compiler (gcc, make)
+# libpq-dev: PostgreSQL headers (necessary for pdo_mysql paradoxically)
+# libzip-dev: headers for the zip extension
+# libicu-dev: headers for the intl extension (internationalization)
+# rm -rf /var/lib/apt/lists/* : cleans apt cache to reduce image size
+# docker-php-ext-install pdo pdo_mysql zip intl : Compile and install PHP extensions from the sources
+
+# echo "pm.max_children..."  x4: Configure PHP-FPM to handle a maximum of 20 child processes, with a starting point of 5 servers, and a minimum of 2 spare servers and a maximum of 10 spare servers. This configuration helps manage the load and performance of the PHP application.
+
+RUN apt-get update && apt-get install -y \
+    git curl build-essential \
+    libpq-dev libzip-dev libicu-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install pdo pdo_mysql zip intl \
+    && echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.conf \
+    && echo "pm.start_servers = 5" >> /usr/local/etc/php-fpm.conf \
+    && echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.conf \
+    && echo "pm.max_spare_servers = 10" >> /usr/local/etc/php-fpm.conf
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

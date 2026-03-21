@@ -1,56 +1,15 @@
 # backend\breco\Dockerfile-backend
+
 # Stage 1: Build dependencies
-FROM php:8.4-fpm AS builder
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    build-essential \
-    libpq-dev \
-    libzip-dev \
-    libicu-dev \
-    zip \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    zip \
-    intl
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
+FROM djrofr/breco-backend-builder:8.4 AS builder
+# Install build dependencies for native modules (git, curl already included in builder image)
 WORKDIR /app
-
-# Copy composer files
 COPY composer.json composer.lock ./
-
-# Copy application source code
 COPY . .
-
-# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
 # Stage 2: Runtime
-FROM php:8.4-fpm
-
-# Install system dependencies & PHP extensions, then configure PHP-FPM
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    libzip-dev \
-    libicu-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install pdo pdo_mysql zip intl \
-    && echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.conf \
-    && echo "pm.start_servers = 5" >> /usr/local/etc/php-fpm.conf \
-    && echo "pm.min_spare_servers = 2" >> /usr/local/etc/php-fpm.conf \
-    && echo "pm.max_spare_servers = 10" >> /usr/local/etc/php-fpm.conf
+FROM djrofr/breco-backend-builder:8.4
 
 # Set working directory
 WORKDIR /app

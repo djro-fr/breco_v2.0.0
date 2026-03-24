@@ -127,6 +127,12 @@ pipeline {
                             npm run test:e2e
                         '''
                     }
+                    post {
+                        always {
+                            junit 'frontend/breco/test-results/e2e-results.xml'
+                            stash name: 'e2e-results', includes: 'frontend/breco/test-results/e2e-results.xml'
+                        }
+                    }
                 }
                 stage('PHP Unit Tests') {
                     agent {
@@ -162,6 +168,7 @@ pipeline {
                 unstash 'unit-results'
                 unstash 'integration-results'
                 unstash 'ui-results'
+                unstash 'e2e-results'
                 sh '''
                     echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/dist/test-results
@@ -169,6 +176,7 @@ pipeline {
                     cp frontend/breco/test-results/unit-results.xml \
                     frontend/breco/test-results/integration-results.xml \
                     frontend/breco/test-results/ui-results.xml \
+                    frontend/breco/test-results/e2e-results.xml \
                     frontend/breco/dist/test-results/
                     echo '✅ Copy succeed'
 

@@ -43,8 +43,8 @@ pipeline {
                 '''
             }
         }
-        stage('SonarQube Analysis') {
-        }
+        // stage('SonarQube Analysis') {
+        // }
         stage('Tests') {
             parallel {
                 stage('Unit Tests') {

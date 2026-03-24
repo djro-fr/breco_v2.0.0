@@ -14,7 +14,7 @@
     "test:unit": "vitest run src/__tests__/unit --reporter=junit --outputFile=test-results/unit-results.xml",
     "test:integration": "vitest run src/__tests__/integration --reporter=junit --outputFile=test-results/integration-results.xml",
     "test:ui": "vitest run src/__tests__/ui --reporter=junit --outputFile=test-results/ui-results.xml",
-    "test:e2e": "vitest run 'src/__tests__/e2e'",
+    "test:e2e": "vitest run src/__tests__/e2e",
     "test:watch": "vitest watch",
     "test:all": "npm run test:unit && npm run test:ui && npm run test:integration",
     "test:coverage": "vitest run --coverage",

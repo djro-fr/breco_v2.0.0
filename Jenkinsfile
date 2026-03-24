@@ -107,30 +107,30 @@ pipeline {
                         }
                     }
                 }
-                // stage('E2E Tests') {
-                //     agent {
-                //         docker {
-                //             image 'node:25-alpine3.21'
-                //             args '-u root'
-                //         }
-                //     }
-                //     steps {
-                //         echo "Tests E2E (Selenium)..."
-                //         sh '''
-                //             apk add --no-cache firefox wget netcat-openbsd
+                stage('E2E Tests') {
+                    agent {
+                        docker {
+                            image 'node:25-alpine3.21'
+                            args '-u root'
+                        }
+                    }
+                    steps {
+                        echo "Tests E2E (Selenium)..."
+                        sh '''
+                            apk add --no-cache firefox wget netcat-openbsd
 
-                //             # Geckodriver
-                //             wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux-aarch64.tar.gz
-                //             tar -xzf geckodriver-v0.34.0-linux-aarch64.tar.gz
-                //             mv geckodriver /usr/bin/
-                //             chmod +x /usr/bin/geckodriver
+                            # Geckodriver
+                            wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux-aarch64.tar.gz
+                            tar -xzf geckodriver-v0.34.0-linux-aarch64.tar.gz
+                            mv geckodriver /usr/bin/
+                            chmod +x /usr/bin/geckodriver
 
-                //                 cd frontend/breco
-                //                 bun install --frozen-lockfile
-                //                 VITEST=true bun run test:e2e
-                //             '''
-                //     }
-                // }
+                                cd frontend/breco
+                                bun install --frozen-lockfile
+                                VITEST=true bun run test:e2e
+                            '''
+                    }
+                }
                 stage('PHP Unit Tests') {
                     agent {
                         docker {

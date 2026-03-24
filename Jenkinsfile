@@ -1,6 +1,9 @@
-/* groovylint-disable CompileStatic, GStringExpressionWithinString */
 pipeline {
     agent any
+    options {
+        // Keep only the last 5 builds to save disk space on VPS
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+    }
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         VPS_IP = '37.59.101.232'
@@ -40,8 +43,8 @@ pipeline {
                 '''
             }
         }
-        // stage('SonarQube Analysis') {
-        // }
+        stage('SonarQube Analysis') {
+        }
         stage('Tests') {
             parallel {
                 stage('Unit Tests') {

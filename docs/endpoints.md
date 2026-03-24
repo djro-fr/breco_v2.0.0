@@ -31,6 +31,7 @@
 | Mailhog UI | 8025 | http://37.59.101.232:8025 | Email web interface |
 | Mailhog SMTP | 1025 | 37.59.101.232:1025 | SMTP server |
 | Jenkins | 8080 | http://37.59.101.232:8080 | CI/CD |
+| SonarQube | 9000 | http://37.59.101.232:9000 | Code quality analysis |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232`
 
@@ -49,5 +50,5 @@
 - [ ] Disable Mailhog on VPS
 - [ ] Configure a real SMTP service (SendGrid, AWS SES, Mailgun, etc.)
 - [ ] Update `backend/breco/config/app.php` with SMTP credentials
-- [ ] Remove Mailhog from `docker-compose.linux.yml`
+- [ ] Remove Mailhog from `docker-compose.yml`
 - [ ] Configure environment variables for email in production

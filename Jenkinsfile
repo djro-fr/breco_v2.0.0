@@ -175,7 +175,7 @@ pipeline {
                     frontend/breco/test-results/integration-results.xml \
                     frontend/breco/test-results/ui-results.xml \
                     frontend/breco/test-results/e2e-results.xml \
-                    frontend/breco/test-results/phpunit-results.xml \
+                    backend/breco/test-results/phpunit-results.xml \
                     frontend/breco/dist/test-results/
                     echo '✅ Copy succeed'
 

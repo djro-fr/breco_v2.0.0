@@ -159,11 +159,14 @@ pipeline {
             // http://37.59.101.232:3001/test-results/unit-results.xml
             // http://37.59.101.232:3001/test-results/integration-results.xml
             // http://37.59.101.232:3001/test-results/ui-results.xml
+            // http://37.59.101.232:3001/test-results/e2e-results.xml
+            // http://37.59.101.232:3001/test-results/phpunit-results.xml
             steps {
                 unstash 'unit-results'
                 unstash 'integration-results'
                 unstash 'ui-results'
                 unstash 'e2e-results'
+                unstash 'phpunit-results'
                 sh '''
                     echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/dist/test-results
@@ -172,6 +175,7 @@ pipeline {
                     frontend/breco/test-results/integration-results.xml \
                     frontend/breco/test-results/ui-results.xml \
                     frontend/breco/test-results/e2e-results.xml \
+                    frontend/breco/test-results/phpunit-results.xml \
                     frontend/breco/dist/test-results/
                     echo '✅ Copy succeed'
 

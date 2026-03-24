@@ -27,29 +27,25 @@ RUN ls -la /app/dist || echo "DIST FOLDER NOT CREATED!"
 #--------------------------------------------------------------
 
 # Stage 2: Production-ready image
-FROM oven/bun:1-alpine
-
-WORKDIR /app
+FROM nginx:alpine
 
 # Build metadata
 ARG BUILD_NUMBER=unknown
 
-# Install serve globally to serve static files
-RUN bun install -g serve
-
-# Copy only built assets from builder stage
-COPY --from=builder /app/dist ./dist
+# Copy custom nginx configuration
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx/nginx-frontend.conf /etc/nginx/conf.d/default.conf
 
 # Create build metadata files
-RUN echo "${BUILD_NUMBER}" > ./dist/BUILD_NUMBER.txt && \
-    echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > ./dist/BUILD_DATE.txt  
+RUN echo "${BUILD_NUMBER}" > /usr/share/nginx/html/BUILD_NUMBER.txt && \
+    echo "$(date -u +'%Y-%m-%d %H:%M:%S')" > /usr/share/nginx/html/BUILD_DATE.txt  
 
-# Expose application port
-EXPOSE 3000
+# Expose port 80 for the frontend
+EXPOSE 80
 
 # Health check configuration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
+  CMD wget --quiet --tries=1 --spider http://localhost:80 || exit 1
 
-# Start the production server
-CMD ["serve", "-s", "/app/dist", "-l", "3000"]
+# Start nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]

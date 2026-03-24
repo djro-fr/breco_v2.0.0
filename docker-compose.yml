@@ -80,7 +80,7 @@ services:
     environment:
       VITE_API_URL: ${VITE_API_URL} # e.g., http://localhost:8081/api
     ports:
-      - "3001:3000"    # Expose Frontend on host port 3001 instead of default 3000
+      - "3001:80"    # Expose Frontend on host port 3001 instead of default 80
     depends_on:
       - backend
     networks:

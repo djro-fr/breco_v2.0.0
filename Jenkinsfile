@@ -169,18 +169,12 @@ pipeline {
                 unstash 'phpunit-results'
                 sh '''
                     echo "Copy test results to dist/..."
-                    mkdir -p frontend/breco/dist/test-results
-
-                    cp frontend/breco/test-results/unit-results.xml \
-                    frontend/breco/test-results/integration-results.xml \
-                    frontend/breco/test-results/ui-results.xml \
-                    frontend/breco/test-results/e2e-results.xml \
-                    backend/breco/test-results/phpunit-results.xml \
-                    frontend/breco/dist/test-results/
+                    mkdir -p frontend/breco/test-results
+                    cp backend/breco/test-results/phpunit-results.xml \
+                    frontend/breco/test-results/
                     echo '✅ Copy succeed'
-
                     echo "Verification:"
-                    ls -la frontend/breco/dist/test-results/
+                    ls -la frontend/breco/test-results/
                 '''
             }
         }
@@ -233,22 +227,14 @@ pipeline {
                 }
 
                 echo 'Re-deploy on VPS...'
-                    sshagent(credentials: ['vps-ssh']) {
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
-                            docker-compose -f docker-compose.linux.yml stop frontend backend nginx mysql && \
-                            docker-compose -f docker-compose.linux.yml rm -f frontend backend nginx mysql && \
-                            docker-compose -f docker-compose.linux.yml pull frontend backend nginx mysql && \
-                            docker-compose -f docker-compose.linux.yml up -d frontend backend nginx mysql"
-                        '''
-                    }
-
-                echo 'Test results copy on VPS...'
                 sshagent(credentials: ['vps-ssh']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "mkdir -p ~/breco_v2_0_0/frontend/breco/dist/test-results"
-                        scp -o StrictHostKeyChecking=no -r frontend/breco/dist/test-results/* ubuntu@37.59.101.232:~/breco_v2_0_0/frontend/breco/dist/test-results/
-                    '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2_0_0 && \
+                        docker-compose -f docker-compose.yml stop frontend backend nginx mysql && \
+                        docker-compose -f docker-compose.yml rm -f frontend backend nginx mysql && \
+                        docker-compose -f docker-compose.yml pull frontend backend nginx mysql && \
+                        docker-compose -f docker-compose.yml up -d frontend backend nginx mysql"
+                    '''                    
                 }
             }
         }

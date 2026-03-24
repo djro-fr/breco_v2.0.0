@@ -1,0 +1,10 @@
+FROM node:25-alpine3.21
+
+RUN apk add --no-cache firefox wget && \
+    wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz && \
+    tar -xzf geckodriver-v0.34.0-linux64.tar.gz && \
+    mv geckodriver /usr/bin/ && \
+    chmod +x /usr/bin/geckodriver && \
+    rm geckodriver-v0.34.0-linux64.tar.gz
+
+WORKDIR /app

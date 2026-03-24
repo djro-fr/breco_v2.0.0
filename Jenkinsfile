@@ -110,18 +110,13 @@ pipeline {
                 stage('E2E Tests') {
                     agent {
                         docker {
-                            image 'node:25-alpine3.21'
+                            image 'djrofr/breco-e2e:latest'
                             args '-u root'
+                            alwaysPull true
                         }
                     }
                     steps {
-                        echo "Tests E2E (Selenium)..."
                         sh '''
-                            apk add --no-cache firefox wget
-                            wget -q https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
-                            tar -xzf geckodriver-v0.34.0-linux64.tar.gz
-                            mv geckodriver /usr/bin/
-                            chmod +x /usr/bin/geckodriver
                             cd frontend/breco
                             npm ci
                             npm run test:e2e

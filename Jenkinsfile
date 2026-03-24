@@ -46,13 +46,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        sonar-scanner \
+                    script {
+                        def scannerHome = tool 'SonarQube Scanner'
+                        sh "${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=breco \
                         -Dsonar.sources=frontend/breco/src,backend/breco/src \
                         -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/** \
-                        -Dsonar.host.url=http://breco_sonarqube:9000
-                    '''
+                        -Dsonar.host.url=http://breco_sonarqube:9000"
+                    }
                 }
             }
         }

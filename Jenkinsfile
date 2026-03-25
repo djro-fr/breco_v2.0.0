@@ -321,6 +321,7 @@ pipeline {
 
                     docker run --rm \
                     --network host \
+                    --user root \
                     -v ${WORKSPACE}/zap-reports:/zap/wrk/:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-baseline.py \

@@ -19,10 +19,11 @@ COPY --from=builder /app /app
 
 # Create necessary directories and create .env file with default values
 RUN mkdir -p logs tmp cache && \
-    chown -R www-data:www-data logs tmp cache webroot && \
+    # Set permissions for www-data (uid 33) to access these directories
+    chown -R 33:33 logs tmp cache webroot && \
     chmod -R 750 logs tmp cache && \
     chmod -R 755 webroot && \
-    chown www-data:www-data webroot/swagger.json && \
+    chown 33:33 webroot/swagger.json && \
     chmod 664 webroot/swagger.json && \
     printf "DEBUG=false\nAPP_NAME=Breco\nAPP_ENCODING=UTF-8\nAPP_DEFAULT_LOCALE=en_US\nAPP_DEFAULT_TIMEZONE=UTC\n" > .env
 

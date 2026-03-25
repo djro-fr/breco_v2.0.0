@@ -313,8 +313,35 @@ pipeline {
                 '''
             }
         }
-        // stage('Security:Owasp ZAP Scan') {
-        // }
+        stage('Security: OWASP ZAP Scan') {
+            steps {
+                echo 'OWASP ZAP security scan...'
+                sh '''
+                    mkdir -p zap-reports
+
+                    docker run --rm \
+                    --network host \
+                    -v ${WORKSPACE}/zap-reports:/zap/wrk/:rw \
+                    ghcr.io/zaproxy/zaproxy:stable \
+                    zap-baseline.py \
+                        -t http://37.59.101.232:8081 \
+                        -r zap-report.html \
+                        -I
+                '''
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing         : true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll              : true,
+                        reportDir            : 'zap-reports',
+                        reportFiles          : 'zap-report.html',
+                        reportName           : 'OWASP ZAP Security Report'
+                    ])
+                }
+            }
+        }
 
         // stage('Performance: JMeter Tests') {
         //     agent {

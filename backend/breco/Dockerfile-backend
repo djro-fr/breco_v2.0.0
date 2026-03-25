@@ -22,6 +22,8 @@ RUN mkdir -p logs tmp cache && \
     chown -R www-data:www-data logs tmp cache webroot && \
     chmod -R 750 logs tmp cache && \
     chmod -R 755 webroot && \
+    chown www-data:www-data webroot/swagger.json && \
+    chmod 664 webroot/swagger.json && \
     printf "DEBUG=false\nAPP_NAME=Breco\nAPP_ENCODING=UTF-8\nAPP_DEFAULT_LOCALE=en_US\nAPP_DEFAULT_TIMEZONE=UTC\n" > .env
 
 # Expose port

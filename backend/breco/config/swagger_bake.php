@@ -62,7 +62,7 @@ return [
         'yml' => '/config/swagger.yml',
         'json' => '/webroot/swagger.json',
         'webPath' => '/swagger.json',
-        'hotReload' => true,
+        'hotReload' => false,
         'jsonOptions' => Configure::read('debug') ? JSON_PRETTY_PRINT : JSON_UNESCAPED_UNICODE,
         'editActionMethods' => ['PUT', 'PATCH'],
         'requestAccepts' => ['application/json'],

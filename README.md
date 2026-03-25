@@ -42,8 +42,10 @@ Mailhog: http://localhost:8025
 
 ## Tech Stack
 
-- **Frontend**: Vue.js 3, TypeScript, Tailwind CSS v4
-- **Backend**: CakePHP 5.x, MySQL 8.0
+- **Frontend**: Vue.js 3, TypeScript, Tailwind CSS v4, Zod
+- **Backend**: CakePHP 5.x, MySQL 8.0, Firebase JWT
+- **API Docs**: SwaggerBake 3.x (OpenAPI / PHP 8 attributes)
+- **Testing**: Vitest, PHPUnit, Selenium
 - **DevOps**: Docker, Jenkins CI/CD, Nginx
 
 ---
@@ -215,6 +217,20 @@ Content-Type: application/json
 curl http://localhost:8081/api/health
 ```
 
+### Running Tests
+
+```bash
+# Frontend unit tests (Vitest)
+cd frontend/breco
+npm run test
+
+# Backend unit tests (PHPUnit)
+docker-compose exec backend vendor/bin/phpunit
+
+# E2E tests (Selenium)
+# See docs/testing.md for setup
+```
+
 ---
 
 ## Environments
@@ -229,6 +245,7 @@ curl http://localhost:8081/api/health
 | API (direct) | http://localhost:8765 |
 | Mailhog | http://localhost:8025 |
 | MySQL | localhost:3307 |
+| Swagger UI | http://localhost:8081/api/swagger |
 
 ### VPS (staging)
 
@@ -273,6 +290,11 @@ docker logs breco_nginx
 docker-compose restart nginx
 ```
 
+### Registration returns "Tous les champs sont requis"
+
+⚠️ **Known issue** — Verify that `AuthController.php` correctly parses the JSON body.  
+Add debug logs to inspect received data before validation.
+
 ### Complete database reset
 
 ```bash
@@ -292,20 +314,17 @@ npm install
 
 ---
 
-## Project Status
-
-- **Version**: 2.0.0
-- **Status**: In development
-- **Last updated**: January 29, 2026
-
 ### Implemented features
 
-- JWT authentication
-- Email verification
-- DDD architecture
-- Jenkins CI/CD pipeline
-- Docker compose
+- JWT authentication (custom `JwtAuthTrait` — Firebase JWT)
+- Email verification (Mailhog)
+- DDD / Clean Architecture (frontend + backend)
+- OpenAPI documentation (SwaggerBake 3.x, PHP 8 attributes)
+- Zod validation (presentation layer — `useTownSearch.ts`)
+- Jenkins CI/CD pipeline (deployed on OVH VPS)
+- Docker Compose (multi-service)
 - Health check endpoint
+- Test plan: 53+ test cases (Vitest / PHPUnit / Selenium pyramid)
 
 ### TODO before production
 
@@ -313,9 +332,10 @@ See [Production Checklist](docs/todo-prod.md) for complete list.
 
 Immediate priorities:
 
+- [ ] Fix registration bug (`AuthController.php` — JSON parsing)
 - [ ] Disable Mailhog on VPS
 - [ ] Implement rate limiting
-- [ ] Add unit tests
+- [ ] Complete test suite (Stories 3–10)
 - [ ] Configure HTTPS
 
 ---
@@ -349,3 +369,11 @@ chore: maintenance tasks
 - [Complete documentation](docs/README.md)
 - [GitHub Issues](https://github.com/djro-fr/breco_v2.0.0/issues)
 - Contact: [syl.gi@laposte.net]
+
+---
+
+## Project Status
+
+- **Version**: 2.0.0
+- **Status**: In development
+- **Last updated**: March 25, 2026

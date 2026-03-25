@@ -227,8 +227,6 @@ npm run test
 # Backend unit tests (PHPUnit)
 docker-compose exec backend vendor/bin/phpunit
 
-# E2E tests (Selenium)
-# See docs/testing.md for setup
 ```
 
 ---

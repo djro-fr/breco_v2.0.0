@@ -6,8 +6,7 @@ Welcome in the demo version of Breco, the carpooling application for Brittany
 
 ## Quick Start
 
-**New developer?** Start here: [Getting Started Guide](getting-started.md)
-
+**New developer?** Start here: [Getting Started Guide](getting-started.md)  
 **Production deployment?** Check the [Production Checklist](todo-prod.md)
 
 ---
@@ -31,6 +30,8 @@ Welcome in the demo version of Breco, the carpooling application for Brittany
 - Docker + Docker Compose
 - Jenkins CI/CD
 - Nginx (reverse proxy)
+- SonarQube (code quality)
+- OWASP ZAP (security scan)
 
 ---
 
@@ -45,6 +46,10 @@ docs/
 ├── endpoints.md           # Ports and services
 ├── error-handling.md      # Error management
 └── todo-prod.md           # Production checklist
+
+jenkins/
+├── Dockerfile             # Custom Jenkins image (VPS)
+└── JENKINS.md             # Jenkins update procedure
 ```
 
 ---
@@ -56,6 +61,7 @@ docs/
 - [CakePHP 5 Documentation](https://book.cakephp.org/5/en/)
 - [Vue.js 3 Documentation](https://vuejs.org/)
 - [Docker Documentation](https://docs.docker.com/)
+- [OWASP ZAP Documentation](https://www.zaproxy.org/docs/)
 
 ### Repositories
 
@@ -64,9 +70,10 @@ docs/
 
 ### Environments
 
-- **Local**: http://localhost:3001 (frontend), http://localhost:8081 (nginx)
-- **VPS**: http://37.59.101.232:3001 (frontend), http://37.59.101.232:8081 (nginx)
-- **Jenkins**: http://37.59.101.232:8080
+| | Frontend | Nginx | Jenkins | SonarQube |
+| --- | --- | --- | --- | --- |
+| **Local** | http://localhost:3001 | http://localhost:8081 | — | — |
+| **VPS** | http://37.59.101.232:3001 | http://37.59.101.232:8081 | http://37.59.101.232:8080 | http://37.59.101.232:9000 |
 
 ---
 
@@ -80,7 +87,7 @@ docs/
 cd frontend/breco
 rm -rf node_modules
 bun install
-bun run dev 
+bun run dev
 ```
 
 #### **Docker "port already in use" error**
@@ -104,12 +111,13 @@ docker-compose up -d
 ### Commits
 
 ```text
-feat: new feature
-fix: bug fix
-docs: documentation
+feat:     new feature
+fix:      bug fix
+docs:     documentation
 refactor: refactoring
-test: add tests
-chore: maintenance tasks
+test:     add tests
+ci:       CI/CD pipeline changes
+chore:    maintenance tasks
 ```
 
 ### Branches
@@ -137,14 +145,14 @@ fix/*        # Bug fixes
 
 ## Project Metrics
 
-- **Coverage**: In development
-- **Tests**: Unit, Integration, UI
-- **CI/CD**: Jenkins 8 stages
-- **Deployment**: Automatic to VPS
+- **Tests**: Unit, Integration, UI, E2E, PHPUnit
+- **CI/CD**: Jenkins pipeline (Lint → SonarQube → Tests → Build → Deploy → ZAP)
+- **Deployment**: Automatic to VPS on every push
+- **Security**: OWASP ZAP baseline scan after each deployment
 
 ---
 
 ## Last Update
 
-**Date**: February 11, 2026  
+**Date**: March 25, 2026  
 **Status**: In development

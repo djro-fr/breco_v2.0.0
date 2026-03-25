@@ -1,7 +1,7 @@
 # TODO - Production Deployment Checklist
 
 > **Current status**: Development (not production-ready)  
-> **Last updated**: January 29, 2026
+> **Last updated**: March 25, 2026
 
 ---
 
@@ -27,7 +27,18 @@
 - [ ] Implement JWT refresh tokens
 - [ ] Add rate limiting (login, register)
 - [ ] Enable fail2ban (SSH + nginx)
-- [ ] OWASP security audit
+
+### OWASP ZAP Security Audit
+
+- [x] OWASP ZAP baseline scan integrated in Jenkins pipeline
+- [ ] Fix WARN-NEW: Server leaks version information (`Server` header in Nginx)
+- [ ] Fix WARN-NEW: Content Security Policy (CSP) header not set
+- [ ] Fix WARN-NEW: Permissions Policy header not set
+- [ ] Fix WARN-NEW: Cross-Domain Misconfiguration (CORS too permissive)
+- [ ] Fix WARN-NEW: Storable and Cacheable Content (Cache-Control headers)
+- [ ] Fix WARN-NEW: Cross-Origin-Embedder-Policy (COEP) header missing
+- [ ] Add `robots.txt` and `sitemap.xml` (resolves In Page Banner Information Leak)
+- [ ] Run ZAP full scan (active scan) before production launch
 
 ### CORS
 
@@ -142,7 +153,7 @@
 
 - [ ] Complete E2E tests (Cypress/Playwright)
 - [ ] Load tests (goal: 1000 simultaneous users)
-- [ ] Security tests (OWASP ZAP)
+- [x] OWASP ZAP baseline scan — integrated in Jenkins pipeline (60 PASS, 7 WARN, 0 FAIL)
 - [ ] Backend coverage > 80%
 
 ---
@@ -181,7 +192,7 @@
 
 - [ ] All points above validated
 - [ ] Load tests successful
-- [ ] Security audit validated
+- [ ] Security audit validated (ZAP 0 FAIL)
 - [ ] Backup tested and functional
 - [ ] Monitoring operational
 - [ ] Complete documentation
@@ -190,5 +201,4 @@
 
 **NEVER launch in production until all CRITICAL points are validated!**
 
-**Version**: 1.0  
-**Last updated**: January 29, 2026
+**Last updated**: March 25, 2026

@@ -7,7 +7,7 @@
 > Works on **Windows** (Docker Desktop + WSL2) or **Ubuntu** (native Docker)
 
 | Service | Port | URL | Description |
-| ------- | ---- | --- | ----------- |
+| --- | --- | --- | --- |
 | Frontend | 3001 | http://localhost:3001 | Vue.js application |
 | Backend | 8765 | http://localhost:8765 | API PHP-FPM (direct) |
 | Nginx | 8081 | http://localhost:8081 | Reverse proxy |
@@ -23,14 +23,14 @@
 ### Production Environment (Ubuntu VPS)
 
 | Service | Port | URL | Description |
-| ------- | ---- | --- | ----------- |
+| --- | --- | --- | --- |
 | Frontend | 3001 | http://37.59.101.232:3001 | Vue.js application |
 | Backend | 8765 | http://37.59.101.232:8765 | API PHP-FPM (direct) |
-| Nginx | 8081 | http://37.59.101.232:8081 | Reverse proxy |
+| Nginx | 8081 | http://37.59.101.232:8081 | Reverse proxy — ZAP scan target |
 | MySQL | 3307 | 37.59.101.232:3307 | Database |
 | Mailhog UI | 8025 | http://37.59.101.232:8025 | Email web interface |
 | Mailhog SMTP | 1025 | 37.59.101.232:1025 | SMTP server |
-| Jenkins | 8080 | http://37.59.101.232:8080 | CI/CD |
+| Jenkins | 8080 | http://37.59.101.232:8080 | CI/CD pipeline |
 | SonarQube | 9000 | http://37.59.101.232:9000 | Code quality analysis |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232`
@@ -52,3 +52,18 @@
 - [ ] Update `backend/breco/config/app.php` with SMTP credentials
 - [ ] Remove Mailhog from `docker-compose.yml`
 - [ ] Configure environment variables for email in production
+
+### Jenkins
+
+Jenkins runs as a standalone Docker container on the VPS (not in `docker-compose.yml`).  
+It uses a custom image defined in `jenkins/Dockerfile`.  
+For update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
+
+### OWASP ZAP
+
+The Jenkins pipeline runs an automated OWASP ZAP baseline scan after each deployment, targeting Nginx on port 8081.  
+Results are archived as an HTML report in Jenkins: **Build → OWASP ZAP Security Report**.
+
+---
+
+**Last updated**: March 25, 2026

@@ -47,16 +47,8 @@ cd breco_v2_0_0
 
 ### 3. Start Docker services
 
-**On Windows**:
-
 ```bash
 docker-compose up -d
-```
-
-**On Linux**:
-
-```bash
-docker-compose -f docker-compose.linux.yml up -d
 ```
 
 **Check everything is running**:
@@ -106,11 +98,7 @@ To develop with automatic frontend reload:
 ### Terminal 1: Backend Docker (without frontend)
 
 ```bash
-# Windows
 docker-compose up -d backend mysql nginx mailhog
-
-# Linux
-docker-compose -f docker-compose.linux.yml up -d backend mysql nginx mailhog
 ```
 
 ### Terminal 2: Frontend Dev (hot reload)
@@ -189,12 +177,16 @@ breco_v2_0_0/
 ├── mysql/
 │   └── init.sql            # Database initialization
 │
-├── docker-compose.yml      # Docker Windows (Dev)
-├── docker-compose.linux.yml# Docker Linux (VPS)
+├── jenkins/
+│   ├── Dockerfile          # Custom Jenkins image (VPS)
+│   └── JENKINS.md          # Jenkins update procedure
+│
+├── docker-compose.yml      # Docker Compose
 ├── Jenkinsfile             # CI/CD pipeline (build + deploy)
 └── docs/
     ├── ARCHITECTURE.md     # Clean Architecture documentation
-    └── API.md              # API endpoints documentation
+    ├── API.md              # API endpoints documentation
+    └── GETTING_STARTED.md  # This file
 ```
 
 ---
@@ -269,9 +261,39 @@ npm run test:unit
 # Frontend - Linting
 npm run lint
 
-# Backend - Tests (coming soon)
+# Backend - PHPUnit tests
 docker-compose exec backend vendor/bin/phpunit
 ```
+
+---
+
+## CI/CD Pipeline (Jenkins)
+
+The project uses a Jenkins pipeline hosted on the VPS.
+
+| URL | Description |
+| --- | --- |
+| http://37.59.101.232:8080 | Jenkins dashboard |
+| http://37.59.101.232:9000 | SonarQube (code quality) |
+
+The pipeline runs automatically on each push to GitHub
+and executes the following stages in order:
+Checkout → Lint → SonarQube Analysis
+→ Tests (Unit, Integration, UI, E2E, PHPUnit)
+→ Swagger Bake → Build → Deploy → Verify → **OWASP ZAP Security Scan**.
+
+For Jenkins update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
+
+---
+
+## OWASP ZAP Security Scan
+
+The pipeline includes an automated security scan using **OWASP ZAP** (Zed Attack Proxy) after each deployment.
+
+ZAP runs a passive baseline scan on the deployed application
+(`http://37.59.101.232:8081`) and generates an HTML report archived in Jenkins.
+
+To view the report: **Jenkins → Build → OWASP ZAP Security Report** (left menu).
 
 ---
 
@@ -296,7 +318,7 @@ Content-Type: application/json
 **Via the interface**:
 
 1. Open http://localhost:5173
-2. Go to "Inscription (register)'"
+2. Go to "Inscription (register)"
 3. Fill in the form
 
 ### 2. Verify email
@@ -325,9 +347,8 @@ You will receive a JWT token to use in subsequent requests.
 
 Now that your environment is configured:
 
-1. **Read the architecture** → [DDD Architecture](architecture.md)
-2. **Understand the API** → [API Documentation](api.md)
-3. **See the ports** → [Endpoints & Ports](endpoints.md)
+1. **Read the architecture** → [DDD Architecture](ARCHITECTURE.md)
+2. **Understand the API** → [API Documentation](API.md)
 
 ---
 
@@ -399,7 +420,7 @@ Password : Password123
 ## Used Ports
 
 | Service | Local Port | Description |
-| ------- | ---------- | ----------- |
+| --- | --- | --- |
 | Frontend | 3001 | Vue.js (production) |
 | Frontend Dev | 5173 | Vite dev server (hot reload) |
 | Backend | 8765 | API PHP-FPM (direct) |
@@ -407,6 +428,8 @@ Password : Password123
 | MySQL | 3307 | Database |
 | Mailhog SMTP | 1025 | SMTP test server |
 | Mailhog UI | 8025 | Email interface |
+| Jenkins | 8080 | CI/CD pipeline |
+| SonarQube | 9000 | Code quality analysis |
 
 ---
 
@@ -462,11 +485,10 @@ docker-compose up -d
 
 ## Need Help?
 
-- [Complete documentation](README.md)
-- [Architecture](architecture.md)
-- [API](api.md)
-- [Endpoints](endpoints.md)
+- [Architecture](ARCHITECTURE.md)
+- [API](API.md)
+- [Jenkins](../jenkins/JENKINS.md)
 
 ---
 
-**Last updated**: February 11, 2026
+**Last updated**: March 25, 2026

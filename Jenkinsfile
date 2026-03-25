@@ -313,21 +313,23 @@ pipeline {
                 '''
             }
         }
-        stage('Security: OWASP ZAP Scan') {
+        stage('Security: Zed Attack Proxy (ZAP) Scan') {
             steps {
-                echo 'OWASP ZAP security scan...'
+                echo 'ZAP security scan...'
                 sh '''
-                    mkdir -p zap-reports
+                    mkdir -p /home/ubuntu/zap-reports
 
                     docker run --rm \
                     --network host \
                     --user root \
-                    -v ${WORKSPACE}/zap-reports:/zap/wrk/:rw \
+                    -v /home/ubuntu/zap-reports:/zap/wrk/:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-baseline.py \
                         -t http://37.59.101.232:8081 \
                         -r zap-report.html \
                         -I
+                    
+                    cp /home/ubuntu/zap-reports/zap-report.html ${WORKSPACE}/zap-reports/zap-report.html
                 '''
             }
             post {

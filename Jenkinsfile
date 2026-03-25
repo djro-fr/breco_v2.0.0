@@ -193,8 +193,40 @@ pipeline {
                 '''
             }
         }
+        stage('Swagger Bake: API Documentation') {
+            agent {
+                docker {
+                    image 'djrofr/breco-phptest:8.4'
+                    args '-u root'
+                    alwaysPull true
+                }
+            }
+            steps {
+                echo 'Generating API documentation...'
+                sh '''
+                    cd backend/breco
+                    curl -sS https://getcomposer.org/installer | php
+                    php composer.phar install --no-interaction
+                    php bin/cake swagger bake                    
+                    echo "✅ swagger.json generated:"
+                    ls -la webroot/swagger.json
+                '''
+            }
+            post {
+                always {
+                    stash name: 'swagger-json', 
+                        includes: 'backend/breco/webroot/swagger.json'
+                } 
+            }       
+        }
         stage('Build') {
             steps {
+                unstash 'swagger-json'
+                sh '''
+                    echo "swagger.json verification:"
+                    ls -la backend/breco/webroot/swagger.json
+                '''
+
                 echo 'Docker images build...'
                 sh '''
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
@@ -218,8 +250,6 @@ pipeline {
                 '''
             }
         }
-        // stage('Swagger Bake: API Documentation') {
-        // }
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {

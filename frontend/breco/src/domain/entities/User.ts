@@ -15,7 +15,9 @@ export const UserSchema = z.object({
     (val) => !Number.isNaN(Date.parse(val)),
     { message: "Date invalide" }
     ).optional().nullable().transform(val => val ?? undefined),
-  gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional().nullable()
+  gender: z.enum(['Homme', 'Femme', 'Ne pas dire'], {
+    error: "Le genre doit être : Homme, Femme ou Ne pas dire"
+  }).optional().nullable()
     .transform(val => val ?? undefined),
   zipCode: z.string().refine(
     (val) => /^\d{5}$/.test(val),

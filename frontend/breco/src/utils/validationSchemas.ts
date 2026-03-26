@@ -3,8 +3,9 @@
 import { z } from 'zod'
 
 export const emailSchema = z
-  .email({ message: "Format d'e-mail invalide" })
+  .string({ message: "L'email est requis" })
   .min(1, "L'email est requis")
+  .check(z.email({ message: "Format d'e-mail invalide" }))
   .toLowerCase()
   .trim()
 
@@ -14,7 +15,7 @@ export const emailSchema = z
   .refine(
     (val) => {
       const cleaned = val.replace(/\s/g, '')
-      return /^0[1-9][0-9]{8}$/.test(cleaned)
+      return /^0[1-9]\d{8}$/.test(cleaned)
     },
     {
       message: "Format téléphone invalide (10 chiffres commençant par 0)"

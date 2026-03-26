@@ -12,18 +12,25 @@ export const UserSchema = z.object({
   lastName: nameSchema('nom'),
   driver: z.boolean().default(false),
   createdAt: z.string().refine(
-    (val) => !isNaN(Date.parse(val)),
+    (val) => !Number.isNaN(Date.parse(val)),
     { message: "Date invalide" }
-  ).optional().nullable().transform(val => val ?? undefined),
-  gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional().nullable().transform(val => val ?? undefined),
+    ).optional().nullable().transform(val => val ?? undefined),
+  gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional().nullable()
+    .transform(val => val ?? undefined),
   zipCode: z.string().refine(
-    (val) => /^[0-9]{5}$/.test(val),
+    (val) => /^\d{5}$/.test(val),
     { message: "Code postal invalide" }
-  ).optional().nullable().transform(val => val ?? undefined),
-  town: z.string().min(2).max(100).optional().nullable().transform(val => val ?? undefined),
-  carModel: z.string().max(50).optional().nullable().transform(val => val ?? undefined),
-  carColor: z.string().max(30).optional().nullable().transform(val => val ?? undefined),
-  carSeatNb: z.number().int().min(1).max(8).optional().nullable().transform(val => val ?? undefined)
+   ).optional().nullable().transform(val => val ?? undefined),
+  town: z.string().min(2, "La ville doit contenir au moins 2 caractères")
+    .max(100, "La ville ne peut pas dépasser 100 caractères")
+    .optional().nullable().transform(val => val ?? undefined),
+  carModel: z.string().max(50, "Le modèle ne peut pas dépasser 50 caractères")
+    .optional().nullable().transform(val => val ?? undefined),
+  carColor: z.string().max(30, "La couleur ne peut pas dépasser 30 caractères")
+    .optional().nullable().transform(val => val ?? undefined),
+  carSeatNb: z.number().int().min(1, "Le nombre de places doit être au moins 1")
+    .max(8, "Le nombre de places ne peut pas dépasser 8").optional().nullable()
+    .transform(val => val ?? undefined)
 })
 
 // Derived schemas for creating and updating users

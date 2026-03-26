@@ -8,7 +8,7 @@ Modern web platform allowing users to offer and search for carpooling trips in B
 
 ## Quick Start
 
-**New developer?** → [Getting Started Guide (5 min)](docs/getting-started.md)
+**New developer?** → [Getting Started Guide](docs/getting-started.md)
 
 ### Launch the application locally
 
@@ -21,7 +21,7 @@ curl http://localhost:8081/api/health
 ```
 
 Frontend: http://localhost:3001  
-API: http://localhost:8081/api  
+API: http://localhost:8081/api (JSON only, use Postman for other routes)
 Mailhog: http://localhost:8025
 
 ---
@@ -32,11 +32,6 @@ Mailhog: http://localhost:8025
 | -------- | ----------- |
 | **[Documentation Index](docs/README.md)** | Complete overview |
 | **[Getting Started](docs/getting-started.md)** | Quick setup (5 min) |
-| [Architecture](docs/architecture.md) | DDD architecture |
-| [API](docs/api.md) | Routes and authentication |
-| [Endpoints](docs/endpoints.md) | Ports and services |
-| [Error Handling](docs/error-handling.md) | Error management |
-| [Production Checklist](docs/todo-prod.md) | Before deployment |
 
 ---
 
@@ -46,7 +41,7 @@ Mailhog: http://localhost:8025
 - **Backend**: CakePHP 5.x, MySQL 8.0, Firebase JWT
 - **API Docs**: SwaggerBake 3.x (OpenAPI / PHP 8 attributes)
 - **Testing**: Vitest, PHPUnit, Selenium
-- **DevOps**: Docker, Jenkins CI/CD, Nginx
+- **DevOps**: Docker, Jenkins CI/CD, Nginx, Bun
 
 ---
 
@@ -57,11 +52,7 @@ Mailhog: http://localhost:8025
 **Terminal 1** - Backend services:
 
 ```bash
-# Windows
 docker-compose up -d backend mysql nginx mailhog
-
-# Linux
-docker-compose -f docker-compose.linux.yml up -d backend mysql nginx mailhog
 ```
 
 **Terminal 2** - Frontend with hot reload:
@@ -77,11 +68,7 @@ Frontend available at: http://localhost:5173 (Vite dev server)
 ### Local production mode (testing)
 
 ```bash
-# Windows
 docker-compose up -d
-
-# Linux
-docker-compose -f docker-compose.linux.yml up -d
 ```
 
 Frontend available at: http://localhost:3001
@@ -111,20 +98,30 @@ docker-compose down -v
 
 ### Rebuild images
 
-**Frontend**:
-
 ```bash
-docker build --build-arg BUILD_NUMBER=1 -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
-docker-compose down
+docker-compose build frontend
+docker-compose build backend
 docker-compose up -d
 ```
 
-**Backend**:
+**Force rebuild (no cache)**:
 
 ```bash
-docker build --build-arg BUILD_NUMBER=1 -t local/breco-backend:latest -f frontend/breco/Dockerfile-backend backend/breco
-docker-compose down
+docker build --no-cache -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
+docker build --no-cache -t local/breco-backend:latest -f backend/breco/Dockerfile-backend backend/breco
 docker-compose up -d
+```
+
+### Cleanup old images
+
+```bash
+# Remove old build versions (keeps :latest and current version)
+docker images --format "{{.Repository}}:{{.Tag}}" \
+  | grep -E "(breco_v2_0_0|djrofr/breco)-(backend|frontend):[0-9]+" \
+  | grep -v ":latest" \
+  | sort -t: -k2 -n \
+  | head -n -2 \
+  | xargs docker rmi
 ```
 
 ---
@@ -181,7 +178,7 @@ Email    : test@test.com
 Password : Password123
 ```
 
-### Test API (Postman/Insomnia)
+### Test API (Postman)
 
 **Registration**:
 
@@ -220,13 +217,27 @@ curl http://localhost:8081/api/health
 ### Running Tests
 
 ```bash
-# Frontend unit tests (Vitest)
+# Frontend - Unit tests
 cd frontend/breco
-npm run test
+npm run test:unit
 
-# Backend unit tests (PHPUnit)
+# Frontend - Integration tests
+npm run test:integration
+
+# Frontend - UI tests
+npm run test:ui
+
+# Frontend - All tests
+npm run test:all
+
+# Frontend - Coverage
+npm run test:coverage
+
+# Frontend - Linting
+npm run lint
+
+# Backend - PHPUnit tests
 docker-compose exec backend vendor/bin/phpunit
-
 ```
 
 ---
@@ -243,7 +254,7 @@ docker-compose exec backend vendor/bin/phpunit
 | API (direct) | http://localhost:8765 |
 | Mailhog | http://localhost:8025 |
 | MySQL | localhost:3307 |
-| Swagger UI | http://localhost:8081/api/swagger |
+| Swagger UI | http://localhost:8081/swagger |
 
 ### VPS (staging)
 
@@ -253,6 +264,7 @@ docker-compose exec backend vendor/bin/phpunit
 | API | http://37.59.101.232:8081 |
 | Jenkins | http://37.59.101.232:8080 |
 | Mailhog | http://37.59.101.232:8025 |
+| Swagger UI | http://37.59.101.232:8081/swagger |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232`
 
@@ -260,21 +272,17 @@ docker-compose exec backend vendor/bin/phpunit
 
 ## Quick Troubleshooting
 
-### Port already in use
-
-```bash
-docker-compose down
-lsof -ti:3001 | xargs kill -9  # Linux/Mac
-# Windows: Task Manager → Kill process
-docker-compose up -d
-```
-
 ### Frontend cannot connect to backend
 
-Check `frontend/breco/src/services/api.ts`:
+The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts`
+based on `window.location.hostname`.
+In local development, it always points to `http://localhost:8081/api`.
 
-```typescript
-const API_BASE_URL = 'http://localhost:8081/api'
+If the frontend cannot reach the backend, check that the backend container is running:
+
+```bash
+docker logs breco_backend
+curl http://localhost:8081/api/health
 ```
 
 ### CORS error
@@ -288,10 +296,31 @@ docker logs breco_nginx
 docker-compose restart nginx
 ```
 
-### Registration returns "Tous les champs sont requis"
+### Docker image errors (build or runtime)
 
-⚠️ **Known issue** — Verify that `AuthController.php` correctly parses the JSON body.  
-Add debug logs to inspect received data before validation.
+`local/breco-frontend` and `local/breco-backend` are built locally (via `DOCKER_USERNAME=local` in `.env`)
+and do not exist on Docker Hub - `docker-compose pull` will return an error for these, which is expected.
+
+If you encounter errors related to these images, pull their base images then rebuild:
+
+```bash
+# Pull base images from Docker Hub
+docker pull djrofr/breco-backend-builder:8.4
+docker pull oven/bun:1-alpine
+docker pull nginx:alpine
+
+# Rebuild local images
+docker build --no-cache -t local/breco-backend:latest -f backend/breco/Dockerfile-backend backend/breco
+docker build --no-cache -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
+
+docker-compose up -d
+```
+
+For third-party images (mysql, mailhog, nginx, sonarqube), a standard pull is sufficient:
+
+```bash
+docker-compose pull
+```
 
 ### Complete database reset
 
@@ -314,15 +343,16 @@ npm install
 
 ### Implemented features
 
-- JWT authentication (custom `JwtAuthTrait` — Firebase JWT)
+- JWT authentication (custom `JwtAuthTrait` - Firebase JWT)
 - Email verification (Mailhog)
 - DDD / Clean Architecture (frontend + backend)
 - OpenAPI documentation (SwaggerBake 3.x, PHP 8 attributes)
-- Zod validation (presentation layer — `useTownSearch.ts`)
+- Zod validation (presentation layer - `useTownSearch.ts`)
 - Jenkins CI/CD pipeline (deployed on OVH VPS)
 - Docker Compose (multi-service)
-- Health check endpoint
-- Test plan: 53+ test cases (Vitest / PHPUnit / Selenium pyramid)
+- Health check endpoint (backend + frontend)
+- SonarQube code quality analysis
+- Test plan: test cases (Vitest / PHPUnit / Selenium pyramid)
 
 ### TODO before production
 
@@ -330,7 +360,6 @@ See [Production Checklist](docs/todo-prod.md) for complete list.
 
 Immediate priorities:
 
-- [ ] Fix registration bug (`AuthController.php` — JSON parsing)
 - [ ] Disable Mailhog on VPS
 - [ ] Implement rate limiting
 - [ ] Complete test suite (Stories 3–10)
@@ -374,4 +403,4 @@ chore: maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: March 25, 2026
+- **Last updated**: March 26, 2026

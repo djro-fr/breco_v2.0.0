@@ -1,7 +1,7 @@
 # TODO - Production Deployment Checklist
 
 > **Current status**: Development (not production-ready)  
-> **Last updated**: March 25, 2026
+> **Last updated**: March 26, 2026
 
 ---
 
@@ -151,9 +151,9 @@
 
 ## Tests
 
-- [ ] Complete E2E tests (Cypress/Playwright)
+- [ ] Complete E2E tests (Selenium)
 - [ ] Load tests (goal: 1000 simultaneous users)
-- [x] OWASP ZAP baseline scan — integrated in Jenkins pipeline (60 PASS, 7 WARN, 0 FAIL)
+- [x] OWASP ZAP baseline scan - integrated in Jenkins pipeline (60 PASS, 7 WARN, 0 FAIL)
 - [ ] Backend coverage > 80%
 
 ---
@@ -175,7 +175,10 @@
 - [ ] Deployment guide
 - [ ] Rollback procedures
 - [ ] Incident runbook
-- [ ] Architecture diagram
+- [x] Architecture diagram
+- [x] API documentation
+- [x] Endpoints documentation
+- [x] Getting started guide
 
 ---
 
@@ -201,4 +204,4 @@
 
 **NEVER launch in production until all CRITICAL points are validated!**
 
-**Last updated**: March 25, 2026
+**Last updated**: March 26, 2026

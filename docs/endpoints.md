@@ -14,9 +14,12 @@
 | MySQL | 3307 | localhost:3307 | Database |
 | Mailhog UI | 8025 | http://localhost:8025 | Email web interface |
 | Mailhog SMTP | 1025 | localhost:1025 | SMTP server |
+| Swagger UI | 8081 | http://localhost:8081/swagger | API documentation |
+| SonarQube | 9000 | http://localhost:9000 | Code quality analysis |
 
-**Note**:
+**Notes**:
 
+- Swagger UI shares port 8081 with Nginx — it is not a separate service
 - On **Windows**: Docker runs via WSL2, ports accessible on `localhost`
 - On **Ubuntu**: Native Docker, ports accessible on `localhost` or `127.0.0.1`
 
@@ -26,11 +29,12 @@
 | --- | --- | --- | --- |
 | Frontend | 3001 | http://37.59.101.232:3001 | Vue.js application |
 | Backend | 8765 | http://37.59.101.232:8765 | API PHP-FPM (direct) |
-| Nginx | 8081 | http://37.59.101.232:8081 | Reverse proxy — ZAP scan target |
+| Nginx | 8081 | http://37.59.101.232:8081 | Reverse proxy - ZAP scan target |
 | MySQL | 3307 | 37.59.101.232:3307 | Database |
 | Mailhog UI | 8025 | http://37.59.101.232:8025 | Email web interface |
 | Mailhog SMTP | 1025 | 37.59.101.232:1025 | SMTP server |
 | Jenkins | 8080 | http://37.59.101.232:8080 | CI/CD pipeline |
+| Swagger UI | 8081 | http://37.59.101.232:8081/swagger | API documentation |
 | SonarQube | 9000 | http://37.59.101.232:9000 | Code quality analysis |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232`
@@ -66,4 +70,4 @@ Results are archived as an HTML report in Jenkins: **Build → OWASP ZAP Securit
 
 ---
 
-**Last updated**: March 25, 2026
+**Last updated**: March 26, 2026

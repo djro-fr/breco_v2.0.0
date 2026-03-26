@@ -17,7 +17,7 @@ Welcome in the demo version of Breco, the carpooling application for Brittany
 
 - Vue.js 3 + TypeScript
 - Tailwind CSS v4
-- Vite + npm
+- Vite + Bun
 
 ### Backend
 
@@ -45,7 +45,10 @@ docs/
 ├── api.md                 # Complete API documentation
 ├── endpoints.md           # Ports and services
 ├── error-handling.md      # Error management
-└── todo-prod.md           # Production checklist
+├── todo-prod.md           # Production checklist
+└── tests/
+    ├── breco - plan de test.odt
+    └── breco - cas de test.xlsx
 
 jenkins/
 ├── Dockerfile             # Custom Jenkins image (VPS)
@@ -70,10 +73,10 @@ jenkins/
 
 ### Environments
 
-| | Frontend | Nginx | Jenkins | SonarQube |
-| --- | --- | --- | --- | --- |
-| **Local** | http://localhost:3001 | http://localhost:8081 | — | — |
-| **VPS** | http://37.59.101.232:3001 | http://37.59.101.232:8081 | http://37.59.101.232:8080 | http://37.59.101.232:9000 |
+| | Frontend | Nginx | Swagger | SonarQube | Jenkins |
+| --- | --- | --- | --- | --- | --- |
+| **Local** | http://localhost:3001 | http://localhost:8081 | http://localhost:8081/swagger | http://localhost:9000 | - |
+| **VPS** | http://37.59.101.232:3001 | http://37.59.101.232:8081 | http://37.59.101.232:8081/swagger | http://37.59.101.232:9000 | http://37.59.101.232:8080 |
 
 ---
 
@@ -154,5 +157,5 @@ fix/*        # Bug fixes
 
 ## Last Update
 
-**Date**: March 25, 2026  
+**Date**: March 26, 2026  
 **Status**: In development

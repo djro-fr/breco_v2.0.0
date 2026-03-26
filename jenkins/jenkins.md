@@ -1,4 +1,4 @@
-# Jenkins — Update procedure
+# Jenkins - Update procedure
 
 ## Versions
 
@@ -25,7 +25,7 @@ The Dockerfile starts from the official image jenkins/jenkins:2.541.3-lts-jdk21 
 - the pre-installed Jenkins plugins
 - the custom JAVA_OPTS
 
-The result is the image breco-jenkins:2.541.3 — a Jenkins image tailored specifically for Breco.
+The result is the image breco-jenkins:2.541.3 - a Jenkins image tailored specifically for Breco.
 
 ---
 
@@ -61,7 +61,7 @@ USER jenkins
 RUN jenkins-plugin-cli --plugins ...
 ```
 
-Installs **Jenkins plugins** at image build time rather than at first startup — guarantees a reproducible image.
+Installs **Jenkins plugins** at image build time rather than at first startup - guarantees a reproducible image.
 
 ```dockerfile
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false \
@@ -94,10 +94,10 @@ docker build -t breco-jenkins:X.X.X .
 ```bash
 docker stop breco-jenkins
 docker rm breco-jenkins
-
 docker run -d \
   --name breco-jenkins \
   --privileged \
+  --restart unless-stopped \
   -p 8080:8080 \
   -p 50000:50000 \
   -v jenkins-data:/var/jenkins_home \
@@ -127,11 +127,16 @@ docker run --rm \
 docker run -d \
   --name breco-jenkins \
   --privileged \
+  --restart unless-stopped \
   -p 8080:8080 \
   -p 50000:50000 \
   -v jenkins-data:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
   breco-jenkins:X.X.X
+
+
+
+
 ```
 
 ---
@@ -184,3 +189,9 @@ Defined in the Dockerfile via `jenkins-plugin-cli`:
 | `ws-cleanup` | Workspace cleanup |
 | `ssh-agent` | SSH authentication |
 | `htmlpublisher` | HTML report publishing (ZAP, etc.) |
+
+---
+
+## Last Update
+
+**Date**: March 26, 2026

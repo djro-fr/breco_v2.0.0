@@ -34,15 +34,15 @@ git --version            # 2.0+
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/breco_v2_0_0.git
+git clone https://github.com/djro-fr/breco_v2_0_0.git
 cd breco_v2_0_0
 ```
 
 ### 2. Configure environment
 
 ```bash
-# Copy .env files (if needed)
-# cp .env.example .env
+# Copy .env files
+cp .env.example .env
 ```
 
 ### 3. Start Docker services
@@ -64,6 +64,8 @@ You should see:
 - breco_nginx (port 8081)
 - breco_mysql (port 3307)
 - breco_mailhog (ports 1025, 8025)
+- breco_sonarqube (port 9000)
+- breco_sonarqube_db
 
 ---
 
@@ -121,72 +123,77 @@ Frontend will be available at: http://localhost:5173 (Vite dev server)
 ```text
 breco_v2_0_0/
 ├── frontend/
-│   └── breco/              # Vue.js application (TypeScript + Vite)
+│   └── breco/
 │       ├── src/
+│       │   ├── main.ts                    # Entry point
 │       │   ├── domain/
-│       │   │   ├── entities/      # Zod schemas (User.ts, Town.ts)
-│       │   │   ├── repositories/  # Interfaces (IAuthRepository.ts)
-│       │   │   └── exceptions/    # AppException.ts
+│       │   │   ├── entities/              # User.ts, Town.ts
+│       │   │   ├── repositories/          # IAuthRepository.ts, ITownRepository.ts, IUserRepository.ts
+│       │   │   ├── schemas/               # townSearch.schema.ts (Zod)
+│       │   │   └── exceptions/            # AppException.ts
 │       │   ├── application/
-│       │   │   └── usecases/      # LoginUseCase.ts, RegisterUseCase.ts
+│       │   │   └── usecases/
+│       │   │       ├── auth/              # Login, Logout, Register, VerifyToken
+│       │   │       ├── town/              # SearchTownsUseCase.ts
+│       │   │       ├── profile/
+│       │   │       └── trip/
 │       │   ├── data/
-│       │   │   ├── datasources/   # API calls (AuthRemoteDataSource.ts)
-│       │   │   ├── models/        # UserModel.ts (DTO ↔ Entity + Zod)
-│       │   │   └── repositories/  # AuthRepositoryImpl.ts
+│       │   │   ├── datasources/remote/    # AuthRemoteDataSource.ts, TownRemoteDataSource.ts
+│       │   │   ├── models/                # UserModel.ts, TownModel.ts
+│       │   │   └── repositories/          # AuthRepositoryImpl.ts, TownRepositoryImpl.ts
 │       │   ├── presentation/
-│       │   │   ├── composables/   # useAuth.ts (reactive state)
-│       │   │   └── features/      # LoginForm.vue, RegisterForm.vue
-│       │   ├── shared/
-│       │   │   └── api/           # axiosInstance.ts
-│       │   └── utils/             # validationSchemas.ts (Zod)
-│       ├── public/
+│       │   │   ├── app/
+│       │   │   │   ├── App.vue
+│       │   │   │   ├── pages/             # HomePage, DashboardPage, SearchPage, NotFoundPage
+│       │   │   │   └── stores/
+│       │   │   └── features/
+│       │   │       ├── auth/
+│       │   │       │   ├── pages/         # LoginPage, RegisterPage, VerifyEmailPage
+│       │   │       │   ├── router/        # authRoutes.ts
+│       │   │       │   └── stores/        # authStore.ts
+│       │   │       ├── carTrip/
+│       │   │       ├── reservation/
+│       │   │       └── search/
+│       │   └── shared/
+│       │       └── api/                   # axiosInstance.ts
 │       ├── package.json
 │       └── vite.config.ts
 │
 ├── backend/
-│   └── breco/              # CakePHP 5 application (PHP 8.3)
+│   └── breco/
 │       ├── src/
-│       │   ├── Controller/
-│       │   │   └── Api/           # TownsController.php (HTTP)
-│       │   ├── Service/
-│       │   │   ├── Auth/          # AuthService.php (business logic)
-│       │   │   ├── Town/          # TownSearchService.php
-│       │   │   ├── Location/      # LocationSearchService.php
-│       │   │   └── User/          # UserService.php
-│       │   ├── Repository/        # TownRepository.php (SQL queries)
-│       │   ├── Dto/
-│       │   │   ├── Auth/          # LoginRequest.php (validation)
-│       │   │   ├── Town/          # TownSearchRequest.php
-│       │   │   └── Location/      # LocationSearchRequest.php
+│       │   ├── Controller/Api/            # AuthController.php, TownsController.php, HealthController.php
+│       │   ├── Service/                   # Auth, Town, Location, User
+│       │   ├── Repository/                # TownRepository.php
+│       │   ├── Dto/                       # Auth, Town, Location
 │       │   └── Model/
-│       │       ├── Entity/        # User.php, Town.php (CakePHP ORM)
-│       │       └── Table/         # UsersTable.php, TownsTable.php
+│       │       ├── Entity/                # User.php, Town.php
+│       │       └── Table/                 # UsersTable.php, TownsTable.php
 │       ├── config/
+│       │   ├── Migrations/                # Versioned tables
+│       │   ├── Seeds/                     # TownsSeed.php, LocationsSeed.php
 │       │   ├── routes.php
-│       │   ├── app.php
-│       │   └── .env
-│       ├── logs/
-│       ├── tmp/
-│       ├── vendor/
-│       ├── composer.json
+│       │   ├── swagger.yml
+│       │   └── swagger_bake.php
+│       ├── phpunit.xml.dist
 │       └── Dockerfile-backend
 │
 ├── nginx/
-│   └── default.conf        # Nginx reverse proxy configuration
-│
+│   └── default.conf
 ├── mysql/
-│   └── init.sql            # Database initialization
-│
+│   └── init.sql
 ├── jenkins/
-│   ├── Dockerfile          # Custom Jenkins image (VPS)
-│   └── JENKINS.md          # Jenkins update procedure
-│
-├── docker-compose.yml      # Docker Compose
-├── Jenkinsfile             # CI/CD pipeline (build + deploy)
+│   ├── Dockerfile
+│   └── JENKINS.md
+├── docker-compose.yml
+├── Jenkinsfile
 └── docs/
-    ├── ARCHITECTURE.md     # Clean Architecture documentation
-    ├── API.md              # API endpoints documentation
-    └── GETTING_STARTED.md  # This file
+    ├── ARCHITECTURE.md
+    ├── API.md
+    ├── GETTING_STARTED.md
+    └── tests/
+        ├── breco - plan de test.odt
+        └── breco - cas de test.xlsx
 ```
 
 ---
@@ -258,6 +265,18 @@ SELECT COUNT(*) FROM users;
 cd frontend/breco
 npm run test:unit
 
+# Frontend - Integration tests
+npm run test:integration
+
+# Frontend - UI tests
+npm run test:ui
+
+# Frontend - All tests
+npm run test:all
+
+# Frontend - Coverage
+npm run test:coverage
+
 # Frontend - Linting
 npm run lint
 
@@ -310,8 +329,10 @@ Content-Type: application/json
 {
   "email": "dev@test.com",
   "password": "DevPass123!",
-  "first_name": "Dev",
-  "last_name": "Test"
+  "password_confirmation": "DevPass123!",
+  "firstName": "Dev",
+  "lastName": "Test",
+  "phone": "0607080910"
 }
 ```
 
@@ -366,10 +387,15 @@ docker-compose up -d
 
 ### Frontend cannot connect to backend
 
-Check `frontend/breco/src/services/api.ts`:
+The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts`
+based on `window.location.hostname`.
+In local development, it always points to `http://localhost:8081/api`.
 
-```typescript
-const API_BASE_URL = 'http://localhost:8081/api'
+If the frontend cannot reach the backend, check that the backend container is running:
+
+```bash
+docker logs breco_backend
+curl http://localhost:8081/api/health
 ```
 
 ### CORS error
@@ -469,7 +495,7 @@ docker-compose up -d backend mysql nginx mailhog
 
 # Terminal 2: Frontend with hot reload
 cd frontend/breco
-npm run dev
+bun run dev
 # → http://localhost:5173
 ```
 
@@ -491,4 +517,4 @@ docker-compose up -d
 
 ---
 
-**Last updated**: March 25, 2026
+**Last updated**: March 26, 2026

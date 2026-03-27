@@ -34,11 +34,12 @@ describe('passwordSchema - S1 : Inscription', () => {
     expect(result.error?.issues[0]?.message).toBe("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre")
   })
 
-  it('TC-06 - Mot de passe sans chiffre', () => {
+  it('TC-06a - Mot de passe sans chiffre', () => {
     const result = passwordSchema.safeParse('Tititoto')
     expect(result.success).toBe(false)
     expect(result.error?.issues[0]?.message).toBe("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre")
   })
+
 })
 
 describe('emailSchema - S1 : Inscription ', () => {
@@ -75,8 +76,8 @@ describe('phoneSchema - S1 : Inscription', () => {
     expect(result.error?.issues[0]?.message).toBe("Format téléphone invalide (10 chiffres commençant par 0)")
   })
 
-  it('TC-12 - téléphone incorrect (trop invalide)', () => {
-    const result = phoneSchema.safeParse('1234567890')
+  it('TC-12 - téléphone incorrect (invalide)', () => {
+    const result = phoneSchema.safeParse('+33612345678')
     expect(result.success).toBe(false)
     expect(result.error?.issues[0]?.message).toBe("Format téléphone invalide (10 chiffres commençant par 0)")
   })

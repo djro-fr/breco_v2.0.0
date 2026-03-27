@@ -21,12 +21,26 @@ describe('CreateUserSchema - S1 : Inscription', () => {
     expect(result.error?.issues[0]?.message).toBe("Le genre doit être : Homme, Femme ou Ne pas dire")
   })
 
-  it('TC-31 - genre null', () => {
+  it('TC-31a - genre null', () => {
     const result = CreateUserSchema.safeParse({ ...validBase,
       gender: null
     })
     expect(result.success).toBe(true)
   })
+
+  it('TC-31b - genre non renseigné', () => {
+    const result = CreateUserSchema.safeParse({ ...validBase,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('TC-31c - genre vide', () => {
+    const result = CreateUserSchema.safeParse({ ...validBase,
+      gender: ''
+    })
+    expect(result.success).toBe(false)
+  })
+
 
   it('TC-32 - genre parmi la liste (\'Homme\', \'Femme\', \'Ne pas dire\')', () => {
     const result = CreateUserSchema.safeParse({ ...validBase,
@@ -35,9 +49,25 @@ describe('CreateUserSchema - S1 : Inscription', () => {
     expect(result.success).toBe(true)
   })
 
-  it('TC-33 - Code Postal invalide', () => {
+  it('TC-33a - Code Postal invalide (trop long)', () => {
     const result = CreateUserSchema.safeParse({ ...validBase,
       zipCode: '123456'
+    })
+    expect(result.success).toBe(false)
+    expect(result.error?.issues[0]?.message).toBe("Code postal invalide")
+  })
+
+  it('TC-33b - Code Postal invalide (lettres)', () => {
+    const result = CreateUserSchema.safeParse({ ...validBase,
+      zipCode: 'T3100'
+    })
+    expect(result.success).toBe(false)
+    expect(result.error?.issues[0]?.message).toBe("Code postal invalide")
+  })
+
+  it('TC-33c - Code Postal invalide (espaces)', () => {
+    const result = CreateUserSchema.safeParse({ ...validBase,
+      zipCode: '31 000'
     })
     expect(result.success).toBe(false)
     expect(result.error?.issues[0]?.message).toBe("Code postal invalide")

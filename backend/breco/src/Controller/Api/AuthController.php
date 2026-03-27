@@ -18,6 +18,10 @@ use SwaggerBake\Lib\Attribute as Swag;
  */
 class AuthController extends AppController
 {
+
+    private const CONTENT_TYPE_JSON = 'application/json';
+    private const ERROR_SERVER = 'Erreur serveur';
+
     private AuthService $authService;
 
     public function initialize(): void
@@ -33,7 +37,7 @@ class AuthController extends AppController
     {
         parent::beforeFilter($event);
 
-        $this->response = $this->response->withType('application/json');
+        $this->response = $this->response->withType(self::CONTENT_TYPE_JSON);
 
         // Handle OPTIONS for CORS
         if ($this->request->getMethod() === 'OPTIONS') {
@@ -50,10 +54,31 @@ class AuthController extends AppController
     }
 
     /**
+     * Build a JSON error response from an exception
+     */
+    private function buildErrorResponse(\Exception $e, string $key = 'error'): Response
+    {
+        if ($e instanceof \RuntimeException && $e->getCode() > 0) {
+            $status = $e->getCode();
+        } elseif ($e instanceof \InvalidArgumentException) {
+            $status = 422;
+        } else {
+            $this->log($e->getMessage(), 'error');
+            return $this->response
+                ->withStatus(500)
+                ->withStringBody(json_encode([$key => self::ERROR_SERVER]));
+        }
+
+        return $this->response
+            ->withStatus($status)
+            ->withStringBody(json_encode([$key => $e->getMessage()]));
+    }
+
+    /**
      * 1. Register new user
      * POST /api/auth/register
      */
-    #[Swag\OpenApiRequestBody(mimeTypes: ['application/json'], required: true, description: 'Registration data')]
+    #[Swag\OpenApiRequestBody(mimeTypes: [self::CONTENT_TYPE_JSON], required: true, description: 'Registration data')]
     #[Swag\OpenApiForm(name: 'email', type: 'string', description: 'User email', example: 'user@example.com', isRequired: true)]
     #[Swag\OpenApiForm(name: 'phone', type: 'string', description: 'Phone number', example: '0612345678', isRequired: true)]
     #[Swag\OpenApiForm(name: 'password', type: 'string', description: 'User password', example: 'Password123', isRequired: true)]
@@ -83,26 +108,8 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(201)
                 ->withStringBody(json_encode($result));
-        } catch (\InvalidArgumentException $e) {
-            return $this->response
-                ->withStatus(422)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
-        } catch (\RuntimeException $e) {
-            return $this->response
-                ->withStatus($e->getCode() ?: 500)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
         } catch (\Exception $e) {
-            $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'error' => 'Server error'
-                ]));
+            return $this->buildErrorResponse($e);
         }
     }
 
@@ -116,7 +123,7 @@ class AuthController extends AppController
 
         try {
             if (!$token) {
-                throw new \InvalidArgumentException('Token is required');
+                throw new \InvalidArgumentException('Token demandé');
             }
 
             $result = $this->authService->verifyEmail($token);
@@ -124,29 +131,9 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(200)
                 ->withStringBody(json_encode($result));
-        } catch (\InvalidArgumentException $e) {
-            return $this->response
-                ->withStatus(400)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ]));
-        } catch (\RuntimeException $e) {
-            return $this->response
-                ->withStatus($e->getCode() ?: 500)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ]));
-        } catch (\Exception $e) {
-            $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'success' => false,
-                    'message' => 'Server error'
-                ]));
+        }
+        catch (\Exception $e) {
+            return $this->buildErrorResponse($e);
         }
     }
 
@@ -154,7 +141,7 @@ class AuthController extends AppController
      * 3. Login user
      * POST /api/auth/login
      */
-    #[Swag\OpenApiRequestBody(mimeTypes: ['application/json'], required: true, description: 'Login credentials')]
+    #[Swag\OpenApiRequestBody(mimeTypes: [self::CONTENT_TYPE_JSON], required: true, description: 'Login credentials')]
     #[Swag\OpenApiForm(name: 'email', type: 'string', description: 'User email', example: 'user@example.com', isRequired: true)]
     #[Swag\OpenApiForm(name: 'password', type: 'string', description: 'User password', example: 'Password123', isRequired: true)]
     public function login(): Response
@@ -174,26 +161,9 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(200)
                 ->withStringBody(json_encode($result));
-        } catch (\InvalidArgumentException $e) {
-            return $this->response
-                ->withStatus(422)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
-        } catch (\RuntimeException $e) {
-            return $this->response
-                ->withStatus($e->getCode() ?: 500)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
-        } catch (\Exception $e) {
-            $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withStatus(500)
-                ->withStringBody(json_encode([
-                    'error' => 'Server error'
-                ]));
+        }
+        catch (\Exception $e) {
+            return $this->buildErrorResponse($e);
         }
     }
 
@@ -210,7 +180,7 @@ class AuthController extends AppController
             $token = $this->request->getHeaderLine('Authorization');
 
             if (empty($token)) {
-                throw new \RuntimeException('Token required', 401);
+                throw new \InvalidArgumentException('Token demandé');
             }
 
             // Remove "Bearer " prefix
@@ -221,20 +191,9 @@ class AuthController extends AppController
             return $this->response
                 ->withStatus(200)
                 ->withStringBody(json_encode($user));
-        } catch (\RuntimeException $e) {
-            return $this->response
-                ->withStatus($e->getCode() ?: 401)
-                ->withStringBody(json_encode([
-                    'error' => $e->getMessage()
-                ]));
-        } catch (\Exception $e) {
-            $this->log($e->getMessage(), 'error');
-
-            return $this->response
-                ->withStatus(401)
-                ->withStringBody(json_encode([
-                    'error' => 'Invalid token'
-                ]));
+        }
+        catch (\Exception $e) {
+            return $this->buildErrorResponse($e);
         }
     }
 
@@ -249,7 +208,7 @@ class AuthController extends AppController
         return $this->response
             ->withStatus(200)
             ->withStringBody(json_encode([
-                'message' => 'Logout successful'
+                'message' => 'Déconnexion réussie'
             ]));
     }
 

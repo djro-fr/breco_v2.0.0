@@ -10,6 +10,11 @@ use App\Service\EmailService;
 use Firebase\JWT\JWT;
 use Cake\I18n\DateTime;
 
+use App\Exception\AuthenticationException;
+use App\Exception\EmailNotVerifiedException;
+use App\Exception\EmailAlreadyInUseException;
+use App\Exception\VerificationException;
+
 class AuthService
 {
     private UserRepository $userRepository;
@@ -35,11 +40,11 @@ class AuthService
         $user = $this->userRepository->findByEmail($request->getEmail());
 
         if (!$user || !password_verify($request->getPassword(), $user['password'])) {
-            throw new \RuntimeException('Invalid email or password', 401);
+            throw new AuthenticationException('E-mail ou mot de passe incorrect');
         }
 
         if (!$user['email_verified']) {
-            throw new \RuntimeException('Please verify your email before logging in', 403);
+            throw new EmailNotVerifiedException('Veuillez vérifier votre adresse e-mail avant de vous connecter');
         }
 
         $token = $this->generateToken($user);
@@ -61,7 +66,7 @@ class AuthService
     {
         // Check if email exists
         if ($this->userRepository->emailExists($request->getEmail())) {
-            throw new \RuntimeException('Email already in use', 422);
+            throw new EmailAlreadyInUseException('Cette adresse e-mail est déjà utilisée');
         }
 
         // Generate verification token
@@ -87,14 +92,14 @@ class AuthService
         if (!$emailSent) {
             return [
                 'success' => true,
-                'message' => 'Registration successful, but verification email could not be sent. Please contact support.',
+                'message' => 'Inscription réussie, mais l\'e-mail de vérification n\'a pas pu être envoyé. Veuillez contacter le support.',
                 'requiresVerification' => true
             ];
         }
 
         return [
             'success' => true,
-            'message' => 'Registration successful! A verification email has been sent to your address.',
+            'message' => 'Inscription réussie ! Un e-mail de vérification a été envoyé à votre adresse.',
             'requiresVerification' => true
         ];
     }
@@ -111,16 +116,16 @@ class AuthService
         $user = $this->userRepository->findByVerificationToken($token);
 
         if (!$user) {
-            throw new \RuntimeException('Invalid or expired token', 400);
+            throw new VerificationException('Lien invalide ou expiré');
         }
 
         if (!$this->userRepository->verifyEmail($user['id'])) {
-            throw new \RuntimeException('Verification failed', 500);
+            throw new VerificationException('La vérification a échoué', 500);
         }
 
         return [
             'success' => true,
-            'message' => 'Email verified successfully! You can now log in.'
+            'message' => 'E-mail vérifié avec succès ! Vous pouvez maintenant vous connecter.'
         ];
     }
 
@@ -139,13 +144,13 @@ class AuthService
             $user = $this->userRepository->findById($decoded->sub);
 
             if (!$user) {
-                throw new \RuntimeException('User not found', 401);
+                throw new AuthenticationException('Utilisateur introuvable');
             }
 
             return $this->formatUser($user);
 
         } catch (\Exception $e) {
-            throw new \RuntimeException('Invalid token', 401);
+            throw new AuthenticationException('Token invalide');
         }
     }
 

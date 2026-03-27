@@ -19,7 +19,7 @@
 
 **Notes**:
 
-- Swagger UI shares port 8081 with Nginx — it is not a separate service
+- Swagger UI shares port 8081 with Nginx - it is not a separate service
 - On **Windows**: Docker runs via WSL2, ports accessible on `localhost`
 - On **Ubuntu**: Native Docker, ports accessible on `localhost` or `127.0.0.1`
 

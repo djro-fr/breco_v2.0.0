@@ -189,7 +189,6 @@ Content-Type: application/json
 {
   "email": "test@example.com",
   "password": "Test1234!",
-  "password_confirmation": "Test1234!",
   "firstName": "Jean",
   "lastName": "Dupont",
   "phone": "0607080910"

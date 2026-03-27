@@ -329,7 +329,6 @@ Content-Type: application/json
 {
   "email": "dev@test.com",
   "password": "DevPass123!",
-  "password_confirmation": "DevPass123!",
   "firstName": "Dev",
   "lastName": "Test",
   "phone": "0607080910"

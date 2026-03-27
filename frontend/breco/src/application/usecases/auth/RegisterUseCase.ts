@@ -10,7 +10,7 @@ import { AppException, ValidationException } from '@/domain/exceptions/AppExcept
 import { ZodError } from 'zod'
 
 export class RegisterUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  constructor(private readonly authRepository: IAuthRepository) {}
 
   async execute(input: RegisterInput): Promise<AuthOutput> {
     try {

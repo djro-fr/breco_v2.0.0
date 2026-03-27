@@ -236,14 +236,14 @@ npm run test:coverage
 npm run lint
 
 # Backend - PHPUnit tests
-docker-compose exec backend vendor/bin/phpunit
+docker-compose exec backend vendor/bin/phpunit --testdox --display-phpunit-notices
 
 # Backend - PHPUnit local (without Docker)
 cd backend/breco
-vendor/bin/phpunit
+vendor/bin/phpunit --testdox --display-phpunit-notices
 
 # Backend - PHPUnit specific test file with notices (local)
-vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --display-phpunit-notices
+vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --display-phpunit-notices
 ```
 
 ---

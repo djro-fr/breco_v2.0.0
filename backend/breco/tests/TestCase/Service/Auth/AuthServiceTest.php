@@ -58,7 +58,7 @@ class AuthServiceTest extends TestCase
     //   ['success' => true, 'requiresVerification' => true, 'message' => '...']
     // ────────────────────────────────────────────────────────────────────────
     #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
-    public function testRegisterWithValidDataReturnsRequiresVerification(): void
+    public function testTc52bRegisterWithValidDataReturnsRequiresVerification(): void
     {
         // ARRANGE: email does not exist yet, user is created, email is sent
         $this->userRepository
@@ -103,7 +103,7 @@ class AuthServiceTest extends TestCase
     //
     // Expected result: EmailAlreadyInUseException thrown
     // ────────────────────────────────────────────────────────────────────────
-    public function testRegisterWithExistingEmailThrowsException(): void
+    public function testTc52cRegisterWithExistingEmailThrowsException(): void
     {
         // ARRANGE: email already exists in database
         $this->userRepository

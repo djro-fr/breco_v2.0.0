@@ -63,6 +63,16 @@ Jenkins runs as a standalone Docker container on the VPS (not in `docker-compose
 It uses a custom image defined in `jenkins/Dockerfile`.  
 For update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
 
+### SonarQube — Jenkins connectivity
+
+Jenkins runs inside a Docker container and cannot reach SonarQube via `localhost` or `127.0.0.1`
+(those resolve to the container itself, not the host).
+
+The Jenkins pipeline uses the Docker host gateway IP to reach SonarQube: `http://172.17.0.1:9000`
+
+> If SonarQube becomes unreachable from Jenkins, verify the gateway IP with:
+> `docker exec breco-jenkins curl -s http://172.17.0.1:9000/api/system/status`
+
 ### OWASP ZAP
 
 The Jenkins pipeline runs an automated OWASP ZAP baseline scan after each deployment, targeting Nginx on port 8081.  
@@ -70,4 +80,4 @@ Results are archived as an HTML report in Jenkins: **Build → OWASP ZAP Securit
 
 ---
 
-**Last updated**: March 26, 2026
+**Last updated**: March 27, 2026

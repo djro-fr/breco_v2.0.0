@@ -5,3 +5,4 @@ test2.*
 test.txt
 test.html
 docs/tests/~$breco - cas de test.xlsx
+backend/breco/test-results/phpunit-results.xml

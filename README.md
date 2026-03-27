@@ -237,6 +237,13 @@ npm run lint
 
 # Backend - PHPUnit tests
 docker-compose exec backend vendor/bin/phpunit
+
+# Backend - PHPUnit local (without Docker)
+cd backend/breco
+vendor/bin/phpunit
+
+# Backend - PHPUnit specific test file with notices (local)
+vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --display-phpunit-notices
 ```
 
 ---
@@ -402,4 +409,4 @@ chore: maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: March 26, 2026
+- **Last updated**: March 27, 2026

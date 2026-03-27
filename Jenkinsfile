@@ -52,7 +52,7 @@ pipeline {
                         -Dsonar.projectKey=breco \
                         -Dsonar.sources=frontend/breco/src,backend/breco/src \
                         -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/** \
-                        -Dsonar.host.url=http://localhost:9000"
+                        -Dsonar.host.url=http://172.18.0.7:9000"
                     }
                 }
             }

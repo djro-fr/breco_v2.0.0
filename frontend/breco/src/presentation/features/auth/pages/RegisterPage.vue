@@ -5,9 +5,11 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import FormInput from '@/presentation/shared/components/FormInput.vue'
 import { emailSchema, phoneSchema, passwordSchema, nameSchema } from '@/utils/validationSchemas'
+import { isStep1Valid } from '@/utils/registerValidation'
 import { UserSchema } from '@/domain/entities/User'
 import type { CreateUserData } from '@/domain/entities/User'
 import { ZodError } from 'zod'
+
 
 
 type RegisterFormField = keyof CreateUserData | 'password'
@@ -40,7 +42,21 @@ const errors = ref<Record<string, string>>({})
 const isLoading = computed(() => authStore.isLoading)
 const globalError = computed(() => authStore.error)
 
-// Real-time validation for each field
+const validateZipCode = (value: string) => {
+  if (!value || value.trim().length === 0) {
+    delete errors.value.zipCode
+    return
+  }
+  try {
+    UserSchema.shape.zipCode.parse(value)
+    delete errors.value.zipCode
+  } catch (error) {
+    if (error instanceof ZodError) {
+      errors.value.zipCode = error.issues[0]?.message || 'Champ invalide'
+    }
+  }
+}
+
 const validateField = (field: RegisterFormField, value: string | number | boolean) => {
   const optionalFields = ['zipCode', 'town', 'carModel', 'carColor', 'carSeatNb']
   if (
@@ -68,13 +84,7 @@ const validateField = (field: RegisterFormField, value: string | number | boolea
         if (typeof value === 'string') nameSchema('nom').parse(value)
         break
       case 'zipCode':
-        if (typeof value === 'string' && value.trim().length > 0) {
-          const zipCodeSchema = UserSchema.shape.zipCode
-          zipCodeSchema.parse(value)
-        } else {
-          delete errors.value[field as string]
-          return
-        }
+        validateZipCode(value as string)
         break
     }
     delete errors.value[field as string]
@@ -103,15 +113,7 @@ const togglePasswordConfirmVisibility = () => {
 
 // Step by step validation
 const step1Valid = computed(() => {
-  return (
-    email.value.length > 0 &&
-    !errors.value.email &&
-    password.value.length >= 8 &&
-    !errors.value.password &&
-    password.value === passwordConfirm.value &&
-    phone.value.length > 0 &&
-    !errors.value.phone
-  )
+  return isStep1Valid(email.value, errors.value.email ?? '', password.value, errors.value.password ?? '', passwordConfirm.value, phone.value, errors.value.phone ?? '')
 })
 
 const step2Valid = computed(() => {
@@ -127,10 +129,10 @@ const step3Valid = computed(() => true)
 
 // Password confirmation error
 const passwordConfirmError = computed(() => {
-  if (password.value !== passwordConfirm.value && passwordConfirm.value.length > 0) {
-    return 'Les mots de passe ne correspondent pas'
+  if (password.value === passwordConfirm.value || passwordConfirm.value.length === 0) {
+    return ''
   }
-  return ''
+  return 'Les mots de passe ne correspondent pas'
 })
 
 const vehicleInfoConfirmation = computed(() => {
@@ -152,10 +154,10 @@ const nextStep = () => {
     validateField('email', email.value)
     validateField('phone', phone.value)
     validateField('password', password.value)
-    if (password.value !== passwordConfirm.value) {
-      errors.value.passwordConfirm = 'Les mots de passe ne correspondent pas'
-    } else {
+    if (password.value === passwordConfirm.value) {
       delete errors.value.passwordConfirm
+    } else {
+      errors.value.passwordConfirm = 'Les mots de passe ne correspondent pas' // NOSONAR
     }
 
     if (step1Valid.value) {
@@ -360,44 +362,46 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
       <div v-if="currentStep === 2" class="mb-7.5">
         <h2 class="text-2xl mb-0 text-black font-medium">Votre identité</h2>
 
-        <label class="block mt-1 mb-1 text-md text-primary-dark font-medium"
-          >Genre<span class="text-error"> *</span></label
-        >
-        <div class="flex gap-2 mb-5">
-          <button
-            type="button"
-            class="px-2 py-1 border border-primary-light rounded-md"
-            :class="[
-              gender === 'Homme' ? 'bg-primary-light text-black' : '',
-              errors.gender ? 'border-error -mb-5' : '',
-            ]"
-            @click="((gender = 'Homme'), delete errors.gender)"
-          >
-            Homme
-          </button>
-          <button
-            type="button"
-            class="px-2 py-1 border border-primary-light rounded-md"
-            :class="[
-              gender === 'Femme' ? 'bg-primary-light text-black' : '',
-              errors.gender ? 'border-error -mb-5' : '',
-            ]"
-            @click="((gender = 'Femme'), delete errors.gender)"
-          >
-            Femme
-          </button>
-          <button
-            type="button"
-            class="px-2 py-1 border border-primary-light rounded-md"
-            :class="[
-              gender === 'Ne pas dire' ? 'bg-primary-light text-black' : '',
-              errors.gender ? 'border-error -mb-5' : '',
-            ]"
-            @click="((gender = 'Ne pas dire'), delete errors.gender)"
-          >
-            Ne pas dire
-          </button>
-        </div>
+        <fieldset>
+          <legend class="block mt-1 mb-1 text-md text-primary-dark font-medium">
+            Genre<span class="text-error"> *</span>
+          </legend>
+          <div class="flex gap-2 mb-5">
+            <button
+              type="button"
+              class="px-2 py-1 border border-primary-light rounded-md"
+              :class="[
+                gender === 'Homme' ? 'bg-primary-light text-black' : '',
+                errors.gender ? 'border-error -mb-5' : '',
+              ]"
+              @click="((gender = 'Homme'), delete errors.gender)"
+            >
+              Homme
+            </button>
+            <button
+              type="button"
+              class="px-2 py-1 border border-primary-light rounded-md"
+              :class="[
+                gender === 'Femme' ? 'bg-primary-light text-black' : '',
+                errors.gender ? 'border-error -mb-5' : '',
+              ]"
+              @click="((gender = 'Femme'), delete errors.gender)"
+            >
+              Femme
+            </button>
+            <button
+              type="button"
+              class="px-2 py-1 border border-primary-light rounded-md"
+              :class="[
+                gender === 'Ne pas dire' ? 'bg-primary-light text-black' : '',
+                errors.gender ? 'border-error -mb-5' : '',
+              ]"
+              @click="((gender = 'Ne pas dire'), delete errors.gender)"
+            >
+              Ne pas dire
+            </button>
+          </div>
+        </fieldset>
 
         <p v-if="errors.gender" class="error-text mt-1 mb-4">{{ errors.gender }}</p>
 
@@ -457,27 +461,29 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
       <div v-if="currentStep === 3" class="mb-7.5">
         <h2 class="text-2xl mb-0 text-black font-medium">Votre véhicule</h2>
 
-        <label class="block mt-1 mb-1 text-md text-primary-dark font-medium"
-          >Souhaitez-vous utiliser votre voiture ?</label
-        >
-        <div class="flex gap-2 mb-5">
-          <button
-            type="button"
-            class="px-2 py-1 border border-primary-light rounded-md"
-            :class="driver === true ? 'bg-primary-light text-black' : ''"
-            @click="driver = true"
-          >
-            Oui
-          </button>
-          <button
-            type="button"
-            class="px-2 py-1 border border-primary-light rounded-md"
-            :class="driver === false ? 'bg-primary-light text-black' : ''"
-            @click="driver = false"
-          >
-            Non
-          </button>
-        </div>
+        <fieldset>
+          <legend class="block mt-1 mb-1 text-md text-primary-dark font-medium">
+            Souhaitez-vous utiliser votre voiture ?
+          </legend>
+          <div class="flex gap-2 mb-5">
+            <button
+              type="button"
+              class="px-2 py-1 border border-primary-light rounded-md"
+              :class="driver === true ? 'bg-primary-light text-black' : ''"
+              @click="driver = true"
+            >
+              Oui
+            </button>
+            <button
+              type="button"
+              class="px-2 py-1 border border-primary-light rounded-md"
+              :class="driver === false ? 'bg-primary-light text-black' : ''"
+              @click="driver = false"
+            >
+              Non
+            </button>
+          </div>
+        </fieldset>
         <div v-if="driver">
           <div class="mb-4">
             <FormInput
@@ -496,12 +502,12 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
               label="Couleur"
               aria-label="Couleur"
             />
-            <label class="block -mb-4 text-md text-primary-dark font-medium"
+            <label for="carSeatNb" class="block -mb-4 text-md text-primary-dark font-medium"
               >Nombre de places disponibles</label
             >
           </div>
           <div class="mb-4">
-            <FormInput v-model="carSeatNb" type="number" class="w-20" />
+            <FormInput v-model="carSeatNb" type="number" class="w-20"  id="carSeatNb" />
           </div>
         </div>
       </div>

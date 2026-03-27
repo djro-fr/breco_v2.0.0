@@ -195,20 +195,20 @@ const handleRegister = async () => {
   try {
     const cleanedPhone = phone.value.replace(/\s/g, '')
 
-    const result = await authStore.register(
-      email.value,
-      cleanedPhone,
-      password.value,
-      firstName.value,
-      lastName.value,
-      driver.value,
-      gender.value || undefined,
-      zipCode.value || undefined,
-      town.value || undefined,
-      carModel.value || undefined,
-      carColor.value || undefined,
-      carSeatNb.value || undefined,
-    )
+    const result = await authStore.register({
+      email:     email.value,
+      phone:     cleanedPhone,
+      password:  password.value,
+      firstName: firstName.value,
+      lastName:  lastName.value,
+      driver:    driver.value,
+      gender:    gender.value || undefined,
+      zipCode:   zipCode.value || undefined,
+      town:      town.value || undefined,
+      carModel:  carModel.value || undefined,
+      carColor:  carColor.value || undefined,
+      carSeatNb: carSeatNb.value || undefined,
+    })
 
     // Check if email verification is required
     if (result.requiresVerification) {

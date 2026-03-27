@@ -2,6 +2,7 @@
 import axiosInstance from '@/shared/api/axiosInstance'
 import { UserModel, type UserDTO } from '@/data/models/UserModel'
 import type { User } from '@/domain/entities/User'
+import type { RegisterInput } from '@/domain/repositories/IAuthRepository'
 import {
   AppException,
   ValidationException,
@@ -35,8 +36,6 @@ export class AuthRemoteDataSource {
     if (axios.isAxiosError(error)) {
       const statusCode = error.response?.status || 500
       const serverMessage = this.extractErrorMessage(error.response?.data)
-
-      // Launch the appropriate exception based on the HTTP status
       switch (statusCode) {
         case 401:
           throw new UnauthorizedException(serverMessage || 'Non authentifié')
@@ -48,12 +47,9 @@ export class AuthRemoteDataSource {
           throw new AppException('API_ERROR', serverMessage || 'Une erreur est survenue', statusCode)
       }
     }
-
-    // Non-Axios error (network, timeout, etc.)
     if (error instanceof Error) {
       throw new AppException('NETWORK_ERROR', error.message, 0)
     }
-
     throw new AppException('UNKNOWN_ERROR', 'Une erreur inconnue est survenue', 500)
   }
 
@@ -62,10 +58,7 @@ export class AuthRemoteDataSource {
     try {
       const { data } = await axiosInstance.post<AuthApiResponse>(
         `${this.API_PREFIX}/login`,
-        {
-          email,
-          password,
-        }
+        { email, password },
       )
       return data
     } catch (error) {
@@ -74,39 +67,12 @@ export class AuthRemoteDataSource {
   }
 
   // API call to register
-  async register(
-    email: string,
-    phone: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    driver?: boolean,
-    gender?: string,
-    zipCode?: string,
-    town?: string,
-    carModel?: string,
-    carColor?: string,
-    carSeatNb?: number,
-  ): Promise<AuthApiResponse> {
+  async register(input: RegisterInput): Promise<AuthApiResponse> {
     try {
       const { data } = await axiosInstance.post<AuthApiResponse>(
         `${this.API_PREFIX}/register`,
-        {
-          email,
-          phone,
-          password,
-          firstName,
-          lastName,
-          driver,
-          gender,
-          zipCode,
-          town,
-          carModel,
-          carColor,
-          carSeatNb,
-        }
+        input,
       )
-      // console.log('Backend register response:', JSON.stringify(data, null, 2))
       return data
     } catch (error) {
       this.handleAxiosError(error)
@@ -120,11 +86,7 @@ export class AuthRemoteDataSource {
       await axiosInstance.post(
         `${this.API_PREFIX}/logout`,
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       )
     } catch (error) {
       console.warn('Erreur lors du logout serveur:', error)
@@ -136,13 +98,8 @@ export class AuthRemoteDataSource {
     const token = localStorage.getItem('token')
     const { data } = await axiosInstance.get<UserDTO>(
       `${this.API_PREFIX}/verify`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-  )
-    // Convert DTO to Entity User
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
     return UserModel.fromJson(data)
   }
 }

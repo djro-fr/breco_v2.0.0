@@ -1,8 +1,8 @@
 // frontend/breco/src/presentation/features/auth/stores/authStore.ts
-
 import { defineStore } from 'pinia'
 import { ref, computed, type Ref, type ComputedRef } from 'vue'
 import type { User } from '@/domain/entities/User'
+import type { RegisterInput } from '@/domain/repositories/IAuthRepository'
 import { LoginUseCase } from '@/application/usecases/auth/LoginUseCase'
 import { RegisterUseCase } from '@/application/usecases/auth/RegisterUseCase'
 import { VerifyTokenUseCase } from '@/application/usecases/auth/VerifyTokenUseCase'
@@ -11,7 +11,6 @@ import { AuthRepositoryImpl } from '@/data/repositories/AuthRepositoryImpl'
 import { AppException } from '@/domain/exceptions/AppException'
 
 export const useAuthStore = defineStore('auth', () => {
-  // Create the use case instances with the repository
   const authRepository = new AuthRepositoryImpl()
   const loginUseCase = new LoginUseCase(authRepository)
   const registerUseCase = new RegisterUseCase(authRepository)
@@ -33,11 +32,9 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const result = await loginUseCase.execute({ email, password })
-
       if (!result.token || !result.user) {
         throw new Error('Réponse invalide du serveur')
       }
-
       token.value = result.token
       user.value = result.user
       localStorage.setItem('token', result.token)
@@ -56,48 +53,22 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Action: Register
+  // Paramètres regroupés dans RegisterInput (fix SonarLint S107)
   const register = async (
-    email: string,
-    phone: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    driver: boolean = false,
-    gender?: 'Homme' | 'Femme' | 'Ne pas dire',
-    zipCode?: string,
-    town?: string,
-    carModel?: string,
-    carColor?: string,
-    carSeatNb?: number,
+    input: RegisterInput,
   ): Promise<{ requiresVerification?: boolean; message?: string }> => {
-
     isLoading.value = true
     error.value = null
     try {
-      const result = await registerUseCase.execute({
-        email,
-        phone,
-        password,
-        firstName,
-        lastName,
-        driver,
-        gender,
-        zipCode,
-        town,
-        carModel,
-        carColor,
-        carSeatNb,
-      })
+      const result = await registerUseCase.execute(input)
 
-      // Check if email verification is required
       if (result.requiresVerification) {
         return {
           requiresVerification: true,
-          message: result.message || 'Veuillez vérifier votre email'
+          message: result.message || 'Veuillez vérifier votre email',
         }
       }
 
-      // Direct login (in case backend doesn't require verification)
       if (!result.token || !result.user) {
         throw new Error('Réponse invalide du serveur')
       }
@@ -155,14 +126,11 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    // State
     user,
     token,
     isLoading,
     error,
     isAuthenticated,
-
-    // Actions
     login,
     register,
     logout,

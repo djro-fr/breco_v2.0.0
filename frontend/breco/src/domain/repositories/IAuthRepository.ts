@@ -18,7 +18,7 @@ export const RegisterInputSchema = z.object({
   driver: z.boolean().optional().default(false),
   gender: z.enum(['Homme', 'Femme', 'Ne pas dire']).optional(),
   zipCode: z.string().refine(
-    (val) => /^[0-9]{5}$/.test(val),
+    (val) => /^\d{5}$/.test(val),
     { message: "Code postal invalide" }
   ).optional(),
   town: z.string().min(2).max(100).optional(),
@@ -60,7 +60,4 @@ export interface IAuthRepository {
   register(input: RegisterInput): Promise<AuthOutput>
   logout(): Promise<void>
   verifyToken(): Promise<User>
-  // refreshToken(): Promise<AuthOutput>
-  // forgotPassword(email: string): Promise<void>
-  // resetPassword(token: string, newPassword: string): Promise<void>
 }

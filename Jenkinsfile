@@ -48,6 +48,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     script {
                         def scannerHome = tool 'SonarQube Scanner'
+                        echo "Scanner home: ${scannerHome}"
                         sh "${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=breco \
                         -Dsonar.sources=frontend/breco/src,backend/breco/src \

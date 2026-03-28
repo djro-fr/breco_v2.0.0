@@ -282,6 +282,7 @@ pipeline {
                         docker compose rm -f frontend backend nginx mysql && \
                         docker compose pull frontend backend nginx mysql && \
                         docker compose up -d frontend backend nginx mysql"
+                    echo "---"
                 '''
             }
         }

@@ -275,18 +275,13 @@ pipeline {
 
                 echo 'Re-deploy on VPS...'
                 sh '''
-                    echo "Test SSH..."
-                    ls -la /var/jenkins_home/.ssh/
                     chmod 600 /var/jenkins_home/.ssh/id_ed25519
-                    ssh -v -p 49494 -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@37.59.101.232 "echo ok"
-                '''
-                sh '''
-                    chmod 600 /var/jenkins_home/.ssh/id_ed25519
-                    ssh -p 49494 -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@37.59.101.232 "cd ~/breco_v2.0.0 && \
-                    docker compose stop frontend backend nginx mysql && \
-                    docker compose rm -f frontend backend nginx mysql && \
-                    docker compose pull frontend backend nginx mysql && \
-                    docker compose up -d frontend backend nginx mysql"
+                    ssh -p 49494 -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                        "cd ~/breco_v2.0.0 && \
+                        docker compose stop frontend backend nginx mysql && \
+                        docker compose rm -f frontend backend nginx mysql && \
+                        docker compose pull frontend backend nginx mysql && \
+                        docker compose up -d frontend backend nginx mysql"
                 '''
             }
         }

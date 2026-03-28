@@ -274,16 +274,14 @@ pipeline {
                 }
 
                 echo 'Re-deploy on VPS...'
-                withCredentials([sshUserPrivateKey(credentialsId: 'vps-ssh', keyFileVariable: 'SSH_KEY')]) {
-                    sh '''
-                        chmod 600 ${SSH_KEY}
-                        ssh -p 49494 -o StrictHostKeyChecking=no -i ${SSH_KEY} ubuntu@37.59.101.232 "cd ~/breco_v2.0.0 && \
-                        docker compose stop frontend backend nginx mysql && \
-                        docker compose rm -f frontend backend nginx mysql && \
-                        docker compose pull frontend backend nginx mysql && \
-                        docker compose up -d frontend backend nginx mysql"
-                    '''
-                }
+                sh '''
+                    chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                    ssh -p 49494 -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@37.59.101.232 "cd ~/breco_v2.0.0 && \
+                    docker compose stop frontend backend nginx mysql && \
+                    docker compose rm -f frontend backend nginx mysql && \
+                    docker compose pull frontend backend nginx mysql && \
+                    docker compose up -d frontend backend nginx mysql"
+                '''
             }
         }
         stage('Verify Deployment Version') {

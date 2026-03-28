@@ -276,6 +276,12 @@ pipeline {
                 echo 'Re-deploy on VPS...'
                 sshagent(credentials: ['vps-ssh']) {
                     sh '''
+                        ssh-add -l
+                        ssh -p 49494 -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "echo ok"
+                    '''
+                }
+                sshagent(credentials: ['vps-ssh']) {
+                    sh '''
                         ssh -p 49494 -o StrictHostKeyChecking=no ubuntu@37.59.101.232 "cd ~/breco_v2.0.0 && \
                         docker-compose -f docker-compose.yml stop frontend backend nginx mysql && \
                         docker-compose -f docker-compose.yml rm -f frontend backend nginx mysql && \

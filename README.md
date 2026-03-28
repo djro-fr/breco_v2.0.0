@@ -271,8 +271,9 @@ vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --d
 | Jenkins | http://37.59.101.232:8080 |
 | Mailhog | http://37.59.101.232:8025 |
 | Swagger UI | http://37.59.101.232:8081/swagger |
+| SonarQube | http://37.59.101.232:9000 |
 
-**SSH Access**: `ssh ubuntu@37.59.101.232`
+**SSH Access**: `ssh ubuntu@37.59.101.232 -p NUMERO_DE_PORT`
 
 ---
 
@@ -359,6 +360,7 @@ npm install
 - Health check endpoint (backend + frontend)
 - SonarQube code quality analysis
 - Test plan: test cases (Vitest / PHPUnit / Selenium pyramid)
+- Security hardening (SSH key auth, Fail2ban IPS, custom SSH port)
 
 ### TODO before production
 
@@ -409,4 +411,4 @@ chore: maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: March 27, 2026
+- **Last updated**: March 28, 2026

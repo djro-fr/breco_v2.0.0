@@ -37,7 +37,7 @@
 | Swagger UI | 8081 | http://37.59.101.232:8081/swagger | API documentation |
 | SonarQube | 9000 | http://37.59.101.232:9000 | Code quality analysis |
 
-**SSH Access**: `ssh ubuntu@37.59.101.232`
+**SSH Access**: `ssh ubuntu@37.59.101.232` (custom port: see private config)
 
 ---
 
@@ -59,19 +59,17 @@
 
 ### Jenkins
 
-Jenkins runs as a standalone Docker container on the VPS (not in `docker-compose.yml`).  
-It uses a custom image defined in `jenkins/Dockerfile`.  
+Jenkins runs as a **Docker Compose service** on the VPS (defined in `docker-compose.yml`).
+It uses a custom image defined in `jenkins/Dockerfile-jenkins`.
 For update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
 
-### SonarQube — Jenkins connectivity
+### SonarQube: Jenkins connectivity
 
-Jenkins runs inside a Docker container and cannot reach SonarQube via `localhost` or `127.0.0.1`
-(those resolve to the container itself, not the host).
+Jenkins and SonarQube are both on the `breco_network` Docker network.
+The Jenkins pipeline reaches SonarQube via its container IP: `http://172.18.0.5:9000`
 
-The Jenkins pipeline uses the Docker host gateway IP to reach SonarQube: `http://172.17.0.1:9000`
-
-> If SonarQube becomes unreachable from Jenkins, verify the gateway IP with:
-> `docker exec breco-jenkins curl -s http://172.17.0.1:9000/api/system/status`
+> If SonarQube becomes unreachable from Jenkins, verify the current IP with:
+> `docker inspect breco_sonarqube | grep IPAddress`
 
 ### OWASP ZAP
 
@@ -80,4 +78,4 @@ Results are archived as an HTML report in Jenkins: **Build → OWASP ZAP Securit
 
 ---
 
-**Last updated**: March 27, 2026
+**Last updated**: March 28, 2026

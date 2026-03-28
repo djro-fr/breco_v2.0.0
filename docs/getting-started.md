@@ -66,6 +66,7 @@ You should see:
 - breco_mailhog (ports 1025, 8025)
 - breco_sonarqube (port 9000)
 - breco_sonarqube_db
+- breco-jenkins (port 8080)
 
 ---
 
@@ -183,7 +184,7 @@ breco_v2_0_0/
 ├── mysql/
 │   └── init.sql
 ├── jenkins/
-│   ├── Dockerfile
+│   ├── Dockerfile-jenkins
 │   └── JENKINS.md
 ├── docker-compose.yml
 ├── Jenkinsfile
@@ -523,4 +524,4 @@ docker-compose up -d
 
 ---
 
-**Last updated**: March 27, 2026
+**Last updated**: March 28, 2026

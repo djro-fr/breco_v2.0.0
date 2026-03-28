@@ -70,7 +70,7 @@ Jenkins Pipeline
     ├── Swagger Bake           ← API documentation generation
     ├── Docker Build
     ├── Docker Push (Hub)
-    ├── Deploy (VPS via SSH)
+    ├── Deploy (VPS via SSH, custom port)
     ├── Verify deployment
     └── OWASP ZAP Scan         ← security baseline scan
 ```
@@ -85,7 +85,8 @@ VPS Ubuntu 37.59.101.232
 ├── breco_mysql       (port 3307)   ← MySQL 8.0
 ├── breco_mailhog     (port 8025)   ← email testing (dev only)
 ├── breco_sonarqube   (port 9000)   ← code quality
-└── breco-jenkins     (port 8080)   ← CI/CD (standalone container)
+├── breco_sonarqube_db              ← PostgreSQL (SonarQube internal)
+└── breco-jenkins     (port 8080)   ← CI/CD (Docker Compose service)
 ```
 
 ---

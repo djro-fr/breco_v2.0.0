@@ -51,7 +51,7 @@ docs/
     └── breco - cas de test.xlsx
 
 jenkins/
-├── Dockerfile             # Custom Jenkins image (VPS)
+├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
 └── JENKINS.md             # Jenkins update procedure
 ```
 
@@ -141,7 +141,7 @@ fix/*        # Bug fixes
 3. **Develop**: Create branch `feature/my-feature`
 4. **Test**: Run tests (unit, integration, E2E)
 5. **Commit**: Follow commit conventions
-6. **Push**: Automatic Jenkins build
+6. **Push**: Automatic Jenkins build triggered via GitHub webhook
 7. **Deploy**: Automatic deployment to VPS if tests pass
 
 ---
@@ -152,10 +152,10 @@ fix/*        # Bug fixes
 - **CI/CD**: Jenkins pipeline (Lint → SonarQube → Tests → Build → Deploy → ZAP)
 - **Deployment**: Automatic to VPS on every push
 - **Security**: OWASP ZAP baseline scan after each deployment
+- **Security hardening**: SSH key auth only, Fail2ban IPS, custom SSH port
 
 ---
 
 ## Last Update
 
-**Date**: March 26, 2026  
-**Status**: In development
+**Date**: March 28, 2026

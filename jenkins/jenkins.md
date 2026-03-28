@@ -14,18 +14,16 @@
 
 ```text
 jenkins/
-└── Dockerfile      ← custom Jenkins image (Docker CLI, plugins, JAVA_OPTS)
+└── Dockerfile-jenkins      ← custom Jenkins image (Docker CLI, plugins, JAVA_OPTS)
 ```
 
-The Dockerfile is stored on VPS: /home/ubuntu/breco_v2_0_0/jenkins/Dockerfile
-The Dockerfile starts from the official image jenkins/jenkins:2.541.3-lts-jdk21 and adds to it:
+Jenkins is managed as a **Docker Compose service** in `docker-compose.yml`.
+The custom image `breco-jenkins:2.541.3` is built from `jenkins/Dockerfile-jenkins` and adds:
 
 - the Docker CLI and Docker Compose (absent from the base image)
-- the docker group for the user jenkins
+- the docker group (GID 988) for the user jenkins
 - the pre-installed Jenkins plugins
 - the custom JAVA_OPTS
-
-The result is the image breco-jenkins:2.541.3 - a Jenkins image tailored specifically for Breco.
 
 ---
 
@@ -48,13 +46,17 @@ Installs the **Docker CLI** so Jenkins can run `docker` commands from pipeline s
 RUN curl ... docker-compose
 ```
 
-Installs **Docker Compose** for `docker-compose` commands in the pipeline (stop/start services on the VPS).
+Installs **Docker Compose** for `docker-compose` commands in the pipeline.
 
 ```dockerfile
-RUN groupadd -g 999 docker && usermod -aG docker jenkins
+RUN groupadd -g 988 docker && usermod -aG docker jenkins
 ```
 
-Adds the `jenkins` user to the `docker` group so it can use the Docker socket without being root.
+Adds the `jenkins` user to the `docker` group (GID 988 on this VPS)
+so it can use the Docker socket without being root.
+
+> **Note:** If you get `permission denied` on `/var/run/docker.sock` after a VPS reinstall,
+check the GID with `stat -c '%g' /var/run/docker.sock` and update the Dockerfile accordingly.
 
 ```dockerfile
 USER jenkins
@@ -78,66 +80,114 @@ ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false \
 ### 1. Update the Dockerfile
 
 ```dockerfile
-# jenkins/Dockerfile
+# jenkins/Dockerfile-jenkins
 FROM jenkins/jenkins:X.X.X-lts-jdk21   ← set the new version
 ```
 
-### 2. Rebuild the image
+### 2. Rebuild and redeploy via Docker Compose
 
 ```bash
-cd /home/ubuntu/breco_v2_0_0/jenkins
-docker build -t breco-jenkins:X.X.X .
+cd /home/ubuntu/breco_v2.0.0
+docker compose build jenkins
+docker compose up -d jenkins
 ```
 
-### 3. Replace the container
+---
+
+## Fresh reinstallation procedure
+
+Use this procedure after a VPS reinstall or if the Jenkins container needs to be fully recreated.
+
+### 1. Check Docker socket GID
 
 ```bash
-docker stop breco-jenkins
-docker rm breco-jenkins
-docker run -d \
-  --name breco-jenkins \
-  --privileged \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -p 50000:50000 \
-  -v jenkins-data:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  breco-jenkins:X.X.X
+stat -c '%g' /var/run/docker.sock
 ```
 
-> **Note:** The `jenkins-data` volume retains all Jenkins configuration
-> (jobs, credentials, plugins, build history).
+Update `groupadd -g <GID>` in `jenkins/Dockerfile-jenkins` if it differs from the current value.
 
-### 4. In case of permissions error at startup
-
-If Jenkins fails to start with `Permission denied` on `/var/jenkins_home/war`:
+### 2. Add Jenkins SSH key to VPS authorized_keys
 
 ```bash
-docker stop breco-jenkins
-docker rm breco-jenkins
+# Generate a new SSH key inside the container
+docker exec -it breco-jenkins bash -c "ssh-keygen -t ed25519 -C 'breco-jenkins' -f ~/.ssh/id_ed25519 -N '' && cat ~/.ssh/id_ed25519.pub"
 
-# Fix permissions on the volume
-docker run --rm \
-  -v jenkins-data:/var/jenkins_home \
-  -u root \
-  jenkins/jenkins:X.X.X-lts-jdk21 \
-  chown -R 1000:1000 /var/jenkins_home
+# Add the public key to the VPS
+echo "PASTE_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
 
-# Restart
-docker run -d \
-  --name breco-jenkins \
-  --privileged \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -p 50000:50000 \
-  -v jenkins-data:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  breco-jenkins:X.X.X
-
-
-
-
+# Test the connection
+docker exec -it breco-jenkins ssh -p NUMERO_DE_PORT -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@37.59.101.232 "echo ok"
 ```
+
+### 3. Add Jenkins SSH key to GitHub
+
+```bash
+docker exec -it breco-jenkins cat /var/jenkins_home/.ssh/id_ed25519.pub
+```
+
+Add the public key in **GitHub → Settings → SSH and GPG keys → New SSH key (Authentication)**.
+
+Test:
+
+```bash
+docker exec -it breco-jenkins ssh -T git@github.com
+```
+
+### 4. Add GitHub to known_hosts
+
+```bash
+docker exec -it breco-jenkins bash -c "mkdir -p ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts"
+```
+
+### 5. Reconfigure Jenkins credentials
+
+In **Credentials → Global → Add Credentials**, recreate the following:
+
+| ID | Type | Description |
+| --- | --- | --- |
+| `github-ssh` | SSH Username with private key | Jenkins private key (`/var/jenkins_home/.ssh/id_ed25519`), username: `git` |
+| `vps-ssh` | SSH Username with private key | Your PC private key (`~/.ssh/id_ed25519`), username: `ubuntu` |
+| `docker_credentials` | Username with password | Docker Hub credentials |
+| `sonarqube-token` | Secret text | SonarQube project token |
+| `mysql_root_password` | Secret text | MySQL root password |
+| `mysql_db` | Secret text | MySQL database name |
+| `mysql_user` | Secret text | MySQL username |
+| `mysql_password` | Secret text | MySQL password |
+| `jwt_secret` | Secret text | JWT secret key |
+| `vite_api_url` | Secret text | e.g. `http://37.59.101.232:8081/api` |
+| `cors_origin` | Secret text | e.g. `http://37.59.101.232:3001` |
+
+### 6. Reconfigure SonarQube
+
+In **Manage Jenkins → System → SonarQube servers**:
+
+- Name: `SonarQube`
+- URL: `http://172.18.0.5:9000`
+- Token: select `sonarqube-token`
+
+In **Manage Jenkins → Tools → SonarQube Scanner**:
+
+- Name: `SonarQube Scanner`
+- Install automatically: checked
+
+### 7. Reconfigure the pipeline job
+
+- **New Item** → `breco` → **Pipeline**
+- Pipeline definition: `Pipeline script from SCM`
+- SCM: `Git`
+- Repository URL: `git@github.com:djro-fr/breco_v2.0.0.git`
+- Credentials: `github-ssh`
+- Branch: `*/main`
+- Build Triggers: check **GitHub hook trigger for GITScm polling**
+
+### 8. Reconfigure the GitHub webhook
+
+In **GitHub → repo → Settings → Webhooks → Add webhook**:
+
+- Payload URL: `http://37.59.101.232:8080/github-webhook/`
+- Content type: `application/json`
+- Events: `Just the push event`
+- Active: checked
 
 ---
 
@@ -145,14 +195,17 @@ docker run -d \
 
 ```bash
 # Start / stop
-docker start breco-jenkins
-docker stop breco-jenkins
+docker compose start jenkins
+docker compose stop jenkins
 
 # Logs in case of problem
 docker logs breco-jenkins --tail 50
 
 # Check the active version
 docker exec breco-jenkins jenkins --version
+
+# Check Docker socket GID
+stat -c '%g' /var/run/docker.sock
 ```
 
 ---
@@ -189,9 +242,10 @@ Defined in the Dockerfile via `jenkins-plugin-cli`:
 | `ws-cleanup` | Workspace cleanup |
 | `ssh-agent` | SSH authentication |
 | `htmlpublisher` | HTML report publishing (ZAP, etc.) |
+| `sonar` | SonarQube Scanner integration |
 
 ---
 
 ## Last Update
 
-**Date**: March 26, 2026
+**Date**: March 28, 2026

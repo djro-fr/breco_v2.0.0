@@ -15,6 +15,7 @@ pipeline {
         VITE_API_URL = credentials('vite_api_url')
         CORS_ORIGIN = credentials('cors_origin')
         DOCKER_CREDENTIALS = credentials('docker_credentials')
+        VPS_SSH_PORT = credentials('vps_ssh_port')
     }
     stages {
         stage('Checkout') {
@@ -276,7 +277,7 @@ pipeline {
                 echo 'Re-deploy on VPS...'
                 sh '''
                     chmod 600 /var/jenkins_home/.ssh/id_ed25519
-                    ssh -p 49494 -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                    ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
                         "cd ~/breco_v2.0.0 && \
                         docker compose stop frontend backend nginx mysql && \
                         docker compose rm -f frontend backend nginx mysql && \

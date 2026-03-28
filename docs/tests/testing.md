@@ -24,26 +24,26 @@ organisés selon la pyramide des tests : unitaires → intégration → UI → E
 ## Run the tests
 
 ```bash
-# Frontend — Unit tests
+# Frontend: Unit tests
 cd frontend/breco && npm run test:unit
 
-# Frontend — Integration tests
+# Frontend: Integration tests
 npm run test:integration
 
-# Frontend — UI tests
+# Frontend: UI tests
 npm run test:ui
 
-# Frontend — E2E tests
+# Frontend: E2E tests
 npm run test:e2e
 
-# Backend — PHPUnit
+# Backend: PHPUnit
 cd backend/breco
 vendor/bin/phpunit --testdox --display-phpunit-notices
 ```
 
 ---
 
-## Story 1 — Inscription / Connexion
+## Story 1: Inscription / Connexion
 
 | ID | Type | Outil | Couche | Fichier test | User Story | Description | Données d'entrée | Résultat attendu | Technique | Statut |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -126,9 +126,9 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 | [ ] TC-69 | E2E | Selenium | Frontend + Backend |  | S1 - Inscription | Parcours inscription complet via formulaire | Tous champs valides saisis en UI | Message de succès affiché, e-mail envoyé | Partitionnement d'équivalence | ✅ VALIDE |
 | [ ] TC-70 | E2E | Selenium | Frontend + Backend |  | S1 - Connexion | Parcours connexion + redirection | email = "toto@titi.com" & password = "Toto1234" saisis en UI | Redirection vers dashboard, token JWT stocké | Partitionnement d'équivalence | ✅ VALIDE |
 | [ ] TC-71 | E2E | Selenium | Frontend + Backend |  | S1 - Inscription | Affichage étape 5 après inscription réussie | Inscription complète avec e-mail valide | Étape 5 "Vérifiez votre email" affichée | Partitionnement d'équivalence | ✅ VALIDE |
-| [ ] TC-72 | Intégration | Vitest + PHPUnit | Backend |  | S1 - Inscription | Injection SQL dans le champ e-mail | email = "' OR 1=1--" | Erreur : "Format d'e-mail invalide" — requête non exécutée | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-73 | Intégration | Vitest + PHPUnit | Backend |  | S1 - Inscription | Injection XSS dans le champ prénom | firstName = "<script>alert(1)</script>" | Erreur : "Le prénom contient des caractères invalides" — script non exécuté | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-74 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | Déconnexion — invalidation du token JWT côté client | Token JWT valide en session | Token supprimé, redirection vers login | Partitionnement d'équivalence | ✅ VALIDE |
+| [ ] TC-72 | Intégration | Vitest + PHPUnit | Backend |  | S1 - Inscription | Injection SQL dans le champ e-mail | email = "' OR 1=1--" | Erreur : "Format d'e-mail invalide": requête non exécutée | Partitionnement d'équivalence | ❌ INVALIDE |
+| [ ] TC-73 | Intégration | Vitest + PHPUnit | Backend |  | S1 - Inscription | Injection XSS dans le champ prénom | firstName = "<script>alert(1)</script>" | Erreur : "Le prénom contient des caractères invalides": script non exécuté | Partitionnement d'équivalence | ❌ INVALIDE |
+| [ ] TC-74 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | Déconnexion: invalidation du token JWT côté client | Token JWT valide en session | Token supprimé, redirection vers login | Partitionnement d'équivalence | ✅ VALIDE |
 | [ ] TC-75 | Intégration | Vitest + PHPUnit | Backend |  | S1 - Connexion | Verrouillage de compte après N échecs | 10+ tentatives échouées sur le même compte | Compte verrouillé, erreur spécifique retournée | Partitionnement d'équivalence | 🔜 À IMPLÉMENTER |
 | [ ] TC-76 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Inscription | Backend indisponible lors de l'inscription | API répond 503 | Message d'erreur générique affiché, pas de crash | Partitionnement d'équivalence | ❌ INVALIDE |
 | [ ] TC-77 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | Backend indisponible lors de la connexion | API répond 503 | Message d'erreur générique affiché, pas de crash | Partitionnement d'équivalence | ❌ INVALIDE |
@@ -139,7 +139,7 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 
 ---
 
-## Story 2 — Lieux préenregistrés
+## Story 2: Lieux préenregistrés
 
 | ID    | Type | Outil | Couche | Fichier test | User Story | Description | Données d'entrée | Résultat attendu | Technique | Statut |
 | ------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---|

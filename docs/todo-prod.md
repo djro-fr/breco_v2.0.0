@@ -24,9 +24,12 @@
 
 ### Authentication
 
+- [x] Enable Fail2ban (SSH brute force protection)
+- [x] SSH key-only authentication (password auth disabled)
+- [x] Custom SSH port (default port 22 disabled)
 - [ ] Implement JWT refresh tokens
 - [ ] Add rate limiting (login, register)
-- [ ] Enable fail2ban (SSH + nginx)
+- [ ] Enable Fail2ban for nginx
 
 ### OWASP ZAP Security Audit
 
@@ -204,4 +207,4 @@
 
 **NEVER launch in production until all CRITICAL points are validated!**
 
-**Last updated**: March 26, 2026
+**Last updated**: March 28, 2026

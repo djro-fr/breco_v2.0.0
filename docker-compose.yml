@@ -98,7 +98,7 @@ services:
 
   # SonarQube - Code quality analysis
   sonarqube:
-    image: sonarqube:community
+    image: sonarqube:26.3.0.120487-community
     container_name: breco_sonarqube
     environment:
       SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonar

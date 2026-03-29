@@ -24,17 +24,25 @@ organisés selon la pyramide des tests : unitaires → intégration → UI → E
 ## Run the tests
 
 ```bash
-# Frontend: Unit tests
+# Frontend: Unit tests all files
 cd frontend/breco && npm run test:unit
+# Frontend: Unit tests 1 file
+cd frontend/breco && npx vitest run src/__tests__/unit/xxx/xxx.spec.ts
 
 # Frontend: Integration tests
 npm run test:integration
+# Frontend: Integration tests 1 file
+cd frontend/breco && npx vitest run src/__tests__/integration/xxx/xxx.spec.ts
 
 # Frontend: UI tests
 npm run test:ui
+# Frontend: UI tests 1 file
+cd frontend/breco && npx vitest run src/__tests__/ui/xxx/xxx.spec.ts
 
 # Frontend: E2E tests
 npm run test:e2e
+# Frontend: E2E tests 1 file
+cd frontend/breco && npx vitest run src/__tests__/e2e/xxx/xxx.spec.ts
 
 # Backend: PHPUnit
 cd backend/breco
@@ -107,8 +115,8 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 | [x] TC-52 | Unitaire | Vitest | Frontend | userSchema.spec.ts | S1 - Inscription | Nombre de places  | CarSeatNb = 4 | Nombre de places accepté | Valeurs limites + Équivalence | ✅ VALIDE |
 | [x] TC-52b | Intégration | Vitest + PHPUnit | Frontend + Backend | register.integration.spec.ts + AuthServiceTest.php | S1 - Inscription | Inscription avec données valides | email: "dev@test.com", password: "DevPass123!", firstName: "Dev", lastName: "Test", phone: "0607080910" | {"success": true, "message": "Registration successful!", "requiresVerification": true} | Équivalence + Tableaux de décision | ✅ VALIDE |
 | [x] TC-52c | Intégration | Vitest + PHPUnit | Frontend + Backend | register.integration.spec.ts + AuthServiceTest.php | S1 - Inscription | Inscription avec e-mail déjà en base | email: "dev@test.com" (déjà en base) | {"error": "Email already in use"} | Équivalence + Tableaux de décision | ❌ INVALIDE |
-| [ ] TC-53 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | E-mail avec format xxx@yyy.zzz mais pas en base | email = "toto@tata.com" | E-mail inconnu, inscrivez-vous | Tableaux de décision | ❌ INVALIDE |
-| [ ] TC-54 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | E-mail avec format xxx@yyy.zzz, bien en base | email = "toto@titi.com" | E-mail accepté | Équivalence + Tableaux de décision | ✅ VALIDE |
+| [x] TC-53 | Intégration | Vitest + PHPUnit | Frontend + Backend | login.integration.spec.ts + AuthServiceTest.php | S1 - Connexion | E-mail avec format xxx@yyy.zzz mais pas en base | email = "toto@tata.com" | E-mail inconnu, inscrivez-vous | Tableaux de décision | ❌ INVALIDE |
+| [x] TC-54 | Intégration | Vitest + PHPUnit | Frontend + Backend | login.integration.spec.ts + AuthServiceTest.php | S1 - Connexion | E-mail avec format xxx@yyy.zzz, bien en base | email = "toto@titi.com" | E-mail accepté | Équivalence + Tableaux de décision | ✅ VALIDE |
 | [ ] TC-55 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | Mot de passe incorrect | password = "Chabada123" | Erreur : le mot de passe ne correspond pas à l'e-mail fourni | Tableaux de décision | ❌ INVALIDE |
 | [ ] TC-56 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Connexion | Connexion avec identifiants valides et existants en base | email = "toto@titi.com" & password = "Toto1234" | Token JWT | Équivalence + Tableaux de décision | ✅ VALIDE |
 | [ ] TC-57 | Intégration | Vitest + PHPUnit | Frontend + Backend |  | S1 - Inscription | Lien de vérification valide | token = valide en base | Compte activé, verified = true | Tableaux de décision | ✅ VALIDE |

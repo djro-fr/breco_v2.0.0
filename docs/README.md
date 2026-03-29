@@ -21,7 +21,7 @@ Welcome in the demo version of Breco, the carpooling application for Brittany
 
 ### Backend
 
-- CakePHP 5.x
+- CakePHP 5.2.x
 - MySQL 8.0
 - PHP-FPM
 

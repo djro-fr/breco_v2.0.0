@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace App\Repository;
+use App\Exception\RepositoryException;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\I18n\DateTime;
@@ -73,7 +74,7 @@ class UserRepository
         $user = $this->table->newEntity($data);
 
         if (!$this->table->save($user)) {
-            throw new \RuntimeException('Failed to create user');
+            throw new RepositoryException('Failed to create user');
         }
 
         return $user->toArray();

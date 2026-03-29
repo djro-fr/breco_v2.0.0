@@ -65,7 +65,7 @@ describe('S1 - Inscription', () => {
     vi.clearAllMocks()
   })
 
-  it('TC-52b - valid data: returns requiresVerification true, no error', async () => {
+  it('TC-52b - Inscription avec données valides', async () => {
 
     // Instantiates the store → AuthRepositoryImpl → AuthRemoteDataSource (mocked)
     const store = useAuthStore()
@@ -97,7 +97,7 @@ describe('S1 - Inscription', () => {
   })
 
 
-  it('TC-52c - email already in database: store.error = "Email already in use"', async () => {
+  it('TC-52c - Inscription avec e-mail déjà en base', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()

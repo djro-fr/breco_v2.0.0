@@ -5,7 +5,7 @@ import { AppException, ValidationException } from '@/domain/exceptions/AppExcept
 import { ZodError } from 'zod'
 
 export class LoginUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  constructor(private readonly authRepository: IAuthRepository) {}
 
   async execute(input: LoginInput): Promise<AuthOutput> {
     try {

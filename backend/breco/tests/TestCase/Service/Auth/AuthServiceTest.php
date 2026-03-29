@@ -10,6 +10,9 @@ use App\Dto\Auth\RegisterRequest;
 use App\Dto\Auth\LoginRequest;
 use App\Exception\AuthenticationException;
 use App\Exception\EmailAlreadyInUseException;
+use App\Exception\EmailNotVerifiedException;
+use App\Exception\RepositoryException;
+use App\Exception\VerificationException;
 use App\Repository\UserRepository;
 use App\Service\Auth\AuthService;
 use App\Service\EmailService;
@@ -27,23 +30,24 @@ class AuthServiceTest extends TestCase
     private UserRepository&\PHPUnit\Framework\MockObject\MockObject $userRepository; // UserRepository and MockObject at the same time
     private EmailService&\PHPUnit\Framework\MockObject\MockObject $emailService; // EmailService and MockObject at the same time
 
-    private const TEST_EMAIL_OK = 'dev@test.com';
-    private const TEST_EMAIL_KO = 'nobody@test.com';
+    private const TEST_EMAIL_OK = 'toto@titi.com';
+    private const TEST_EMAIL_KO = 'toto@tata.com';
 
 
     // ─ Valid registration data (shared between TC) ─
     private array $validUserData = [
         'email'      => self::TEST_EMAIL_OK,
-        'password'   => 'DevPass123!', // NOSONAR
-        'firstName'  => 'Dev',
-        'lastName'   => 'Test',
+        'password'   => 'Toto1234', // NOSONAR
+        'firstName'  => 'Toto',
+        'lastName'   => 'TITI',
         'phone'      => '0607080910', // NOSONAR
         'driver'     => false,
     ];
 
     private array $unvalidUserData = [
         'email'      => self::TEST_EMAIL_KO,
-        'password'   => 'DevPass123!'
+        'password' => 'Chabada123', // NOSONAR
+        'wrongPassword' => 'MauvaisMot2Passe', // NOSONAR
     ];
 
 
@@ -81,8 +85,8 @@ class AuthServiceTest extends TestCase
             ->willReturn([
                 'id'         => 1,
                 'email'      => self::TEST_EMAIL_OK,
-                'first_name' => 'Dev',
-                'last_name'  => 'Test',
+                'first_name' => 'Toto',
+                'last_name'  => 'TITI',
                 'phone'      => '0607080910',
             ]);
 
@@ -163,7 +167,7 @@ class AuthServiceTest extends TestCase
 
         // ASSERT
         $this->expectException(AuthenticationException::class);
-        $this->expectExceptionMessage('E-mail ou mot de passe incorrect');
+        $this->expectExceptionMessage('E-mail ou mot de passe incorrect');  // NOSONAR
         $this->expectExceptionCode(401);
 
         // ACT (after ASSERT for exceptions in PHPUnit)
@@ -193,8 +197,8 @@ class AuthServiceTest extends TestCase
                 'id'             => 1,
                 'email'      => self::TEST_EMAIL_OK,
                 'phone'      => '0607080910',
-                'first_name'  => 'Dev',
-                'last_name'   => 'Test',
+                'first_name'  => 'Toto',
+                'last_name'   => 'TITI',
                 'gender'         => null,
                 'age'            => null,
                 'created'        => null,
@@ -213,6 +217,138 @@ class AuthServiceTest extends TestCase
         $this->assertArrayHasKey('user', $result);
         $this->assertNotEmpty($result['token']);
         $this->assertEquals(self::TEST_EMAIL_OK, $result['user']['email']);
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-55 Login with incorrect password → INVALID
+    //
+    // Expected result: AuthenticationException thrown
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc55LoginWithIncorrectPasswordThrowsException(): void
+    {
+        // ARRANGE
+        $this->userRepository
+            ->method('findByEmail')
+            ->with(self::TEST_EMAIL_OK)
+            ->willReturn([
+                'password'   => password_hash($this->validUserData['password'], PASSWORD_DEFAULT), // NOSONAR
+                'email_verified' => true,
+                'id'             => 1,
+                'email'      => self::TEST_EMAIL_OK,
+                'phone'      => '0607080910',
+                'first_name'  => 'Toto',
+                'last_name'   => 'TITI',
+                'gender'         => null,
+                'age'            => null,
+                'created'        => null,
+            ]);
+
+        $loginRequest = new LoginRequest(
+            $this->validUserData['email'],
+            $this->unvalidUserData['wrongPassword']
+        );
+
+        // ASSERT
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('E-mail ou mot de passe incorrect');
+        $this->expectExceptionCode(401);
+
+        // ACT (after ASSERT for exceptions in PHPUnit)
+        $this->authService->login($loginRequest);
+
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-57  Verify email with valid token → VALID
+    //
+    // Expected result: ['success' => true, 'message' => '...']
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc57VerifyEmailWithValidTokenReturnsSuccess(): void
+    {
+        // ARRANGE
+        $this->userRepository
+            ->method('findByVerificationToken')
+            ->willReturn([
+                'id' => 1
+            ]);
+        $this->userRepository
+            ->method('verifyEmail')
+            ->with(1)
+            ->willReturn(true);
+
+        // ACT
+        $result = $this->authService->verifyEmail('valid-token-abc123');
+
+        // ASSERT
+        $this->assertTrue($result['success']);
+        $this->assertNotEmpty($result['message']);
+
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-58  Verify email with expired token → INVALID
+    //
+    // Expected result: VerificationException thrown
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc58VerifyEmailWithExpiredTokenThrowsException(): void
+    {
+        // ARRANGE
+        $this->userRepository
+            ->method('findByVerificationToken')
+            ->willReturn(null);
+
+        // ASSERT
+        $this->expectException(VerificationException::class);
+        $this->expectExceptionMessage('Lien invalide ou expiré');  // NOSONAR
+        $this->expectExceptionCode(400);
+
+        // ACT
+        $this->authService->verifyEmail('expired-token-abc123');
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-60 Login with unverified account → INVALID
+    //
+    // Expected result: EmailNotVerifiedException thrown
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc60LoginWithUnverifiedAccountThrowsException(): void
+    {
+        // ARRANGE
+        $this->userRepository
+            ->method('findByEmail')
+            ->with(self::TEST_EMAIL_OK)
+            ->willReturn([
+                'password'   => password_hash($this->validUserData['password'], PASSWORD_DEFAULT), // NOSONAR
+                'email_verified' => false,
+                'id'             => 1,
+                'email'      => self::TEST_EMAIL_OK,
+                'phone'      => '0607080910',
+                'first_name'  => 'Toto',
+                'last_name'   => 'TITI',
+                'gender'         => null,
+                'age'            => null,
+                'created'        => null,
+            ]);
+
+        $loginRequest = new LoginRequest(
+            $this->validUserData['email'],
+            $this->validUserData['password']
+        );
+
+        // ASSERT
+        $this->expectException(EmailNotVerifiedException::class);
+        $this->expectExceptionMessage('Veuillez vérifier votre adresse e-mail avant de vous connecter');
+        $this->expectExceptionCode(403);
+
+        // ACT (after ASSERT for exceptions in PHPUnit)
+        $this->authService->login($loginRequest);
+
     }
 
 }

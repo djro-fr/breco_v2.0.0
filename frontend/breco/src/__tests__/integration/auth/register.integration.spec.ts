@@ -3,6 +3,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 
+import { ValidationException, AppException } from '@/domain/exceptions/AppException'
+
 /**
  * Tested layer: the full chain runs for real except the HTTP call
  * (mocked at DataSource level)
@@ -37,11 +39,11 @@ import type { RegisterInput }   from '@/domain/repositories/IAuthRepository'
 
 // ─ Test data ─
 const VALID_INPUT: RegisterInput = {
-  email:     'dev@test.com',
+  email:     'toto@titi.com',
   phone:     '0607080910',
-  password:  'DevPass123!', // NOSONAR
-  firstName: 'Dev',
-  lastName:  'Test',
+  password:  'Toto1234', // NOSONAR
+  firstName: 'Toto',
+  lastName:  'TITI',
   driver:    false,
 }
 
@@ -98,12 +100,11 @@ describe('S1 - Inscription', () => {
 
 
   it('TC-52c - Inscription avec e-mail déjà en base', async () => {
-
     const store = useAuthStore()
     const ds = getDataSourceMock()
 
     // Programs the mock: when register() is called, throw this error (simulates a 422 from the backend)
-    ds.register.mockRejectedValue(new Error('Cette adresse e-mail est déjà utilisée'))
+    ds.register.mockRejectedValue(new ValidationException('Cette adresse e-mail est déjà utilisée'))
 
     await expect(store.register(VALID_INPUT)).rejects.toThrow('Cette adresse e-mail est déjà utilisée')
 
@@ -112,4 +113,18 @@ describe('S1 - Inscription', () => {
     expect(store.error).toBe('Cette adresse e-mail est déjà utilisée')
     expect(store.isLoading).toBe(false)
   })
+
+  it('TC-76 - Backend indisponible lors de l\'inscription', async () => {
+    const store = useAuthStore()
+    const ds = getDataSourceMock()
+
+    ds.register.mockRejectedValue(new AppException('API_ERROR', 'Une erreur est survenue', 503))
+
+    await expect(store.register(VALID_INPUT)).rejects.toThrow('Une erreur est survenue')
+    expect(store.isAuthenticated).toBe(false)
+    expect(store.error).toBe('Une erreur est survenue')
+    expect(ds.register).toHaveBeenCalledOnce()
+  })
+
+
 })

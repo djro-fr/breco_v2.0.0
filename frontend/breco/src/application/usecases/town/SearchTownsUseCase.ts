@@ -13,7 +13,7 @@ export type SearchTownsInput = {
 
 export class SearchTownsUseCase {
   // Declare and initialize the town repository dependency
-  constructor(private townRepository: ITownRepository) {}
+  constructor(private readonly townRepository: ITownRepository) {}
 
   /**
    * Execute town search with validation

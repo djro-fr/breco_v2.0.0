@@ -1,4 +1,7 @@
 <?php
+
+// backend\breco\src\Controller\Api\TownsController.php
+
 declare(strict_types=1);
 
 namespace App\Controller\Api;
@@ -11,6 +14,8 @@ use SwaggerBake\Lib\Attribute as Swag;
 
 class TownsController extends AppController
 {
+    private const SERVER_ERROR_MESSAGE = 'Server error';
+
     private TownSearchService $townSearchService;
 
     public function initialize(): void
@@ -45,31 +50,23 @@ class TownsController extends AppController
     public function search()
     {
         $this->request->allowMethod(['get']);
-
         $query = $this->request->getQuery('q') ?? '';
         $limit = (int)($this->request->getQuery('limit') ?? 10);
 
         try {
             $request = new TownSearchRequest($query, $limit);
             $result = $this->townSearchService->search($request);
-
             return $this->jsonResponse([
                 'success' => true,
-                'data' => $result['towns'],
-                'count' => $result['count'],
-                'query' => $result['query']
+                'data'    => $result['towns'],
+                'count'   => $result['count'],
+                'query'   => $result['query']
             ]);
-
         } catch (\InvalidArgumentException $e) {
-            return $this->jsonResponse([
-                'error' => $e->getMessage()
-            ], 422);
-
+            return $this->jsonResponse(['error' => $e->getMessage()], 422);
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
-            return $this->jsonResponse([
-                'error' => 'Server error'
-            ], 500);
+            return $this->jsonResponse(['error' => self::SERVER_ERROR_MESSAGE], 500);
         }
     }
 
@@ -82,26 +79,21 @@ class TownsController extends AppController
     public function index()
     {
         $this->request->allowMethod(['get']);
-
-        $limit = (int)($this->request->getQuery('limit') ?? 50);
+        $limit  = (int)($this->request->getQuery('limit') ?? 50);
         $offset = (int)($this->request->getQuery('offset') ?? 0);
 
         try {
             $result = $this->townSearchService->listAll($limit, $offset);
-
             return $this->jsonResponse([
                 'success' => true,
-                'data' => $result['towns'],
-                'count' => $result['count'],
-                'limit' => $limit,
-                'offset' => $offset
+                'data'    => $result['towns'],
+                'count'   => $result['count'],
+                'limit'   => $limit,
+                'offset'  => $offset
             ]);
-
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
-            return $this->jsonResponse([
-                'error' => 'Server error'
-            ], 500);
+            return $this->jsonResponse(['error' => self::SERVER_ERROR_MESSAGE], 500);
         }
     }
 
@@ -116,33 +108,34 @@ class TownsController extends AppController
         $this->request->allowMethod(['get']);
 
         try {
-            if (!$id) {
-                throw new \InvalidArgumentException('ID required');
-            }
-
-            $town = $this->townSearchService->getById((int)$id);
-
-            if (!$town) {
-                return $this->jsonResponse([
-                    'error' => 'Town not found'
-                ], 404);
-            }
-
-            return $this->jsonResponse([
-                'success' => true,
-                'data' => $town
-            ]);
-
+            $town = $this->findTownById($id); // ← logique extraite
+            return $this->jsonResponse(['success' => true, 'data' => $town]);
         } catch (\InvalidArgumentException $e) {
-            return $this->jsonResponse([
-                'error' => $e->getMessage()
-            ], 400);
-
+            return $this->jsonResponse(['error' => $e->getMessage()], 400);
         } catch (\Exception $e) {
             $this->log($e->getMessage(), 'error');
-            return $this->jsonResponse([
-                'error' => 'Server error'
-            ], 500);
+            return $this->jsonResponse(['error' => self::SERVER_ERROR_MESSAGE], 500);
         }
     }
+
+    /**
+     * Find town by ID or throw exception
+     *
+     * @param mixed $id
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    private function findTownById(mixed $id): array
+    {
+        if (!$id) {
+            throw new \InvalidArgumentException('ID requis');
+        }
+        $town = $this->townSearchService->getById((int)$id);
+        if (!$town) {
+            throw new \InvalidArgumentException('Ville non trouvée');
+        }
+        return $town;
+    }
+
+
 }

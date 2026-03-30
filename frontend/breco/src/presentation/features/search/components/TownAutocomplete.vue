@@ -108,9 +108,11 @@ const handleKeydown = (event: KeyboardEvent) => {
       break
     case 'Enter':
       event.preventDefault()
-      const selectedTown = towns.value[selectedIndex.value]
-      if (selectedTown) {
-        selectTown(selectedTown)
+      { // braces required to scope the const declaration inside the case block
+        const selectedTown = towns.value[selectedIndex.value]
+        if (selectedTown) {
+          selectTown(selectedTown)
+        }
       }
       break
     case 'Escape':

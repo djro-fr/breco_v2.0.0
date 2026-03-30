@@ -15,6 +15,7 @@ use App\Exception\EmailNotVerifiedException;
 use App\Exception\EmailAlreadyInUseException;
 use App\Exception\VerificationException;
 use App\Exception\TooManyAttemptsException;
+use App\Exception\AccountLockedException;
 
 class AuthService
 {
@@ -38,16 +39,28 @@ class AuthService
      */
     public function login(LoginRequest $request): array
     {
-        // Check for too many failed attempts
+        // Check for too many failed attempts (rate limiting)
         $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         if ($this->userRepository->countRecentAttempts($request->getEmail(), $ipAddress) >= 5) {
             throw new TooManyAttemptsException();
+        }
+
+        // Check if account is locked
+        if ($this->userRepository->isAccountLocked($request->getEmail())) {
+            throw new AccountLockedException();
         }
 
         $user = $this->userRepository->findByEmail($request->getEmail());
 
         if (!$user || !password_verify($request->getPassword(), $user['password'])) {
             $this->userRepository->recordFailedAttempt($request->getEmail(), $ipAddress);
+
+            // Lock account after 10 failed attempts on the same email
+            $attemptCount = $this->userRepository->countRecentAttempts($request->getEmail(), '0.0.0.0');
+            if ($attemptCount >= 10) {
+                $this->userRepository->lockAccount($request->getEmail());
+            }
+
             throw new AuthenticationException('E-mail ou mot de passe incorrect');
         }
 
@@ -59,7 +72,7 @@ class AuthService
 
         return [
             'token' => $token,
-            'user' => $this->formatUser($user)
+            'user'  => $this->formatUser($user)
         ];
     }
 

@@ -19,6 +19,7 @@ use App\Exception\EmailAlreadyInUseException;
 use App\Exception\EmailNotVerifiedException;
 use App\Exception\VerificationException;
 use App\Exception\TooManyAttemptsException;
+use App\Exception\AccountLockedException;
 
 /**
  * AuthService Test Case
@@ -466,4 +467,38 @@ class AuthServiceTest extends TestCase
         // ACT
         RegisterRequest::create("toto@titi.com", 'Toto1234', '<script>alert(1)</script>', 'TITI', '0607080910');
     }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-75 Account Lockout After N Failed Attempts → BLOCKED
+    //
+    // Expected result: AccountLockedException thrown
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc75AccountLockedAfterRepeatedFailedAttemptsBlocksAccess(): void
+    {
+        // ARRANGE
+        $this->userRepository
+            ->method('countRecentAttempts')
+            ->willReturn(4); // below rate limit threshold (5)
+
+        $this->userRepository
+            ->method('isAccountLocked')
+            ->with($this->validUserData['email'])
+            ->willReturn(true);
+
+        $loginRequest = new LoginRequest(
+            $this->validUserData['email'],
+            $this->validUserData['password']
+        );
+
+        // ASSERT
+        $this->expectException(AccountLockedException::class);
+        $this->expectExceptionMessage('Compte verrouillé');
+        $this->expectExceptionCode(423);
+
+        // ACT
+        $this->authService->login($loginRequest);
+    }
+
+
 }

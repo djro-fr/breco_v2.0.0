@@ -190,4 +190,35 @@ class UserRepository
             ->count();
     }
 
+    /**
+     * Lock a user account
+     *
+     * @param string $email
+     * @return void
+     */
+    public function lockAccount(string $email): void
+    {
+        $user = $this->table->find()
+            ->where(['email' => $email])
+            ->first();
+
+        if ($user) {
+            $this->update($user->id, ['locked_at' => new DateTime()]);
+        }
+    }
+
+    /**
+     * Check if account is locked
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function isAccountLocked(string $email): bool
+    {
+        return $this->table->exists([
+            'email'          => $email,
+            'locked_at IS NOT' => null,
+        ]);
+    }
+
 }

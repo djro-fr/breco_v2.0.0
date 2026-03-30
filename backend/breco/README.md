@@ -18,7 +18,7 @@ CakePHP 5.x API backend for the Breco carpooling platform.
 docker-compose up -d backend mysql
 
 # Run migrations
-docker-compose exec backend bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations migrate
 ```
 
 Backend API available at: http://localhost:8765
@@ -62,19 +62,19 @@ For complete documentation, see the main [docs folder](../../docs/):
 ### Run Migrations
 
 ```bash
-docker-compose exec backend bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations migrate
 ```
 
 ### Create Migration
 
 ```bash
-docker-compose exec backend bin/cake bake migration CreateUsersTable
+docker exec -it breco_backend /app/bin/cake bake migration CreateUsersTable
 ```
 
 ### Rollback
 
 ```bash
-docker-compose exec backend bin/cake migrations rollback
+docker exec -it breco_backend /app/bin/cake migrations rollback
 ```
 
 ## Testing
@@ -82,13 +82,13 @@ docker-compose exec backend bin/cake migrations rollback
 ### Run Tests
 
 ```bash
-docker-compose exec backend vendor/bin/phpunit
+docker exec -it breco_backend vendor/bin/phpunit
 ```
 
 ### Run Specific Test
 
 ```bash
-docker-compose exec backend vendor/bin/phpunit tests/TestCase/Controller/AuthControllerTest.php
+docker exec -it breco_backend vendor/bin/phpunit tests/TestCase/Controller/AuthControllerTest.php
 ```
 
 ## Environment Variables
@@ -116,19 +116,19 @@ See [API Documentation](../../docs/api.md) for complete endpoint list.
 ### Clear Cache
 
 ```bash
-docker-compose exec backend bin/cake cache clear_all
+docker exec -it breco_backend /app/bin/cake cache clear_all
 ```
 
 ### Debug Routes
 
 ```bash
-docker-compose exec backend bin/cake routes
+docker exec -it breco_backend /app/bin/cake routes
 ```
 
 ### Console Access
 
 ```bash
-docker-compose exec backend bin/cake console
+docker exec -it breco_backend /app/bin/cake console
 ```
 
 ## Debugging
@@ -149,3 +149,7 @@ tail -f logs/error.log
 ---
 
 **Part of [Breco v2.0.0](../../README.md)**
+
+---
+
+**Last updated**: March 30, 2026

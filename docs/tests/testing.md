@@ -44,7 +44,7 @@ npm run test:e2e
 # Frontend: E2E tests 1 file
 cd frontend/breco && npx vitest run src/__tests__/e2e/xxx/xxx.spec.ts
 
-# Backend: PHPUnit
+# Backend: PHPUnit (local)
 cd backend/breco
 vendor/bin/phpunit --testdox --display-phpunit-notices
 ```

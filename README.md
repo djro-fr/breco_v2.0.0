@@ -132,13 +132,13 @@ docker images --format "{{.Repository}}:{{.Tag}}" \
 
 ```bash
 # Run migrations
-docker-compose exec backend bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations migrate
 
 # Rollback
-docker-compose exec backend bin/cake migrations rollback
+docker exec -it breco_backend /app/bin/cake migrations rollback
 
 # Create new migration
-docker-compose exec backend bin/cake bake migration MigrationName
+docker exec -it breco_backend /app/bin/cake bake migration MigrationName
 ```
 
 ### MySQL access
@@ -236,7 +236,7 @@ npm run test:coverage
 npm run lint
 
 # Backend - PHPUnit tests
-docker-compose exec backend vendor/bin/phpunit --testdox --display-phpunit-notices
+docker exec -it breco_backend vendor/bin/phpunit --testdox --display-phpunit-notices
 
 # Backend - PHPUnit local (without Docker)
 cd backend/breco
@@ -334,7 +334,7 @@ docker-compose pull
 ```bash
 docker-compose down -v
 docker-compose up -d
-docker-compose exec backend bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations migrate
 ```
 
 ### npm issues
@@ -411,4 +411,4 @@ chore: maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: March 28, 2026
+- **Last updated**: March 30, 2026

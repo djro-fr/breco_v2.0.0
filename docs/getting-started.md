@@ -233,7 +233,7 @@ docker exec -it breco_mysql mysql -u root -p breco_db
 
 ```bash
 # Migrations
-docker-compose exec backend bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations migrate
 ```
 
 ```bash
@@ -282,7 +282,7 @@ npm run test:coverage
 npm run lint
 
 # Backend - PHPUnit tests
-docker-compose exec backend vendor/bin/phpunit --testdox --display-phpunit-notices
+docker exec -it breco_backend vendor/bin/phpunit --testdox --display-phpunit-notices
 
 # Backend - PHPUnit local (without Docker)
 cd backend/breco
@@ -422,7 +422,7 @@ To completely reset the database:
 ```bash
 docker-compose down -v  # ⚠️ Removes volumes
 docker-compose up -d
-docker-compose exec backend bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations migrate
 ```
 
 ### npm install fails
@@ -524,4 +524,4 @@ docker-compose up -d
 
 ---
 
-**Last updated**: March 28, 2026
+**Last updated**: March 30, 2026

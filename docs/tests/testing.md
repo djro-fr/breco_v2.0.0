@@ -126,11 +126,11 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 | [x] TC-61 | Intégration | PHPUnit | Backend | AuthServiceTest.php | S1 - Vérification token | Token JWT falsifié | Authorization: Bearer token_falsifié | Erreur 401 : "Token invalide" | Partitionnement d'équivalence | ❌ INVALIDE |
 | [x] TC-62 | Intégration | PHPUnit | Backend | AuthServiceTest.php | S1 - Vérification token | Token JWT expiré | Authorization: Bearer token_expiré | Erreur 401 : "Token expiré" | Partitionnement d'équivalence | ❌ INVALIDE |
 | [x] TC-63 | Intégration | PHPUnit | Backend | AuthServiceTest.php | S1 - Connexion | Tentatives répétées de connexion échouées [À implémenter] | 5+ tentatives avec mauvais mot de passe | Accès temporairement bloqué | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-64 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Inscription | Champs véhicule fournis malgré driver=false | driver = false & carModel = "Clio" & carSeatNb = 4 | Champs véhicule ignorés | Tableaux de décision | ✅ VALIDE |
-| [ ] TC-65 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Inscription | Affichage messages d'erreur Zod en UI | email = "" soumis via formulaire | Message d'erreur affiché dans le DOM | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-66 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Inscription | Bouton Suivant désactivé si step1 invalide | Formulaire vide à l'étape 1 | Bouton Suivant disabled | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-67 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Inscription | Progression vers étape 2 si step1 valide | Tous champs étape 1 valides | Étape 2 affichée, barre de progression à 50% | Partitionnement d'équivalence | ✅ VALIDE |
-| [ ] TC-68 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Inscription | Affichage erreur confirmation mot de passe | password = "Toto1234" / password_confirmation = "Toto5678" | Message "Les mots de passe ne correspondent pas" visible dans le DOM | Partitionnement d'équivalence | ❌ INVALIDE |
+| [x] TC-64 | UI | Vitest + vue/test-utils | Frontend | RegisterPage.spec.ts | S1 - Inscription | Champs véhicule fournis malgré driver=false | driver = false & carModel = "Clio" & carSeatNb = 4 | Champs véhicule ignorés | Tableaux de décision | ✅ VALIDE |
+| [x] TC-65 | UI | Vitest + vue/test-utils | Frontend | RegisterPage.spec.ts | S1 - Inscription | E-mail vide soumis via formulaire | Affichage messages d'erreur Zod en UI | Message d'erreur affiché dans le DOM | Partitionnement d'équivalence | ❌ INVALIDE |
+| [x] TC-66 | UI | Vitest + vue/test-utils | Frontend | RegisterPage.spec.ts | S1 - Inscription | Bouton Suivant désactivé si step1 invalide | Formulaire vide à l'étape 1 | Bouton Suivant disabled | Partitionnement d'équivalence | ❌ INVALIDE |
+| [x] TC-67 | UI | Vitest + vue/test-utils | Frontend | RegisterPage.spec.ts | S1 - Inscription | Progression vers étape 2 si step1 valide | Tous champs étape 1 valides | Étape 2 affichée, barre de progression à 50% | Partitionnement d'équivalence | ✅ VALIDE |
+| [x] TC-68 | UI | Vitest + vue/test-utils | Frontend | RegisterPage.spec.ts | S1 - Inscription | Affichage erreur confirmation mot de passe | password = "Toto1234" / password_confirmation = "Toto5678" | Message "Les mots de passe ne correspondent pas" visible dans le DOM | Partitionnement d'équivalence | ❌ INVALIDE |
 | [ ] TC-69 | E2E | Selenium | Frontend + Backend |  | S1 - Inscription | Parcours inscription complet via formulaire | Tous champs valides saisis en UI | Message de succès affiché, e-mail envoyé | Partitionnement d'équivalence | ✅ VALIDE |
 | [ ] TC-70 | E2E | Selenium | Frontend + Backend |  | S1 - Connexion | Parcours connexion + redirection | email = "toto@titi.com" & password = "Toto1234" saisis en UI | Redirection vers dashboard, token JWT stocké | Partitionnement d'équivalence | ✅ VALIDE |
 | [ ] TC-71 | E2E | Selenium | Frontend + Backend |  | S1 - Inscription | Affichage étape 5 après inscription réussie | Inscription complète avec e-mail valide | Étape 5 "Vérifiez votre email" affichée | Partitionnement d'équivalence | ✅ VALIDE |
@@ -140,9 +140,9 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 | [x] TC-75 | Intégration | PHPUnit | Backend | AuthServiceTest.php | S1 - Connexion | Verrouillage de compte après N échecs | 10+ tentatives échouées sur le même compte | Compte verrouillé, erreur spécifique retournée | Partitionnement d'équivalence | ❌ INVALIDE |
 | [x] TC-76 | Intégration | Vitest | Frontend | register.integration.spec.ts | S1 - Inscription | Backend indisponible lors de l'inscription | API répond 503 | Message d'erreur générique affiché, pas de crash | Partitionnement d'équivalence | ❌ INVALIDE |
 | [x] TC-77 | Intégration | Vitest | Frontend | login.integration.spec.ts  | S1 - Connexion | Backend indisponible lors de la connexion | API répond 503 | Message d'erreur générique affiché, pas de crash | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-78 | Intégration | PHPUnit | Backend |  | S1 - Connexion | Rate limiting global de l'API | 100+ requêtes/minute depuis la même IP | Erreur 429 : Too Many Requests | Partitionnement d'équivalence | 🔜 À IMPLÉMENTER |
-| [ ] TC-79 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Connexion | Expiration du token JWT en session active | Token JWT expiré, utilisateur sur /dashboard | Redirection automatique vers /login | Partitionnement d'équivalence | ❌ INVALIDE |
-| [ ] TC-80 | UI | Vitest + vue/test-utils | Frontend |  | S1 - Connexion | Rafraîchissement de page en session authentifiée | Token JWT valide en localStorage, F5 sur /dashboard | Session maintenue, utilisateur reste connecté | Partitionnement d'équivalence | ✅ VALIDE |
+| [ ] TC-78 | Intégration | PHPUnit | Backend | (Rate limiting global à implémenter au niveau middleware CakePHP, hors périmètre AuthService. Nécessite un système de cache, Redis ou CakePHP Cache, pour comptabiliser les requêtes par IP. Non prioritaire pour la v1) | S1 - Connexion | Rate limiting global de l'API | 100+ requêtes/minute depuis la même IP | Erreur 429 : Too Many Requests | Partitionnement d'équivalence | 🔜 À IMPLÉMENTER |
+| [ ] TC-79 | Intégration | Vitest | Frontend |  | S1 - Connexion | Expiration du token JWT en session active | Token JWT expiré, utilisateur sur /dashboard | Redirection automatique vers /login | Partitionnement d'équivalence | ❌ INVALIDE |
+| [ ] TC-80 | Intégration | Vitest | Frontend |  | S1 - Connexion | Rafraîchissement de page en session authentifiée | Token JWT valide en localStorage, F5 sur /dashboard | Session maintenue, utilisateur reste connecté | Partitionnement d'équivalence | ✅ VALIDE |
 | [ ] TC-81 | E2E | Selenium | Frontend |  | S1 - Connexion | Navigation directe vers route protégée sans token | Accès à /dashboard sans token JWT | Redirection vers /login | Partitionnement d'équivalence | ❌ INVALIDE |
 
 ---
@@ -163,4 +163,4 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 
 ---
 
-**Last updated**: March 29, 2026
+**Last updated**: March 30, 2026

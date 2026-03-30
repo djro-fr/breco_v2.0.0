@@ -351,4 +351,89 @@ class AuthServiceTest extends TestCase
 
     }
 
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-61 Falsified JWT Token → INVALID
+    //
+    // Expected result: AuthenticationException thrown
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc61FalsifiedJwtTokenThrowsException(): void
+    {
+        // ARRANGE
+        $falsifiedToken = 'fake-token-abc123';
+
+        // ASSERT
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Token invalide');
+        $this->expectExceptionCode(401);
+
+        // ACT (after ASSERT for exceptions in PHPUnit)
+        $this->authService->verifyToken($falsifiedToken);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-62 Expired JWT Token → INVALID
+    //
+    // Expected result: AuthenticationException thrown
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc62ExpiredJwtTokenThrowsException(): void
+    {
+        // ARRANGE (generateToken)
+        $expiredToken = \Firebase\JWT\JWT::encode(
+            [
+                'sub'   => 1,
+                'email' => self::TEST_EMAIL_OK,
+                'iat'   => time() - 7200,
+                'exp'   => time() - 1,
+            ],
+            env('JWT_SECRET', 'your-secret-key'), // 'your-secret-key' is a fallback, not the true key
+            'HS256'
+        );
+
+        // ASSERT
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Token invalide');
+        $this->expectExceptionCode(401);
+
+        // ACT (after ASSERT for exceptions in PHPUnit)
+        $this->authService->verifyToken($expiredToken);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-72 SQL Injection In E-mail Field → INVALID
+    //
+    // Expected result: InvalidArgumentException thrown, query never executed
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc72SqlInjectionInEMailFieldThrowsException(): void
+    {
+        // No ARRANGE nor mock, DTO tests itself
+
+        // ASSERT
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid email format');
+
+        // ACT
+        RegisterRequest::create("' OR 1=1--", 'Toto1234', 'Toto', 'TITI', '0607080910');
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-73 XSS Injection In First Name Field → INVALID
+    //
+    // Expected result: InvalidArgumentException thrown, query never executed
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc73XssInjectionInFirstNameFieldThrowsException(): void
+    {
+        // No ARRANGE nor mock, DTO tests itself
+
+        // ASSERT
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Le prénom contient des caractères invalides');
+
+        // ACT
+        RegisterRequest::create("toto@titi.com", 'Toto1234', '<script>alert(1)</script>', 'TITI', '0607080910');
+    }
 }

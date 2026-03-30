@@ -87,7 +87,7 @@ class RegisterRequest
             throw new \InvalidArgumentException('Le numéro de téléphone est obligatoire');
         }
         $cleanedPhone = preg_replace('/\s/', '', $phone);
-        if (!preg_match('/^0[1-9][0-9]{8}$/', $cleanedPhone)) {
+        if (!preg_match('/^0[1-9]\d{8}$/', $cleanedPhone)) {
             throw new \InvalidArgumentException("Format téléphone invalide (10 chiffres commençant par 0)");
         }
 
@@ -143,5 +143,21 @@ class RegisterRequest
             'gender' => $this->gender,
             'age' => $this->age,
         ];
+    }
+
+    /**
+     * Named constructor: allows instantiation without assigning to a variable.
+     * Used in tests to trigger constructor validation without SonarLint warnings.
+     */
+    public static function create(
+        string $email,
+        string $password,
+        string $firstName,
+        string $lastName,
+        string $phone,
+        ?string $gender = null,
+        ?int $age = null
+    ): self {
+        return new self($email, $password, $firstName, $lastName, $phone, $gender, $age);
     }
 }

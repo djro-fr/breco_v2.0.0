@@ -36,17 +36,12 @@ services:
       EMAIL_HOST: mailhog
       EMAIL_PORT: 1025
       EMAIL_FROM: noreply@breco.fr
+      MYSQL_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DB: ${MYSQL_DB}
     ports:
       - "8765:9000"
-    volumes:
-      - ./backend/breco/src:/app/src
-      - ./csv:/app/csv
-      - ./backend/breco/config:/app/config
-      - ./backend/breco/webroot:/app/webroot
-      - ./backend/breco/bin:/app/bin
-      - ./backend/breco/templates:/app/templates
-      - ./backend/breco/resources:/app/resources
-      - ./backend/breco/vendor:/app/vendor
     depends_on:
       mysql:
         condition: service_healthy

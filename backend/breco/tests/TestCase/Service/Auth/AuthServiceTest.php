@@ -8,15 +8,17 @@ namespace App\Test\TestCase\Service\Auth;
 
 use App\Dto\Auth\RegisterRequest;
 use App\Dto\Auth\LoginRequest;
-use App\Exception\AuthenticationException;
-use App\Exception\EmailAlreadyInUseException;
-use App\Exception\EmailNotVerifiedException;
-use App\Exception\RepositoryException;
-use App\Exception\VerificationException;
+
 use App\Repository\UserRepository;
 use App\Service\Auth\AuthService;
 use App\Service\EmailService;
 use Cake\TestSuite\TestCase;
+
+use App\Exception\AuthenticationException;
+use App\Exception\EmailAlreadyInUseException;
+use App\Exception\EmailNotVerifiedException;
+use App\Exception\VerificationException;
+use App\Exception\TooManyAttemptsException;
 
 /**
  * AuthService Test Case
@@ -398,6 +400,34 @@ class AuthServiceTest extends TestCase
 
         // ACT (after ASSERT for exceptions in PHPUnit)
         $this->authService->verifyToken($expiredToken);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // TC-63 Repeated Failed Login Attempts → BLOCKED
+    //
+    // Expected result: TooManyAttemptsException thrown after 5 failed attempts
+    // ────────────────────────────────────────────────────────────────────────
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    public function testTc63RepeatedFailedLoginAttemptsBlocksAccess(): void
+    {
+        // ARRANGE
+        $this->userRepository
+            ->method('countRecentAttempts')
+            ->with($this->validUserData['email'], $this->anything())
+            ->willReturn(5);
+
+        $loginRequest = new LoginRequest(
+            $this->validUserData['email'],
+            $this->validUserData['password']
+        );
+
+        // ASSERT
+        $this->expectException(TooManyAttemptsException::class);
+        $this->expectExceptionMessage('Accès temporairement bloqué');
+        $this->expectExceptionCode(429);
+
+        // ACT
+        $this->authService->login($loginRequest);
     }
 
     // ────────────────────────────────────────────────────────────────────────

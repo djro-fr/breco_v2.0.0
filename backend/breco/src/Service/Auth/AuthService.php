@@ -14,6 +14,7 @@ use App\Exception\AuthenticationException;
 use App\Exception\EmailNotVerifiedException;
 use App\Exception\EmailAlreadyInUseException;
 use App\Exception\VerificationException;
+use App\Exception\TooManyAttemptsException;
 
 class AuthService
 {
@@ -37,9 +38,16 @@ class AuthService
      */
     public function login(LoginRequest $request): array
     {
+        // Check for too many failed attempts
+        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if ($this->userRepository->countRecentAttempts($request->getEmail(), $ipAddress) >= 5) {
+            throw new TooManyAttemptsException();
+        }
+
         $user = $this->userRepository->findByEmail($request->getEmail());
 
         if (!$user || !password_verify($request->getPassword(), $user['password'])) {
+            $this->userRepository->recordFailedAttempt($request->getEmail(), $ipAddress);
             throw new AuthenticationException('E-mail ou mot de passe incorrect');
         }
 

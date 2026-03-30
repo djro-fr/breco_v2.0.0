@@ -149,4 +149,45 @@ class UserRepository
             ->toArray();
     }
 
+    /**
+     * Record a failed login attempt
+     *
+     * @param string $email
+     * @param string $ipAddress
+     * @return void
+     */
+    public function recordFailedAttempt(string $email, string $ipAddress): void
+    {
+        $attemptsTable = $this->fetchTable('LoginAttempts');
+        $attempt = $attemptsTable->newEntity([
+            'email'        => $email,
+            'ip_address'   => $ipAddress,
+            'attempted_at' => new DateTime(),
+        ]);
+        $attemptsTable->save($attempt);
+    }
+
+    /**
+     * Count recent failed login attempts (last 15 minutes)
+     *
+     * @param string $email
+     * @param string $ipAddress
+     * @return int
+     */
+    public function countRecentAttempts(string $email, string $ipAddress): int
+    {
+        $attemptsTable = $this->fetchTable('LoginAttempts');
+        $since = new DateTime('-15 minutes');
+
+        return $attemptsTable->find()
+            ->where([
+                'OR' => [
+                    'email'      => $email,
+                    'ip_address' => $ipAddress,
+                ],
+                'attempted_at >=' => $since,
+            ])
+            ->count();
+    }
+
 }

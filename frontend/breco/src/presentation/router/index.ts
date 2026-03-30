@@ -43,7 +43,7 @@ const router = createRouter({
   routes,
 })
 
-// Global guard - Check authentication at first load
+// Global router guard - Check authentication at first load
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
@@ -55,7 +55,7 @@ router.beforeEach(async (to, from, next) => {
     await authStore.checkAuth()
   }
 
-  // Redirection for protected routes
+  // Redirection for protected and unauthentified route
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({
       name: 'Login',

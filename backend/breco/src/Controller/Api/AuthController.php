@@ -20,7 +20,6 @@ class AuthController extends AppController
 {
 
     private const CONTENT_TYPE_JSON = 'application/json';
-    private const ERROR_SERVER = 'Erreur serveur';
 
     private AuthService $authService;
 
@@ -66,7 +65,7 @@ class AuthController extends AppController
             $this->log($e->getMessage(), 'error');
             return $this->response
                 ->withStatus(500)
-                ->withStringBody(json_encode([$key => self::ERROR_SERVER]));
+                ->withStringBody(json_encode([$key => $e->getMessage() . " | " . get_class($e) . " | " . $e->getFile() . ":" . $e->getLine()]));
         }
 
         return $this->response

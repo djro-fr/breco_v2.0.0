@@ -1,5 +1,5 @@
 // @vitest-environment node
-// frontend/breco/src/__tests__/e2e/auth/tc69.register.e2e.spec.ts
+// frontend/breco/src/__tests__/e2e/auth/Tc69.register.e2e.spec.ts
 // TC-69 | E2E | Selenium | Full registration flow via form
 // Preconditions: Frontend on http://localhost:3001, Backend + MailHog running in Docker
 

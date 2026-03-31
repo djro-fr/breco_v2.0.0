@@ -1,5 +1,5 @@
 // @vitest-environment node
-// frontend/breco/src/__tests__/e2e/auth/tc70.login.e2e.spec.ts
+// frontend/breco/src/__tests__/e2e/auth/Tc70.login.e2e.spec.ts
 // TC-70 | E2E | Selenium | Login flow + redirection
 // Preconditions: Frontend on http://localhost:3001, user test@test.com / Password123 exists and is verified in DB (id=1)
 

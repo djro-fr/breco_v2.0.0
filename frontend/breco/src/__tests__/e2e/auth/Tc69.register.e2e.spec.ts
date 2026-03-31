@@ -10,8 +10,9 @@ import firefox from 'selenium-webdriver/firefox.js'
 
 // ─── Config ────────────────────────────────────────────────────────────────
 
-const BASE_URL    = 'http://localhost:3001'
-const MAILHOG_URL = 'http://localhost:8025/api/v2/messages'
+const VPS_IP      = process.env.VPS_IP ?? 'localhost'
+const BASE_URL    = `http://${VPS_IP}:3001`
+const MAILHOG_URL = `http://${VPS_IP}:8025/api/v2/messages`
 const TIMEOUT     = 10_000
 
 // Unique email per run: assigned in beforeAll to ensure Date.now() matches the actual test execution time

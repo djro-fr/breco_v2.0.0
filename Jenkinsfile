@@ -134,11 +134,13 @@ pipeline {
                         }
                     }
                     steps {
-                        sh '''
-                            cd frontend/breco
-                            npm ci
-                            npm run test:e2e
-                        '''
+                        withEnv(["VPS_IP=${VPS_IP}"]) {
+                            sh '''
+                                cd frontend/breco
+                                npm ci
+                                npm run test:e2e
+                            '''
+                        }
                     }
                     post {
                         always {

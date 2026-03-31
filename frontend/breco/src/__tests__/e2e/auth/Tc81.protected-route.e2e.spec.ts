@@ -11,7 +11,8 @@ import firefox from 'selenium-webdriver/firefox.js'
 
 // ─── Config ────────────────────────────────────────────────────────────────
 
-const BASE_URL = 'http://localhost:3001'
+const VPS_IP   = process.env.VPS_IP ?? 'localhost'
+const BASE_URL = `http://${VPS_IP}:3001`
 const TIMEOUT  = 10_000
 
 // ─── TC-81 Suite ───────────────────────────────────────────────────────────

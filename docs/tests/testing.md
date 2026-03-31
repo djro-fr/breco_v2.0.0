@@ -163,4 +163,4 @@ vendor/bin/phpunit --testdox --display-phpunit-notices
 
 ---
 
-**Last updated**: March 30, 2026
+**Last updated**: March 31, 2026

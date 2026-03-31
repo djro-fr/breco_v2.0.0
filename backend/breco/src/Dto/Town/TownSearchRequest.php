@@ -50,7 +50,7 @@ class TownSearchRequest
     }
 
     /**
-     * Named constructor — allows instantiation without assigning to a variable.
+     * Named constructor: allows instantiation without assigning to a variable.
      * Used in tests to trigger constructor validation without SonarLint warnings.
      */
     public static function create(string $query, int $limit = 10): self

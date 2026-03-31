@@ -125,30 +125,6 @@ pipeline {
                         }
                     }
                 }
-                stage('E2E Tests') {
-                    agent {
-                        docker {
-                            image 'djrofr/breco-e2e:latest'
-                            args '-u root'
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        withEnv(["VPS_IP=${VPS_IP}"]) {
-                            sh '''
-                                cd frontend/breco
-                                npm ci
-                                npm run test:e2e
-                            '''
-                        }
-                    }
-                    post {
-                        always {
-                            junit 'frontend/breco/test-results/e2e-results.xml'
-                            stash name: 'e2e-results', includes: 'frontend/breco/test-results/e2e-results.xml'
-                        }
-                    }
-                }
                 stage('PHP Unit Tests') {
                     agent {
                         docker {
@@ -161,10 +137,10 @@ pipeline {
                         sh '''
                             cd backend/breco
                             curl -sS https://getcomposer.org/installer | php
-                            php composer.phar install --no-interaction 
+                            php composer.phar install --no-interaction
                             mkdir -p test-results
                             php composer.phar test
-                    '''
+                        '''
                     }
                     post {
                         always {
@@ -173,6 +149,40 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+        stage('Seed Test Data') {
+            steps {
+                sh 'docker exec breco_backend php /app/bin/seed-test-user.php'
+            }
+        }
+        stage('E2E Tests') {
+            agent {
+                docker {
+                    image 'djrofr/breco-e2e:latest'
+                    args '-u root'
+                    alwaysPull true
+                }
+            }
+            steps {
+                withEnv(["VPS_IP=${VPS_IP}"]) {
+                    sh '''
+                        cd frontend/breco
+                        npm ci
+                        npm run test:e2e
+                    '''
+                }
+            }
+            post {
+                always {
+                    junit 'frontend/breco/test-results/e2e-results.xml'
+                    stash name: 'e2e-results', includes: 'frontend/breco/test-results/e2e-results.xml'
+                }
+            }
+        }
+        stage('Cleanup Test Data') {
+            steps {
+                sh 'docker exec breco_backend php /app/bin/cleanup-test-user.php'
             }
         }
         stage('Copy Test Results to Frontend') {
@@ -212,17 +222,17 @@ pipeline {
                     cd backend/breco
                     curl -sS https://getcomposer.org/installer | php
                     php composer.phar install --no-interaction
-                    php bin/cake swagger bake                    
+                    php bin/cake swagger bake
                     echo "✅ swagger.json generated:"
                     ls -la webroot/swagger.json
                 '''
             }
             post {
                 always {
-                    stash name: 'swagger-json', 
+                    stash name: 'swagger-json',
                         includes: 'backend/breco/webroot/swagger.json'
-                } 
-            }       
+                }
+            }
         }
         stage('Build') {
             steps {
@@ -231,7 +241,6 @@ pipeline {
                     echo "swagger.json verification:"
                     ls -la backend/breco/webroot/swagger.json
                 '''
-
                 echo 'Docker images build...'
                 sh '''
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
@@ -275,7 +284,6 @@ pipeline {
                         docker push ${DOCKER_USERNAME}/breco-backend:latest
                     '''
                 }
-
                 echo 'Re-deploy on VPS...'
                 sh '''
                     chmod 600 /var/jenkins_home/.ssh/id_ed25519
@@ -361,19 +369,13 @@ pipeline {
         //         sh '''
         //             apt-get update -qq
         //             apt-get install -y wget unzip
-
-        //             # Download JMeter
         //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
         //             unzip -o -q apache-jmeter-5.6.3.zip
-
-        //             # Launch test
         //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
-
-    //             # Generates the report
-    //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
-    //         '''
-    //     }
-    // }
+        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
+        //         '''
+        //     }
+        // }
     }
     post {
         failure {

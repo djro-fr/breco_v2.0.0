@@ -49,13 +49,14 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     script {
                         def scannerHome = tool 'SonarQube Scanner'
-                        echo "Scanner home: ${scannerHome}"
+                        def sonarIp = sh(script: "docker inspect breco_sonarqube --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'", returnStdout: true).trim()
+                        echo "SonarQube IP: ${sonarIp}"
                         sh "${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=breco \
-                        -Dsonar.sources=frontend/breco/src,backend/breco/src \
-                        -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/** \
-                        -Dsonar.host.url=http://breco_sonarqube:9000 \
-                        -Dsonar.token=${env.SONAR_AUTH_TOKEN}"
+                            -Dsonar.projectKey=breco \
+                            -Dsonar.sources=frontend/breco/src,backend/breco/src \
+                            -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/** \
+                            -Dsonar.host.url=http://${sonarIp}:9000 \
+                            -Dsonar.token=${env.SONAR_AUTH_TOKEN}"
                     }
                 }
             }

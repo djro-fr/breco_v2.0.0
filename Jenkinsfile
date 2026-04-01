@@ -78,6 +78,7 @@ pipeline {
                         sh '''
                             cd frontend/breco
                             npm run test:unit
+                            chmod -R 755 test-results/
                         '''
                     }
                     post {
@@ -98,7 +99,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm run test:integration
+                            npm run test:integration                            
+                            chmod -R 755 test-results/
                         '''
                     }
                     post {
@@ -119,7 +121,8 @@ pipeline {
                     steps {
                         sh '''
                             cd frontend/breco
-                            npm run test:ui
+                            npm run test:ui                            
+                            chmod -R 755 test-results/
                         '''
                     }
                     post {
@@ -143,7 +146,8 @@ pipeline {
                             curl -sS https://getcomposer.org/installer | php
                             php composer.phar install --no-interaction
                             mkdir -p test-results
-                            php composer.phar test
+                            php composer.phar test                            
+                            chmod -R 755 test-results/
                         '''
                     }
                     post {

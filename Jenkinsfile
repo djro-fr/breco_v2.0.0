@@ -375,6 +375,7 @@ pipeline {
                 sh '''
                     mkdir -p ${WORKSPACE}/jmeter/report
                     rm -rf ${WORKSPACE}/jmeter/report/* 
+                    rm -f ${WORKSPACE}/jmeter/results.jtl
                     rm -rf /tmp/apache-jmeter-5.6.3
 
                     curl -s https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz -o /tmp/jmeter.tgz

@@ -349,8 +349,7 @@ pipeline {
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-baseline.py \
                         -t http://37.59.101.232:8081 \
-                        -r zap-report.html \
-                        -w ${WORKSPACE}/zap-reports \
+                        -r ${WORKSPACE}/zap-reports/zap-report.html \
                         -I
                 '''
             }

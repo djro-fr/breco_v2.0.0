@@ -5,5 +5,8 @@ test2.*
 test.txt
 test.html
 docs/tests/~$breco - cas de test.xlsx
-docs/tests/.~lock.breco - cas de test.xlsx#
+docs/tests/~$breco - Test Cases.xlsx
+docs/tests/.~lock.breco - cas de test.xlsx#<br/>
+docs/tests/.~lock.breco - Test Cases.xlsx#
+docs/tests/.~lock.breco - plan de test.odt#
 backend/breco/test-results/phpunit-results.xml

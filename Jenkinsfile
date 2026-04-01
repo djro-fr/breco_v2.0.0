@@ -362,24 +362,50 @@ pipeline {
             }
         }
 
-        // stage('Performance: JMeter Tests') {
-        //     agent {
-        //         docker {
-        //             image 'openjdk:11-jre-slim'
-        //             args '-u root'
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //             apt-get update -qq
-        //             apt-get install -y wget unzip
-        //             wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-        //             unzip -o -q apache-jmeter-5.6.3.zip
-        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -n -t ${WORKSPACE}/jmeter/test.jmx -l ${WORKSPACE}/jmeter/results.jtl -j ${WORKSPACE}/jmeter/jmeter.log
-        //             ./apache-jmeter-5.6.3/bin/jmeter.sh -g ${WORKSPACE}/jmeter/results.jtl -o ${WORKSPACE}/jmeter/report
-        //         '''
-        //     }
-        // }
+        stage('Performance: JMeter Tests') {
+            when {
+                branch 'main'
+            }
+            agent {
+                docker {
+                    image 'justfly/jmeter:5.6'
+                    args '-u root --network breco_v2_0_0_breco_network'
+                }
+            }
+            steps {
+                echo "Charge test JMeter..."
+                sh '''
+                    mkdir -p ${WORKSPACE}/jmeter/report
+
+                    jmeter -n \
+                        -t ${WORKSPACE}/jmeter/test-plan.jmx \
+                        -l ${WORKSPACE}/jmeter/results.jtl \
+                        -j ${WORKSPACE}/jmeter/jmeter.log \
+                        -Jbase_url=nginx \    
+                        -Jbase_port=80
+                '''
+                // 
+
+                sh '''
+                    jmeter -g ${WORKSPACE}/jmeter/results.jtl \
+                        -o ${WORKSPACE}/jmeter/report
+                '''
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll              : true,
+                        reportDir            : 'jmeter/report',
+                        reportFiles          : 'index.html',
+                        reportName           : 'JMeter Performance Report'
+                    ])
+                    archiveArtifacts artifacts: 'jmeter/results.jtl,jmeter/jmeter.log', allowEmptyArchive: true
+                }
+            }
+        }
+
     }
     post {
         failure {

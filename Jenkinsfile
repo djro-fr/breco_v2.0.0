@@ -346,10 +346,11 @@ pipeline {
                     --network host \
                     --user root \
                     --volumes-from ${JENKINS_CONTAINER} \
+                    -v ${WORKSPACE}/zap-reports:/zap/wrk/:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-baseline.py \
                         -t http://37.59.101.232:8081 \
-                        -r ${WORKSPACE}/zap-reports/zap-report.html \
+                        -r zap-report.html \
                         -I
                 '''
             }

@@ -252,6 +252,15 @@ pipeline {
                     echo "swagger.json verification:"
                     ls -la backend/breco/webroot/swagger.json
                 '''
+                echo 'Nginx build...'
+                sh '''
+                docker build \
+                --no-cache \
+                -t breco_v2_0_0_nginx:${BUILD_NUMBER} \
+                -t breco_v2_0_0_nginx:latest \
+                -f Dockerfile.nginx \
+                .
+                '''
                 echo 'Docker images build...'
                 sh '''
                     echo "BUILD_NUMBER is: ${BUILD_NUMBER}"
@@ -281,6 +290,12 @@ pipeline {
                     sh '''
                         # Login to Docker Hub
                         echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+                        # Push Nginx
+                        docker tag breco_v2_0_0_nginx:latest ${DOCKER_USERNAME}/breco-nginx:${BUILD_NUMBER}
+                        docker tag breco_v2_0_0_nginx:latest ${DOCKER_USERNAME}/breco-nginx:latest
+                        docker push ${DOCKER_USERNAME}/breco-nginx:${BUILD_NUMBER}
+                        docker push ${DOCKER_USERNAME}/breco-nginx:latest
 
                         # Push Frontend
                         docker tag breco_v2_0_0_frontend:latest ${DOCKER_USERNAME}/breco-frontend:${BUILD_NUMBER}

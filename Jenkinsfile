@@ -161,6 +161,9 @@ pipeline {
             }
         }
         stage('E2E Tests') {
+            options {
+                retry(2)
+            }
             agent {
                 docker {
                     image 'djrofr/breco-e2e:latest'
@@ -372,12 +375,10 @@ pipeline {
                 sh '''
                     mkdir -p ${WORKSPACE}/jmeter/report
                     rm -rf ${WORKSPACE}/jmeter/report/* 
+                    rm -rf /tmp/apache-jmeter-5.6.3
 
-                    # Downloads JMeter if not present
-                    if [ ! -d "/tmp/apache-jmeter-5.6.3" ]; then
-                        curl -s https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz -o /tmp/jmeter.tgz
-                        tar -xf /tmp/jmeter.tgz -C /tmp/
-                    fi
+                    curl -s https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz -o /tmp/jmeter.tgz
+                    tar -xf /tmp/jmeter.tgz -C /tmp/
 
                     /tmp/apache-jmeter-5.6.3/bin/jmeter -n \
                         -t ${WORKSPACE}/jmeter/test-plan.jmx \

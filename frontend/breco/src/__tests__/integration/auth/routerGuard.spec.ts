@@ -19,7 +19,7 @@ vi.mock('@/presentation/features/auth/stores/authStore', () => ({
   }),
 }))
 
-describe('S1 - Connexion - Router guard', () => {
+describe('S1: Login - Router guard', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     localStorage.clear()
@@ -53,7 +53,7 @@ describe('S1 - Connexion - Router guard', () => {
     return router
   }
 
-  it('TC-79 : Expiration du token JWT en session active', async () => {
+  it('TC-79: Expiration du token JWT en session active', async () => {
     // ARRANGE: token expired, checkAuth clears the session
     localStorage.setItem('token', 'expired-token')  // token exists in localStorage
     mockToken.value = null                          // but not yet in store
@@ -67,7 +67,7 @@ describe('S1 - Connexion - Router guard', () => {
     expect(router.currentRoute.value.name).toBe('Login')
   })
 
-  it('TC-80 : Rafraîchissement de page en session authentifiée', async () => {
+  it('TC-80: Rafraîchissement de page en session authentifiée', async () => {
     // ARRANGE: token valid, checkAuth restores the session
     localStorage.setItem('token', 'valid-token')    // token exists in localStorage
     mockToken.value = null                          // but not yet in store, the page has just reloaded

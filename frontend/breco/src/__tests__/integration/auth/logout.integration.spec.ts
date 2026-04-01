@@ -47,14 +47,14 @@ const getDataSourceMock = () =>
 
 
 // ─ Test suite ─
-describe('S1 - Déconnexion', () => {
+describe('S1: Logout', () => {
 
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
   })
 
-  it('TC-74 - Suppression du token et réinitialisation du store', async () => {
+  it('TC-74: token deletion and store reset', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()

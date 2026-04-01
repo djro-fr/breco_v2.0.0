@@ -25,7 +25,7 @@ describe('RegisterPage UI', () => {
     setActivePinia(createPinia())
   })
 
-  it('TC-64 : Champs véhicule fournis malgré driver=false', async () => {
+  it('TC-64: Vehicle fields provided despite driver=false', async () => {
     const wrapper = mount(RegisterPage, {
       global: { plugins: [] },
     })
@@ -52,7 +52,7 @@ describe('RegisterPage UI', () => {
     expect(wrapper.find('#carSeatNb').exists()).toBe(false)
   })
 
-  it('TC-65 : E-mail vide soumis via formulaire affiche une erreur Zod', async () => {
+  it('TC-65: Empty email submitted via form displays a Zod error', async () => {
     const wrapper = mount(RegisterPage, {
       global: { plugins: [] },
     })
@@ -71,7 +71,7 @@ describe('RegisterPage UI', () => {
     expect(wrapper.find('.error-text').text()).toContain("L'email est requis")
   })
 
-  it('TC-66 : Bouton Suivant désactivé si step1 invalide', async () => {
+  it('TC-66: Next button disabled when step1 is invalid', async () => {
     const wrapper = mount(RegisterPage, {
       global: { plugins: [] },
     })
@@ -83,7 +83,7 @@ describe('RegisterPage UI', () => {
     expect(wrapper.find('button.btn-action').attributes('disabled')).toBeDefined()
   })
 
-  it('TC-67 : Progression vers étape 2 si step1 valide', async () => {
+  it('TC-67: Progress to step 2 when step1 is valid', async () => {
     const wrapper = mount(RegisterPage, {
       global: { plugins: [] },
     })
@@ -100,7 +100,7 @@ describe('RegisterPage UI', () => {
     expect(wrapper.find('[aria-label="Prénom"]').exists()).toBe(true)
   })
 
-  it('TC-68 : Affichage erreur confirmation mot de passe', async () => {
+  it('TC-68: Password confirmation error displayed', async () => {
     const wrapper = mount(RegisterPage, {
       global: { plugins: [] },
     })

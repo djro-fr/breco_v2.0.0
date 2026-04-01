@@ -48,14 +48,14 @@ const getDataSourceMock = () =>
 
 
 // ─ Test suite ─
-describe('S1 - Connexion', () => {
+describe('S1: Login', () => {
 
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
   })
 
-  it('TC-53 - E-mail avec format xxx@yyy.zzz mais pas en base', async () => {
+  it('TC-53: email with format xxx@yyy.zzz but not in database', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()
@@ -69,7 +69,7 @@ describe('S1 - Connexion', () => {
   })
 
 
-  it('TC-54 - E-mail avec format xxx@yyy.zzz, bien en base', async () => {
+  it('TC-54: email with format xxx@yyy.zzz, present in database', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()
@@ -94,7 +94,7 @@ describe('S1 - Connexion', () => {
     expect(ds.login).toHaveBeenCalledOnce()
   })
 
-  it('TC-55 - Login avec mot de passe incorrect', async () => {
+  it('TC-55: incorrect password', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()
@@ -107,7 +107,7 @@ describe('S1 - Connexion', () => {
     expect(ds.login).toHaveBeenCalledOnce()
   })
 
-  it('TC-60 - Login avec compte non vérifié', async () => {
+  it('TC-60: login with unverified account', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()
@@ -120,7 +120,7 @@ describe('S1 - Connexion', () => {
     expect(ds.login).toHaveBeenCalledOnce()
   })
 
-  it('TC-77 - Backend indisponible lors de la connexion', async () => {
+  it('TC-77: backend unavailable during login', async () => {
 
     const store = useAuthStore()
     const ds = getDataSourceMock()

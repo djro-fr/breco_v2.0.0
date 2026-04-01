@@ -58,7 +58,7 @@ const getDataSourceMock = () =>
     }
 
 // ─ Test suite ─
-describe('S1 - Inscription', () => {
+describe('S1: Register', () => {
 
   beforeEach(() => {
     // Fresh Pinia before each test (store.user = null...)
@@ -67,7 +67,7 @@ describe('S1 - Inscription', () => {
     vi.clearAllMocks()
   })
 
-  it('TC-52b - Inscription avec données valides', async () => {
+  it('TC-52b: Registration with valid data', async () => {
 
     // Instantiates the store → AuthRepositoryImpl → AuthRemoteDataSource (mocked)
     const store = useAuthStore()
@@ -99,7 +99,7 @@ describe('S1 - Inscription', () => {
   })
 
 
-  it('TC-52c - Inscription avec e-mail déjà en base', async () => {
+  it('TC-52c: Registration with email already in database', async () => {
     const store = useAuthStore()
     const ds = getDataSourceMock()
 
@@ -114,7 +114,7 @@ describe('S1 - Inscription', () => {
     expect(store.isLoading).toBe(false)
   })
 
-  it('TC-76 - Backend indisponible lors de l\'inscription', async () => {
+  it('TC-76: Backend unavailable during registration', async () => {
     const store = useAuthStore()
     const ds = getDataSourceMock()
 

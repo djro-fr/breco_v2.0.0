@@ -5,7 +5,7 @@ import { isStep1Valid } from '@/utils/registerValidation.ts'
 
 describe('S1 - Inscription', () => {
 
-  it('TC-06b - Confirmation différente du mot de passe', () => {
+  it('TC-06b: Password confirmation does not match', () => {
     expect(isStep1Valid(
       'toto@titi.com', '',
       'Toto1234', '',
@@ -14,7 +14,7 @@ describe('S1 - Inscription', () => {
     )).toBe(false)
   })
 
-  it('TC-06c - Confirmation identique au mot de passe', () => {
+  it('TC-06c: Password confirmation matches', () => {
     expect(isStep1Valid(
       'toto@titi.com', '',
       'Toto1234', '',

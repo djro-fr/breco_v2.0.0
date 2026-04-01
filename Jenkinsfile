@@ -340,14 +340,17 @@ pipeline {
                 sh '''
                     mkdir -p ${WORKSPACE}/zap-reports
 
+                    JENKINS_CONTAINER=$(docker ps --filter "name=breco-jenkins" --format "{{.ID}}")
+
                     docker run --rm \
                     --network host \
                     --user root \
-                    -v /var/lib/docker/volumes/jenkins-data/_data/workspace/breco/zap-reports:/zap/wrk/:rw \
+                    --volumes-from ${JENKINS_CONTAINER} \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-baseline.py \
                         -t http://37.59.101.232:8081 \
                         -r zap-report.html \
+                        -w ${WORKSPACE}/zap-reports \
                         -I
                 '''
             }

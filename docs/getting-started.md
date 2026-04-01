@@ -194,7 +194,7 @@ breco_v2_0_0/
     ├── GETTING_STARTED.md
     └── tests/
         ├── breco - plan de test.odt
-        └── breco - cas de test.xlsx
+        └── breco - Test cases.xlsx
 ```
 
 ---
@@ -524,4 +524,4 @@ docker-compose up -d
 
 ---
 
-**Last updated**: March 30, 2026
+**Date**: April 1, 2026

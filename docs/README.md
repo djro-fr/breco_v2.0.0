@@ -48,7 +48,7 @@ docs/
 ├── todo-prod.md           # Production checklist
 └── tests/
     ├── breco - plan de test.odt
-    └── breco - cas de test.xlsx
+    └── breco - Test cases.xlsx
 
 jenkins/
 ├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
@@ -158,4 +158,4 @@ fix/*        # Bug fixes
 
 ## Last Update
 
-**Date**: March 28, 2026
+**Date**: April 1, 2026

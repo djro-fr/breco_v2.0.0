@@ -371,6 +371,7 @@ pipeline {
                 echo "Charge test JMeter..."
                 sh '''
                     mkdir -p ${WORKSPACE}/jmeter/report
+                    rm -rf ${WORKSPACE}/jmeter/report/* 
 
                     # Downloads JMeter if not present
                     if [ ! -d "/tmp/apache-jmeter-5.6.3" ]; then
@@ -392,6 +393,7 @@ pipeline {
             }
             post {
                 always {
+                    sh 'docker exec breco_backend php /app/bin/cleanup-jmeter-user.php'
                     publishHTML(target: [
                         allowMissing         : true,
                         alwaysLinkToLastBuild: true,
@@ -402,11 +404,6 @@ pipeline {
                     ])
                     archiveArtifacts artifacts: 'jmeter/results.jtl,jmeter/jmeter.log', allowEmptyArchive: true
                 }
-            }
-        }
-        stage('Cleanup JMeter User') {
-            steps {
-                sh 'docker exec breco_backend php /app/bin/cleanup-jmeter-user.php'
             }
         }
     }

@@ -10,7 +10,7 @@
     </TestPlan>
     <hashTree>
 
-      <!-- ===== Variables globales ===== -->
+      <!-- ===== Global variables ===== -->
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables" enabled="true">
         <collectionProp name="Arguments.arguments">
           <elementProp name="BASE_URL" elementType="Argument">
@@ -25,21 +25,21 @@
       </Arguments>
       <hashTree/>
 
-      <!-- ===== Groupe de threads : Auth ===== -->
+      <!-- ===== Thread group : Auth ===== -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Auth - Register + Login" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">3</stringProp>
         </elementProp>
-        <!-- 10 utilisateurs simultanés, montée en 10 secondes -->
+        <!-- 10 concurrent users, ramp-up over 10 seconds -->
         <stringProp name="ThreadGroup.num_threads">10</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
       </ThreadGroup>
       <hashTree>
 
-        <!-- Config HTTP -->
+        <!-- HTTP config -->
         <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Defaults" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
@@ -52,7 +52,7 @@
         </ConfigTestElement>
         <hashTree/>
 
-        <!-- Header JSON -->
+        <!-- JSON headers -->
         <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers JSON" enabled="true">
           <collectionProp name="HeaderManager.headers">
             <elementProp name="Content-Type" elementType="Header">
@@ -82,7 +82,7 @@
           <stringProp name="HTTPSampler.method">POST</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <!-- Assertion : statut 201 ou 422 (email déjà pris) -->
+          <!-- Assertion: status 201 or 422 (email already taken) -->
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status 201 or 422" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">201</stringProp>
@@ -110,6 +110,7 @@
           <stringProp name="HTTPSampler.method">POST</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
+          <!-- Assertion: status 200 or 401 -->
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status 200 or 401" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -122,7 +123,7 @@
           <hashTree/>
         </hashTree>
 
-        <!-- GET /api/towns (endpoint public) -->
+        <!-- GET /api/towns (public endpoint) -->
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/towns" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
@@ -131,6 +132,7 @@
           <stringProp name="HTTPSampler.method">GET</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
+          <!-- Assertion: status 200 -->
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -142,7 +144,7 @@
           <hashTree/>
         </hashTree>
 
-        <!-- Listener : résultats -->
+        <!-- Listener: results -->
         <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>

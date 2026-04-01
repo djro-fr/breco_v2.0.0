@@ -381,10 +381,9 @@ pipeline {
                         -t ${WORKSPACE}/jmeter/test-plan.jmx \
                         -l ${WORKSPACE}/jmeter/results.jtl \
                         -j ${WORKSPACE}/jmeter/jmeter.log \
-                        -Jbase_url=nginx \    
+                        -Jbase_url=nginx \
                         -Jbase_port=80
-                '''
-                // 
+                '''                 
 
                 sh '''
                     jmeter -g ${WORKSPACE}/jmeter/results.jtl \

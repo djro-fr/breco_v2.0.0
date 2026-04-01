@@ -368,7 +368,7 @@ pipeline {
             }
             agent {
                 docker {
-                    image 'justfly/jmeter:5.6'
+                    image 'alpine/jmeter:5.6'
                     args '-u root --network breco_v2_0_0_breco_network'
                 }
             }

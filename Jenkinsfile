@@ -361,7 +361,11 @@ pipeline {
                 }
             }
         }
-
+        stage('Seed JMeter User') {
+            steps {
+                sh 'docker exec breco_backend php /app/bin/seed-jmeter-user.php'
+            }
+        }
         stage('Performance: JMeter Tests') {
             steps {
                 echo "Charge test JMeter..."
@@ -400,7 +404,11 @@ pipeline {
                 }
             }
         }
-
+        stage('Cleanup JMeter User') {
+            steps {
+                sh 'docker exec breco_backend php /app/bin/cleanup-jmeter-user.php'
+            }
+        }
     }
     post {
         failure {

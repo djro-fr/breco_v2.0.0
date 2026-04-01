@@ -363,37 +363,33 @@ pipeline {
         }
 
         stage('Performance: JMeter Tests') {
-            when {
-                branch 'main'
-            }
-            agent {
-                docker {
-                    image 'alpine/jmeter:5.6'
-                    args '-u root --network breco_v200_breco_network'
-                }
-            }
             steps {
                 echo "Charge test JMeter..."
                 sh '''
                     mkdir -p ${WORKSPACE}/jmeter/report
 
-                    jmeter -n \
+                    # Downloads JMeter if not present
+                    if [ ! -d "/tmp/apache-jmeter-5.6.3" ]; then
+                        wget -q https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz -O /tmp/jmeter.tgz
+                        tar -xf /tmp/jmeter.tgz -C /tmp/
+                    fi
+
+                    /tmp/apache-jmeter-5.6.3/bin/jmeter -n \
                         -t ${WORKSPACE}/jmeter/test-plan.jmx \
                         -l ${WORKSPACE}/jmeter/results.jtl \
                         -j ${WORKSPACE}/jmeter/jmeter.log \
                         -Jbase_url=nginx \
                         -Jbase_port=80
-                '''                 
-
-                sh '''
-                    jmeter -g ${WORKSPACE}/jmeter/results.jtl \
+                    
+                    /tmp/apache-jmeter-5.6.3/bin/jmeter \
+                        -g ${WORKSPACE}/jmeter/results.jtl \
                         -o ${WORKSPACE}/jmeter/report
                 '''
             }
             post {
                 always {
                     publishHTML(target: [
-                        allowMissing         : false,
+                        allowMissing         : true,
                         alwaysLinkToLastBuild: true,
                         keepAll              : true,
                         reportDir            : 'jmeter/report',

@@ -369,7 +369,7 @@ pipeline {
             agent {
                 docker {
                     image 'alpine/jmeter:5.6'
-                    args '-u root --network breco_v2_0_0_breco_network'
+                    args '-u root --network breco_v200_breco_network'
                 }
             }
             steps {

@@ -161,7 +161,11 @@ pipeline {
         }
         stage('Seed Test Data') {
             steps {
-                sh 'docker exec breco_backend php /app/bin/seed-test-user.php'
+                sh '''
+                    chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                    ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                        "docker exec breco_backend php /app/bin/seed-test-user.php"
+                '''
             }
         }
         stage('E2E Tests') {
@@ -193,7 +197,11 @@ pipeline {
         }
         stage('Cleanup Test Data') {
             steps {
-                sh 'docker exec breco_backend php /app/bin/cleanup-test-user.php'
+                sh '''
+                    chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                    ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                        "docker exec breco_backend php /app/bin/cleanup-test-user.php"
+                '''
             }
         }
         stage('Copy Test Results to Frontend') {
@@ -396,7 +404,11 @@ pipeline {
         }
         stage('Seed JMeter User') {
             steps {
-                sh 'docker exec breco_backend php /app/bin/seed-jmeter-user.php'
+                sh '''
+                    chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                    ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                        "docker exec breco_backend php /app/bin/seed-jmeter-user.php"
+                '''
             }
         }
         stage('Performance: JMeter Tests') {
@@ -425,7 +437,11 @@ pipeline {
             }
             post {
                 always {
-                    sh 'docker exec breco_backend php /app/bin/cleanup-jmeter-user.php'
+                    sh '''
+                        chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                        ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                            "docker exec breco_backend php /app/bin/cleanup-jmeter-user.php"
+                    '''
                     publishHTML(target: [
                         allowMissing         : true,
                         alwaysLinkToLastBuild: true,

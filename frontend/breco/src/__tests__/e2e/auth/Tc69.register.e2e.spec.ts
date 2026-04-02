@@ -14,6 +14,7 @@ const VPS_IP      = process.env.VPS_IP ?? 'localhost'
 const BASE_URL    = `http://${VPS_IP}:3001`
 const MAILHOG_URL = `http://${VPS_IP}:8025/api/v2/messages`
 const TIMEOUT     = 10_000
+const HOOK_TIMEOUT = 30_000
 
 // Unique email per run: assigned in beforeAll to ensure Date.now() matches the actual test execution time
 let uniqueEmail: string
@@ -111,7 +112,7 @@ describe('TC-69 | E2E | Full registration flow via form', () => {
       .forBrowser(Browser.FIREFOX)
       .setFirefoxOptions(options)
       .build()
-  }, TIMEOUT)
+  }, HOOK_TIMEOUT)
 
   afterAll(async () => {
     if (driver) await driver.quit()

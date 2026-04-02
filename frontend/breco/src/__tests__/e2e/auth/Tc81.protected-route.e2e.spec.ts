@@ -14,6 +14,7 @@ import firefox from 'selenium-webdriver/firefox.js'
 const VPS_IP   = process.env.VPS_IP ?? 'localhost'
 const BASE_URL = `http://${VPS_IP}:3001`
 const TIMEOUT  = 10_000
+const HOOK_TIMEOUT = 30_000
 
 // ─── TC-81 Suite ───────────────────────────────────────────────────────────
 
@@ -28,7 +29,7 @@ describe('TC-81 | E2E | Direct navigation to protected route without JWT token',
       .forBrowser(Browser.FIREFOX)
       .setFirefoxOptions(options)
       .build()
-  }, TIMEOUT)
+  }, HOOK_TIMEOUT)
 
   afterAll(async () => {
     if (driver) await driver.quit()

@@ -13,6 +13,7 @@ import firefox from 'selenium-webdriver/firefox.js'
 const VPS_IP   = process.env.VPS_IP ?? 'localhost'
 const BASE_URL = `http://${VPS_IP}:3001`
 const TIMEOUT  = 10_000
+const HOOK_TIMEOUT = 30_000
 
 const TEST_EMAIL    = 'test@test.com'
 const TEST_PASSWORD = 'Password123'
@@ -79,7 +80,7 @@ describe('TC-70 | E2E | Login flow + redirection', () => {
       .forBrowser(Browser.FIREFOX)
       .setFirefoxOptions(options)
       .build()
-  }, TIMEOUT)
+  }, HOOK_TIMEOUT)
 
   afterAll(async () => {
     if (driver) await driver.quit()

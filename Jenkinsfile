@@ -310,6 +310,10 @@ pipeline {
                 echo 'Re-deploy on VPS...'
                 sh '''
                     chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                    scp -P ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 \
+                        docker-compose.yml ubuntu@${VPS_IP}:~/breco_v2.0.0/docker-compose.yml
+                    scp -P ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 \
+                        -r monitoring/ ubuntu@${VPS_IP}:~/breco_v2.0.0/
                     ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
                         "cd ~/breco_v2.0.0 && \
                         docker compose stop frontend backend nginx mysql && \

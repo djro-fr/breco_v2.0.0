@@ -197,21 +197,23 @@ pipeline {
             }
         }
         stage('Copy Test Results to Frontend') {
-            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-                retry(2) { unstash 'unit-results' }
-                retry(2) { unstash 'integration-results' }
-                retry(2) { unstash 'ui-results' }
-                retry(2) { unstash 'e2e-results' }
-                retry(2) { unstash 'phpunit-results' }
-                sh '''
-                    echo "Copy test results to dist/..."
-                    mkdir -p frontend/breco/test-results
-                    cp backend/breco/test-results/phpunit-results.xml \
-                    frontend/breco/test-results/
-                    echo '✅ Copy succeed'
-                    echo "Verification:"
-                    ls -la frontend/breco/test-results/
-                '''
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                    retry(2) { unstash 'unit-results' }
+                    retry(2) { unstash 'integration-results' }
+                    retry(2) { unstash 'ui-results' }
+                    retry(2) { unstash 'e2e-results' }
+                    retry(2) { unstash 'phpunit-results' }
+                    sh '''
+                        echo "Copy test results to dist/..."
+                        mkdir -p frontend/breco/test-results
+                        cp backend/breco/test-results/phpunit-results.xml \
+                        frontend/breco/test-results/
+                        echo '✅ Copy succeed'
+                        echo "Verification:"
+                        ls -la frontend/breco/test-results/
+                    '''
+                }
             }
         }
         stage('Swagger Bake: API Documentation') {

@@ -332,7 +332,7 @@ pipeline {
                         docker compose stop frontend backend nginx mysql && \
                         docker compose rm -f frontend backend nginx mysql && \
                         docker compose pull frontend backend nginx mysql && \
-                        docker compose up -d frontend backend nginx mysql prometheus grafana nginx-exporter cadvisor"
+                        docker compose --profile monitoring up -d frontend backend nginx mysql prometheus grafana nginx-exporter cadvisor"
                     echo "---"
                 '''
             }

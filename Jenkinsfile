@@ -197,17 +197,12 @@ pipeline {
             }
         }
         stage('Copy Test Results to Frontend') {
-            // http://37.59.101.232:3001/test-results/unit-results.xml
-            // http://37.59.101.232:3001/test-results/integration-results.xml
-            // http://37.59.101.232:3001/test-results/ui-results.xml
-            // http://37.59.101.232:3001/test-results/e2e-results.xml
-            // http://37.59.101.232:3001/test-results/phpunit-results.xml
-            steps {
-                unstash 'unit-results'
-                unstash 'integration-results'
-                unstash 'ui-results'
-                unstash 'e2e-results'
-                unstash 'phpunit-results'
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                retry(2) { unstash 'unit-results' }
+                retry(2) { unstash 'integration-results' }
+                retry(2) { unstash 'ui-results' }
+                retry(2) { unstash 'e2e-results' }
+                retry(2) { unstash 'phpunit-results' }
                 sh '''
                     echo "Copy test results to dist/..."
                     mkdir -p frontend/breco/test-results

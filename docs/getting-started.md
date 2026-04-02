@@ -67,6 +67,10 @@ You should see:
 - breco_sonarqube (port 9000)
 - breco_sonarqube_db
 - breco-jenkins (port 8080)
+- breco_prometheus
+- breco_grafana (port 3002, SSH tunnel only)
+- breco_nginx_exporter
+- breco_cadvisor
 
 ---
 
@@ -307,7 +311,8 @@ The pipeline runs automatically on each push to GitHub
 and executes the following stages in order:
 Checkout → Lint → SonarQube Analysis
 → Tests (Unit, Integration, UI, E2E, PHPUnit)
-→ Swagger Bake → Build → Deploy → Verify → **OWASP ZAP Security Scan**.
+→ Swagger Bake → Build → Deploy → Verify
+→ OWASP ZAP Security Scan → JMeter Performance → Cleanup Docker
 
 For Jenkins update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
 
@@ -463,6 +468,7 @@ Password : Password123
 | Mailhog UI | 8025 | Email interface |
 | Jenkins | 8080 | CI/CD pipeline |
 | SonarQube | 9000 | Code quality analysis |
+| Grafana | 3002 | Monitoring dashboards (SSH tunnel only) |
 
 ---
 
@@ -524,4 +530,4 @@ docker-compose up -d
 
 ---
 
-**Date**: April 1, 2026
+**Date**: April 2, 2026

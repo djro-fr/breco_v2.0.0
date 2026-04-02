@@ -1,7 +1,6 @@
 # TODO - Production Deployment Checklist
 
 > **Current status**: Development (not production-ready)  
-> **Last updated**: March 26, 2026
 
 ---
 
@@ -114,7 +113,7 @@
 ### Alerts
 
 - [x] Configure monitoring (Prometheus/Grafana)
-- [ ] Alerts: CPU > 80%, RAM > 90%, Disk > 85%
+- [x] Alerts: CPU > 80%, RAM > 90%, Disk > 85%
 - [ ] Uptime monitoring (UptimeRobot, Pingdom)
 - [ ] Notifications (Email, Slack)
 
@@ -206,5 +205,7 @@
 - [ ] Communication plan launched
 
 **NEVER launch in production until all CRITICAL points are validated!**
+
+---
 
 **Last updated**: April 2, 2026

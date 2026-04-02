@@ -32,6 +32,8 @@ Welcome in the demo version of Breco, the carpooling application for Brittany
 - Nginx (reverse proxy)
 - SonarQube (code quality)
 - OWASP ZAP (security scan)
+- Prometheus + Grafana (monitoring)
+- cAdvisor (container metrics)
 
 ---
 
@@ -53,6 +55,10 @@ docs/
 jenkins/
 ├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
 └── JENKINS.md             # Jenkins update procedure
+
+monitoring/
+└── MONITORING.md          # Prometheus + Grafana monitoring setup
+
 ```
 
 ---
@@ -73,10 +79,19 @@ jenkins/
 
 ### Environments
 
-| | Frontend | Nginx | Swagger | SonarQube | Jenkins |
-| --- | --- | --- | --- | --- | --- |
-| **Local** | http://localhost:3001 | http://localhost:8081 | http://localhost:8081/swagger | http://localhost:9000 | - |
-| **VPS** | http://37.59.101.232:3001 | http://37.59.101.232:8081 | http://37.59.101.232:8081/swagger | http://37.59.101.232:9000 | http://37.59.101.232:8080 |
+#### Application Services
+
+| | Frontend | Nginx | Swagger |
+| --- | --- | --- | --- |
+| **Local** | http://localhost:3001 | http://localhost:8081 | http://localhost:8081/swagger |
+| **VPS** | http://37.59.101.232:3001 | http://37.59.101.232:8081 | http://37.59.101.232:8081/swagger |
+
+#### DevOps Services
+
+| | SonarQube | Jenkins | Grafana |
+| --- | --- | --- | --- |
+| **Local** | http://localhost:9000 | - | - |
+| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel — see [MONITORING.md](MONITORING.md) |
 
 ---
 
@@ -158,4 +173,4 @@ fix/*        # Bug fixes
 
 ## Last Update
 
-**Date**: April 1, 2026
+**Date**: April 2, 2026

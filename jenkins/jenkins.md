@@ -156,6 +156,7 @@ In **Credentials → Global → Add Credentials**, recreate the following:
 | `jwt_secret` | Secret text | JWT secret key |
 | `vite_api_url` | Secret text | e.g. `http://37.59.101.232:8081/api` |
 | `cors_origin` | Secret text | e.g. `http://37.59.101.232:3001` |
+| `vps_ssh_port` | Secret text | VPS SSH port number |
 
 ### 6. Reconfigure SonarQube
 
@@ -206,6 +207,11 @@ docker exec breco-jenkins jenkins --version
 
 # Check Docker socket GID
 stat -c '%g' /var/run/docker.sock
+
+# Sync docker-compose.yml and monitoring/ to VPS (done automatically by pipeline)
+scp -P NUMERO_DE_PORT docker-compose.yml ubuntu@37.59.101.232:~/breco_v2.0.0/
+scp -P NUMERO_DE_PORT -r monitoring/ ubuntu@37.59.101.232:~/breco_v2.0.0/
+
 ```
 
 ---
@@ -248,4 +254,4 @@ Defined in the Dockerfile via `jenkins-plugin-cli`:
 
 ## Last Update
 
-**Date**: March 28, 2026
+**Date**: April 2, 2026

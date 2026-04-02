@@ -16,6 +16,7 @@
 | Mailhog SMTP | 1025 | localhost:1025 | SMTP server |
 | Swagger UI | 8081 | http://localhost:8081/swagger | API documentation |
 | SonarQube | 9000 | http://localhost:9000 | Code quality analysis |
+| Grafana | 3002 | http://localhost:3002 | Monitoring dashboards (SSH tunnel only) |
 
 **Notes**:
 
@@ -36,6 +37,8 @@
 | Jenkins | 8080 | http://37.59.101.232:8080 | CI/CD pipeline |
 | Swagger UI | 8081 | http://37.59.101.232:8081/swagger | API documentation |
 | SonarQube | 9000 | http://37.59.101.232:9000 | Code quality analysis |
+| Grafana | 3002 | SSH tunnel only | Monitoring dashboards — see MONITORING.md |
+| Prometheus | 9090 | Internal only | Metrics collection (not exposed publicly) |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232` (custom port: see private config)
 
@@ -76,6 +79,11 @@ The Jenkins pipeline reaches SonarQube via its container IP: `http://172.18.0.5:
 The Jenkins pipeline runs an automated OWASP ZAP baseline scan after each deployment, targeting Nginx on port 8081.  
 Results are archived as an HTML report in Jenkins: **Build → OWASP ZAP Security Report**.
 
+### Grafana / Monitoring
+
+Grafana is not publicly exposed. Access via SSH tunnel only — see [MONITORING.md](../monitoring/MONITORING.md).
+Prometheus scrapes metrics every 15s from nginx-exporter and cAdvisor.
+
 ---
 
-**Last updated**: March 28, 2026
+**Last updated**: April 2, 2026

@@ -47,23 +47,6 @@ pipeline {
                 '''
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    script {
-                        def scannerHome = tool 'SonarQube Scanner'
-                        def sonarIp = sh(script: "docker inspect breco_sonarqube --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'", returnStdout: true).trim()
-                        echo "SonarQube IP: ${sonarIp}"
-                        sh "${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=breco \
-                            -Dsonar.sources=frontend/breco/src,backend/breco/src \
-                            -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/** \
-                            -Dsonar.host.url=http://${sonarIp}:9000 \
-                            -Dsonar.token=${env.SONAR_AUTH_TOKEN}"
-                    }
-                }
-            }
-        }
         stage('Tests') {
             parallel {
                 stage('Unit Tests') {
@@ -146,7 +129,7 @@ pipeline {
                             curl -sS https://getcomposer.org/installer | php
                             php composer.phar install --no-interaction
                             mkdir -p test-results
-                            php composer.phar test                            
+                            php composer.phar test -- --coverage-clover test-results/coverage.xml                   
                             chmod -R 755 test-results/
                         '''
                     }
@@ -154,7 +137,29 @@ pipeline {
                         always {
                             junit 'backend/breco/test-results/phpunit-results.xml'
                             stash name: 'phpunit-results', includes: 'backend/breco/test-results/phpunit-results.xml'
+                            stash name: 'phpunit-coverage', includes: 'backend/breco/test-results/coverage.xml'
                         }
+                    }
+                }
+            }
+        }                
+        stage('SonarQube Analysis') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    unstash 'phpunit-coverage'
+                }
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        def scannerHome = tool 'SonarQube Scanner'
+                        def sonarIp = sh(script: "docker inspect breco_sonarqube --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'", returnStdout: true).trim()
+                        echo "SonarQube IP: ${sonarIp}"
+                        sh "${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.php.coverage.reportPaths=backend/breco/test-results/coverage.xml \
+                            -Dsonar.projectKey=breco \
+                            -Dsonar.sources=frontend/breco/src,backend/breco/src \
+                            -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/**,**/Model/Entity/** \
+                            -Dsonar.host.url=http://${sonarIp}:9000 \
+                            -Dsonar.token=${env.SONAR_AUTH_TOKEN}"
                     }
                 }
             }

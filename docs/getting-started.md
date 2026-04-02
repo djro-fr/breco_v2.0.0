@@ -309,8 +309,8 @@ The project uses a Jenkins pipeline hosted on the VPS.
 
 The pipeline runs automatically on each push to GitHub
 and executes the following stages in order:
-Checkout → Lint → SonarQube Analysis
-→ Tests (Unit, Integration, UI, E2E, PHPUnit)
+Checkout → Lint → Tests (Unit, Integration, UI, PHPUnit)
+→ SonarQube Analysis → Seed → E2E → Cleanup → Copy Results
 → Swagger Bake → Build → Deploy → Verify
 → OWASP ZAP Security Scan → JMeter Performance → Cleanup Docker
 

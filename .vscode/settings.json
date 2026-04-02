@@ -1,0 +1,6 @@
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "http://37.59.101.232:9000",
+    "projectKey": "breco"
+  }
+}

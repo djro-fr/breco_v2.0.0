@@ -164,7 +164,7 @@ fix/*        # Bug fixes
 ## Project Metrics
 
 - **Tests**: Unit, Integration, UI, E2E, PHPUnit
-- **CI/CD**: Jenkins pipeline (Lint → SonarQube → Tests → Build → Deploy → ZAP)
+- **CI/CD**: Jenkins pipeline (Lint → Tests → SonarQube → E2E → Build → Deploy → ZAP → JMeter → Cleanup Docker)
 - **Deployment**: Automatic to VPS on every push
 - **Security**: OWASP ZAP baseline scan after each deployment
 - **Security hardening**: SSH key auth only, Fail2ban IPS, custom SSH port

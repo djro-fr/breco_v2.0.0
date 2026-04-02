@@ -454,15 +454,15 @@ pipeline {
                 }
             }
         }
-    }
-    stage('Cleanup Docker') {
-        steps {
-            sh '''
-                chmod 600 /var/jenkins_home/.ssh/id_ed25519
-                ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
-                    "docker image prune -a -f --filter until=24h && \
-                    docker builder prune -f --filter until=24h"
-            '''
+        stage('Cleanup Docker') {
+            steps {
+                sh '''
+                    chmod 600 /var/jenkins_home/.ssh/id_ed25519
+                    ssh -p ${VPS_SSH_PORT} -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/id_ed25519 ubuntu@${VPS_IP} \
+                        "docker image prune -a -f --filter until=24h && \
+                        docker builder prune -f --filter until=24h"
+                '''
+            }
         }
     }
     post {

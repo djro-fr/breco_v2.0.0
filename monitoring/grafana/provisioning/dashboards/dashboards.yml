@@ -1,0 +1,8 @@
+# monitoring/grafana/provisioning/dashboards/dashboards.yml
+apiVersion: 1
+providers:
+  - name: default
+    folder: Breco
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards

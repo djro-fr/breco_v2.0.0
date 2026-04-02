@@ -91,7 +91,7 @@ monitoring/
 | | SonarQube | Jenkins | Grafana |
 | --- | --- | --- | --- |
 | **Local** | http://localhost:9000 | - | - |
-| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel — see [MONITORING.md](MONITORING.md) |
+| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel - see [MONITORING.md](MONITORING.md) |
 
 ---
 

@@ -42,6 +42,8 @@ Mailhog: http://localhost:8025
 - **API Docs**: SwaggerBake 3.x (OpenAPI / PHP 8 attributes)
 - **Testing**: Vitest, PHPUnit, Selenium
 - **DevOps**: Docker, Jenkins CI/CD, Nginx, Bun
+- **Monitoring**: Prometheus, Grafana, cAdvisor
+- **Security**: OWASP ZAP, Fail2ban
 
 ---
 
@@ -272,6 +274,7 @@ vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --d
 | Mailhog | http://37.59.101.232:8025 |
 | Swagger UI | http://37.59.101.232:8081/swagger |
 | SonarQube | http://37.59.101.232:9000 |
+| Grafana | SSH tunnel only (port 3002) - see [MONITORING.md](monitoring/MONITORING.md) |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232 -p NUMERO_DE_PORT`
 
@@ -361,6 +364,9 @@ npm install
 - SonarQube code quality analysis
 - Test plan: test cases (Vitest / PHPUnit / Selenium pyramid)
 - Security hardening (SSH key auth, Fail2ban IPS, custom SSH port)
+- Prometheus + Grafana monitoring (cAdvisor, nginx-exporter, SSH tunnel)
+- OWASP ZAP baseline scan (integrated in Jenkins pipeline)
+- Automatic Docker cleanup (image/cache pruning after each build)
 
 ### TODO before production
 
@@ -411,4 +417,4 @@ chore: maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: March 30, 2026
+**Last updated**: April 2, 2026

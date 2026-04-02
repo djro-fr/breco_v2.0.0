@@ -156,6 +156,14 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_SERVER_ROOT_URL=http://localhost:3002
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=ssl0.ovh.net:465
+      - GF_SMTP_USER=syl@djro.fr
+      - GF_SMTP_PASSWORD=${GRAFANA_SMTP_PASSWORD}
+      - GF_SMTP_FROM_ADDRESS=syl@djro.fr
+      - GF_SMTP_FROM_NAME=Breco Monitoring
+      - GF_SMTP_SKIP_VERIFY=false
+      - GF_SMTP_STARTSSL_POLICY=MandatoryStartTLS
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro

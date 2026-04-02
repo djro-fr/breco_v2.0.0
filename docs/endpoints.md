@@ -37,7 +37,7 @@
 | Jenkins | 8080 | http://37.59.101.232:8080 | CI/CD pipeline |
 | Swagger UI | 8081 | http://37.59.101.232:8081/swagger | API documentation |
 | SonarQube | 9000 | http://37.59.101.232:9000 | Code quality analysis |
-| Grafana | 3002 | SSH tunnel only | Monitoring dashboards — see MONITORING.md |
+| Grafana | 3002 | SSH tunnel only | Monitoring dashboards - see MONITORING.md |
 | Prometheus | 9090 | Internal only | Metrics collection (not exposed publicly) |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232` (custom port: see private config)
@@ -81,7 +81,7 @@ Results are archived as an HTML report in Jenkins: **Build → OWASP ZAP Securit
 
 ### Grafana / Monitoring
 
-Grafana is not publicly exposed. Access via SSH tunnel only — see [MONITORING.md](../monitoring/MONITORING.md).
+Grafana is not publicly exposed. Access via SSH tunnel only - see [MONITORING.md](../monitoring/MONITORING.md).
 Prometheus scrapes metrics every 15s from nginx-exporter and cAdvisor.
 
 ---

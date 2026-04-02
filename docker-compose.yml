@@ -176,6 +176,17 @@ services:
       - breco_network
     depends_on:
       - nginx
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: breco_cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - breco_network      
 
 volumes:
   mysql_data:

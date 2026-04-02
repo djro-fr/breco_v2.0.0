@@ -115,7 +115,7 @@
 - [x] Configure monitoring (Prometheus/Grafana)
 - [x] Alerts: CPU > 80%, RAM > 90%, Disk > 85%
 - [ ] Uptime monitoring (UptimeRobot, Pingdom)
-- [ ] Notifications (Email, Slack)
+- [x] Notifications (Email OVH)
 
 ### Logs
 
@@ -177,6 +177,7 @@
 - [ ] Deployment guide
 - [ ] Rollback procedures
 - [ ] Incident runbook
+- [x] Monitoring documentation (MONITORING.md)
 - [x] Architecture diagram
 - [x] API documentation
 - [x] Endpoints documentation

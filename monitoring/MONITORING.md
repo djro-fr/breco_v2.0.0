@@ -128,6 +128,20 @@ This monitoring stack directly addresses the course requirements for real-time a
 - **cAdvisor**: provides container-level resource monitoring
   (CPU > 80%, RAM > 90% thresholds configurable as alerts)
 
+## Alerts
+
+Three alert rules configured in Grafana, grouped under `breco-alerts`, evaluated every minute with a 5-minute pending period.
+
+| Rule | Query | Threshold | Contact |
+| --- | --- | --- | --- |
+| CPU Usage High | `rate(container_cpu_usage_seconds_total{image!=""}[1m]) * 100` | > 80% | Email OVH |
+| Memory Usage High | `sum(container_memory_usage_bytes{image!=""}) / 7600000000 * 100` | > 90% | Email OVH |
+| Disk I/O High | `rate(container_fs_writes_bytes_total{image!=""}[1m])` | > 10MB/s | Email OVH |
+
+Alerts are sent to admin email via OVH SMTP (SSL port 465).
+
+SMTP is configured via environment variables in `docker-compose.yml`.
+
 ---
 
 **Last updated**: April 2, 2026

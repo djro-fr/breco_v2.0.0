@@ -18,6 +18,7 @@ jenkins/
 ```
 
 Jenkins is managed as a **Docker Compose service** in `docker-compose.yml`.
+
 The custom image `breco-jenkins:2.541.3` is built from `jenkins/Dockerfile-jenkins` and adds:
 
 - the Docker CLI and Docker Compose (absent from the base image)
@@ -46,24 +47,23 @@ Installs the **Docker CLI** so Jenkins can run `docker` commands from pipeline s
 RUN curl ... docker-compose
 ```
 
-Installs **Docker Compose** for `docker-compose` commands in the pipeline.
+Installs **Docker Compose** for `docker compose` commands in the pipeline.
 
 ```dockerfile
 RUN groupadd -g 988 docker && usermod -aG docker jenkins
 ```
 
-Adds the `jenkins` user to the `docker` group (GID 988 on this VPS)
-so it can use the Docker socket without being root.
+Adds the `jenkins` user to the `docker` group (GID 988 on this VPS) so it can use the Docker socket without being root.
 
 > **Note:** If you get `permission denied` on `/var/run/docker.sock` after a VPS reinstall,
-check the GID with `stat -c '%g' /var/run/docker.sock` and update the Dockerfile accordingly.
+> check the GID with `stat -c '%g' /var/run/docker.sock` and update the Dockerfile accordingly.
 
 ```dockerfile
 USER jenkins
 RUN jenkins-plugin-cli --plugins ...
 ```
 
-Installs **Jenkins plugins** at image build time rather than at first startup - guarantees a reproducible image.
+Installs **Jenkins plugins** at image build time rather than at first startup — guarantees a reproducible image.
 
 ```dockerfile
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false \
@@ -211,7 +211,6 @@ stat -c '%g' /var/run/docker.sock
 # Sync docker-compose.yml and monitoring/ to VPS (done automatically by pipeline)
 scp -P NUMERO_DE_PORT docker-compose.yml ubuntu@37.59.101.232:~/breco_v2.0.0/
 scp -P NUMERO_DE_PORT -r monitoring/ ubuntu@37.59.101.232:~/breco_v2.0.0/
-
 ```
 
 ---
@@ -252,6 +251,4 @@ Defined in the Dockerfile via `jenkins-plugin-cli`:
 
 ---
 
-## Last Update
-
-**Date**: April 2, 2026
+**Last updated**: April 3, 2026

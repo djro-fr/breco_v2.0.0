@@ -13,7 +13,7 @@ Check that you have installed:
 ```bash
 # Docker & Docker Compose
 docker --version          # 20.10+
-docker-compose --version  # 2.0+
+docker compose version    # 2.0+
 
 # Node.js & npm + bun
 node --version           # 18.0+
@@ -24,7 +24,8 @@ bun --version            # 1.3+
 git --version            # 2.0+
 ```
 
-**No Docker?** → [Install Docker Desktop](https://www.docker.com/products/docker-desktop)  
+**No Docker?** → [Install Docker Desktop](https://www.docker.com/products/docker-desktop)
+
 **No Node.js?** → [Install Node.js](https://nodejs.org/)
 
 ---
@@ -41,14 +42,18 @@ cd breco_v2_0_0
 ### 2. Configure environment
 
 ```bash
-# Copy .env files
 cp .env.example .env
+# Edit .env with your values
 ```
+
+> ⚠️ Avoid `$`, `#`, `"`, `'`, `\` in passwords (Docker Compose interprets them).
+>
+> In `DATABASE_URL`, encode special chars: `@` → `%40`, `:` → `%3A`, etc.
 
 ### 3. Start Docker services
 
 ```bash
-docker-compose up -d
+docker compose up --build -d
 ```
 
 **Check everything is running**:
@@ -67,10 +72,28 @@ You should see:
 - breco_sonarqube (port 9000)
 - breco_sonarqube_db
 - breco-jenkins (port 8080)
-- breco_prometheus
-- breco_grafana (port 3002, SSH tunnel only)
-- breco_nginx_exporter
-- breco_cadvisor
+
+> The monitoring stack (Prometheus, Grafana, cAdvisor, nginx-exporter) is not started by default.
+>
+> To start it: `docker compose --profile monitoring up -d`
+
+### 4. Run migrations and seeds
+
+**Windows / Git Bash:**
+
+```bash
+docker exec -it breco_backend //app/bin/cake migrations migrate
+docker exec -it breco_backend //app/bin/cake migrations seed --seed TownsSeed
+docker exec -it breco_backend //app/bin/cake migrations seed --seed LocationsSeed
+```
+
+**Linux / VPS:**
+
+```bash
+docker exec -it breco_backend /app/bin/cake migrations migrate
+docker exec -it breco_backend /app/bin/cake migrations seed --seed TownsSeed
+docker exec -it breco_backend /app/bin/cake migrations seed --seed LocationsSeed
+```
 
 ---
 
@@ -79,21 +102,20 @@ You should see:
 ### Backend
 
 ```bash
-# Health check
 curl http://localhost:8081/api/health
-
-# Should return:
 # {"status":"ok","service":"breco-backend","timestamp":"..."}
 ```
 
 ### Frontend
 
-Open your browser: http://localhost:3001  
+Open your browser: http://localhost:3001
+
 You should see the Breco home page.
 
 ### Mailhog (test emails)
 
-Open: http://localhost:8025  
+Open: http://localhost:8025
+
 Interface to view emails sent during development.
 
 ---
@@ -105,7 +127,7 @@ To develop with automatic frontend reload:
 ### Terminal 1: Backend Docker (without frontend)
 
 ```bash
-docker-compose up -d backend mysql nginx mailhog
+docker compose up -d backend mysql nginx mailhog
 ```
 
 ### Terminal 2: Frontend Dev (hot reload)
@@ -118,7 +140,8 @@ bun run dev
 
 Frontend will be available at: http://localhost:5173 (Vite dev server)
 
-**Why 5173?** This is Vite's development server port with hot reload.  
+**Why 5173?** This is Vite's development server port with hot reload.
+
 **In production**: Frontend is on port 3001.
 
 ---
@@ -185,17 +208,19 @@ breco_v2_0_0/
 │
 ├── nginx/
 │   └── default.conf
-├── mysql/
-│   └── init.sql
+├── Dockerfile.nginx
 ├── jenkins/
 │   ├── Dockerfile-jenkins
 │   └── JENKINS.md
 ├── docker-compose.yml
 ├── Jenkinsfile
 └── docs/
-    ├── ARCHITECTURE.md
-    ├── API.md
-    ├── GETTING_STARTED.md
+    ├── getting-started.md
+    ├── architecture.md
+    ├── api.md
+    ├── endpoints.md
+    ├── error-handling.md
+    ├── todo-prod.md
     └── tests/
         ├── breco - plan de test.odt
         └── breco - Test cases.xlsx
@@ -209,57 +234,58 @@ breco_v2_0_0/
 
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up --build -d
 
 # Stop all services
-docker-compose down
+docker compose down
+
+# Stop and remove volumes (⚠️ deletes database)
+docker compose down -v
+
+# Start monitoring stack
+docker compose --profile monitoring up -d
+
+# Stop monitoring stack
+docker compose --profile monitoring down
 
 # View logs
 docker logs breco_backend
 docker logs breco_frontend
 docker logs breco_nginx
 
-# Rebuild an image
-docker-compose build backend
-docker-compose build frontend
-
-# Remove volumes (deletes database)
-docker-compose down -v
+# Rebuild a specific image
+docker compose build backend
+docker compose build frontend
+docker compose build nginx
 ```
 
 ### Database
 
 ```bash
-# Connect to MySQL
+# Connect to MySQL (Windows/Git Bash)
 docker exec -it breco_mysql mysql -u root -p breco_db
-# With root password
 ```
 
 ```bash
-# Migrations
-docker exec -it breco_backend /app/bin/cake migrations migrate
+# Migrations (Windows/Git Bash)
+docker exec -it breco_backend //app/bin/cake migrations migrate
 ```
 
 ```bash
-# Empty users table
-docker exec -it breco_mysql mysql -u root -p breco_db
+# Seeds (Windows/Git Bash)
+docker exec -it breco_backend //app/bin/cake migrations seed --seed TownsSeed
+docker exec -it breco_backend //app/bin/cake migrations seed --seed LocationsSeed
 ```
 
 ```sql
+-- Reset user-related tables
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE drivers;
-TRUNCATE TABLE passengers;
 TRUNCATE TABLE bookings;
 TRUNCATE TABLE users;
 SET FOREIGN_KEY_CHECKS = 1;
-```
 
-```bash
-# Check empty users table
-docker exec -it breco_mysql mysql -u root -p breco_db
-```
-
-```sql
+-- Check row count
 SELECT COUNT(*) FROM users;
 ```
 
@@ -284,15 +310,17 @@ npm run test:coverage
 
 # Frontend - Linting
 npm run lint
+```
 
-# Backend - PHPUnit tests
+```bash
+# Backend - PHPUnit tests (Windows/Git Bash)
 docker exec -it breco_backend vendor/bin/phpunit --testdox --display-phpunit-notices
 
 # Backend - PHPUnit local (without Docker)
 cd backend/breco
 vendor/bin/phpunit --testdox --display-phpunit-notices
 
-# Backend - PHPUnit specific test file with notices (local)
+# Backend - PHPUnit specific test file
 vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --display-phpunit-notices
 ```
 
@@ -307,8 +335,8 @@ The project uses a Jenkins pipeline hosted on the VPS.
 | http://37.59.101.232:8080 | Jenkins dashboard |
 | http://37.59.101.232:9000 | SonarQube (code quality) |
 
-The pipeline runs automatically on each push to GitHub
-and executes the following stages in order:
+The pipeline runs automatically on each push to GitHub and executes the following stages in order:
+
 Checkout → Lint → Tests (Unit, Integration, UI, PHPUnit)
 → SonarQube Analysis → Seed → E2E → Cleanup → Copy Results
 → Swagger Bake → Build → Deploy → Verify
@@ -322,8 +350,8 @@ For Jenkins update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
 
 The pipeline includes an automated security scan using **OWASP ZAP** (Zed Attack Proxy) after each deployment.
 
-ZAP runs a passive baseline scan on the deployed application
-(`http://37.59.101.232:8081`) and generates an HTML report archived in Jenkins.
+ZAP runs a passive baseline scan on the deployed application (`http://37.59.101.232:8081`)
+and generates an HTML report archived in Jenkins.
 
 To view the report: **Jenkins → Build → OWASP ZAP Security Report** (left menu).
 
@@ -350,7 +378,7 @@ Content-Type: application/json
 
 **Via the interface**:
 
-1. Open http://localhost:5173
+1. Open http://localhost:3001
 2. Go to "Inscription (register)"
 3. Fill in the form
 
@@ -380,8 +408,8 @@ You will receive a JWT token to use in subsequent requests.
 
 Now that your environment is configured:
 
-1. **Read the architecture** → [DDD Architecture](ARCHITECTURE.md)
-2. **Understand the API** → [API Documentation](API.md)
+1. **Read the architecture** → [DDD Architecture](architecture.md)
+2. **Understand the API** → [API Documentation](api.md)
 
 ---
 
@@ -391,19 +419,19 @@ Now that your environment is configured:
 
 ```bash
 # Error: "port 3001 is already allocated"
-docker-compose down
+docker compose down
 lsof -ti:3001 | xargs kill -9  # Linux/Mac
 # Windows: Task Manager → Kill process
-docker-compose up -d
+docker compose up --build -d
 ```
 
 ### Frontend cannot connect to backend
 
-The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts`
-based on `window.location.hostname`.
+The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts` based on `window.location.hostname`.
+
 In local development, it always points to `http://localhost:8081/api`.
 
-If the frontend cannot reach the backend, check that the backend container is running:
+If the frontend cannot reach the backend:
 
 ```bash
 docker logs breco_backend
@@ -414,44 +442,37 @@ curl http://localhost:8081/api/health
 
 If you see a CORS error in the console:
 
-1. Check `nginx/default.conf`
+1. Check `nginx/default.conf`, allowed origins must include your frontend URL
 2. Verify nginx is running: `docker ps | grep nginx`
-3. Restart nginx: `docker-compose restart nginx`
+3. Restart nginx: `docker compose restart nginx`
 
 ### Empty database after restart
 
-MySQL data is persisted in a Docker volume.
-
-To completely reset the database:
+MySQL data is persisted in a Docker volume. To completely reset:
 
 ```bash
-docker-compose down -v  # ⚠️ Removes volumes
-docker-compose up -d
-docker exec -it breco_backend /app/bin/cake migrations migrate
+docker compose down -v  # ⚠️ Removes all volumes
+docker compose up --build -d
+# Then run migrations and seeds (see Installation step 4)
 ```
 
 ### npm install fails
 
 ```bash
-# Clean npm cache
 cd frontend/breco
 rm -rf node_modules package-lock.json
 npm cache clean --force
 npm install
 ```
 
----
+### fgetcsv deprecated warning (PHP 8.1+)
 
-## Test Account
+If seeds show a deprecation warning about `fgetcsv()`, ensure the `$escape` parameter is
+explicitly provided in `TownsSeed.php` and `LocationsSeed.php`:
 
-A test account already exists:
-
-```text
-Email    : test@test.com
-Password : Password123
+```php
+fgetcsv($file, 0, ',', '"', '\\');
 ```
-
-**Remove in production!**
 
 ---
 
@@ -459,16 +480,16 @@ Password : Password123
 
 | Service | Local Port | Description |
 | --- | --- | --- |
-| Frontend | 3001 | Vue.js (production) |
+| Frontend | 3001 | Vue.js (production build) |
 | Frontend Dev | 5173 | Vite dev server (hot reload) |
-| Backend | 8765 | API PHP-FPM (direct) |
-| Nginx | 8081 | Reverse proxy |
+| Backend | 8765 | API PHP-FPM (direct, bypass nginx) |
+| Nginx | 8081 | Reverse proxy, use this for API calls |
 | MySQL | 3307 | Database |
 | Mailhog SMTP | 1025 | SMTP test server |
 | Mailhog UI | 8025 | Email interface |
 | Jenkins | 8080 | CI/CD pipeline |
 | SonarQube | 9000 | Code quality analysis |
-| Grafana | 3002 | Monitoring dashboards (SSH tunnel only) |
+| Grafana | 3002 | Monitoring (SSH tunnel only) |
 
 ---
 
@@ -504,7 +525,7 @@ Create `.vscode/settings.json`:
 
 ```bash
 # Terminal 1: Docker services
-docker-compose up -d backend mysql nginx mailhog
+docker compose up -d backend mysql nginx mailhog
 
 # Terminal 2: Frontend with hot reload
 cd frontend/breco
@@ -515,8 +536,7 @@ bun run dev
 ### Production mode (local testing)
 
 ```bash
-# Everything via Docker
-docker-compose up -d
+docker compose up --build -d
 # → http://localhost:3001
 ```
 
@@ -524,10 +544,10 @@ docker-compose up -d
 
 ## Need Help?
 
-- [Architecture](ARCHITECTURE.md)
-- [API](API.md)
+- [Architecture](architecture.md)
+- [API](api.md)
 - [Jenkins](../jenkins/JENKINS.md)
 
 ---
 
-**Date**: April 2, 2026
+**Last updated**: April 3, 2026

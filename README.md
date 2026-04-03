@@ -14,14 +14,16 @@ Modern web platform allowing users to offer and search for carpooling trips in B
 
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up --build -d
 
 # Check everything is working
 curl http://localhost:8081/api/health
 ```
 
-Frontend: http://localhost:3001  
+Frontend: http://localhost:3001
+
 API: http://localhost:8081/api (JSON only, use Postman for other routes)
+
 Mailhog: http://localhost:8025
 
 ---
@@ -54,15 +56,15 @@ Mailhog: http://localhost:8025
 **Terminal 1** - Backend services:
 
 ```bash
-docker-compose up -d backend mysql nginx mailhog
+docker compose up -d backend mysql nginx mailhog
 ```
 
 **Terminal 2** - Frontend with hot reload:
 
 ```bash
 cd frontend/breco
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Frontend available at: http://localhost:5173 (Vite dev server)
@@ -70,7 +72,7 @@ Frontend available at: http://localhost:5173 (Vite dev server)
 ### Local production mode (testing)
 
 ```bash
-docker-compose up -d
+docker compose up --build -d
 ```
 
 Frontend available at: http://localhost:3001
@@ -88,22 +90,29 @@ docker logs breco_frontend
 docker logs breco_nginx
 
 # Restart a service
-docker-compose restart backend
-docker-compose restart nginx
+docker compose restart backend
+docker compose restart nginx
 
 # Stop all services
-docker-compose down
+docker compose down
 
 # Stop and remove volumes (⚠️ deletes database)
-docker-compose down -v
+docker compose down -v
+
+# Start monitoring stack
+docker compose --profile monitoring up -d
+
+# Stop monitoring stack
+docker compose --profile monitoring down
 ```
 
 ### Rebuild images
 
 ```bash
-docker-compose build frontend
-docker-compose build backend
-docker-compose up -d
+docker compose build frontend
+docker compose build backend
+docker compose build nginx
+docker compose up -d
 ```
 
 **Force rebuild (no cache)**:
@@ -111,13 +120,13 @@ docker-compose up -d
 ```bash
 docker build --no-cache -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
 docker build --no-cache -t local/breco-backend:latest -f backend/breco/Dockerfile-backend backend/breco
-docker-compose up -d
+docker build --no-cache -t local/breco-nginx:latest -f Dockerfile.nginx .
+docker compose up -d
 ```
 
 ### Cleanup old images
 
 ```bash
-# Remove old build versions (keeps :latest and current version)
 docker images --format "{{.Repository}}:{{.Tag}}" \
   | grep -E "(breco_v2_0_0|djrofr/breco)-(backend|frontend):[0-9]+" \
   | grep -v ":latest" \
@@ -133,14 +142,21 @@ docker images --format "{{.Repository}}:{{.Tag}}" \
 ### Migrations
 
 ```bash
-# Run migrations
+# Run migrations (Windows/Git Bash)
+docker exec -it breco_backend //app/bin/cake migrations migrate
+
+# Run migrations (Linux/VPS)
 docker exec -it breco_backend /app/bin/cake migrations migrate
 
+# Seeds
+docker exec -it breco_backend //app/bin/cake migrations seed --seed TownsSeed
+docker exec -it breco_backend //app/bin/cake migrations seed --seed LocationsSeed
+
 # Rollback
-docker exec -it breco_backend /app/bin/cake migrations rollback
+docker exec -it breco_backend //app/bin/cake migrations rollback
 
 # Create new migration
-docker exec -it breco_backend /app/bin/cake bake migration MigrationName
+docker exec -it breco_backend //app/bin/cake bake migration MigrationName
 ```
 
 ### MySQL access
@@ -148,7 +164,6 @@ docker exec -it breco_backend /app/bin/cake bake migration MigrationName
 ```bash
 # Connect to MySQL
 docker exec -it breco_mysql mysql -u root -p breco_db
-# Password: root
 ```
 
 ### Useful MySQL commands
@@ -161,7 +176,7 @@ SELECT * FROM users;
 TRUNCATE TABLE users;
 
 -- Delete specific user
-DELETE FROM users WHERE id='4';
+DELETE FROM users WHERE id = 4;
 
 -- View table structure
 DESCRIBE users;
@@ -236,15 +251,17 @@ npm run test:coverage
 
 # Frontend - Linting
 npm run lint
+```
 
-# Backend - PHPUnit tests
+```bash
+# Backend - PHPUnit tests (Windows/Git Bash)
 docker exec -it breco_backend vendor/bin/phpunit --testdox --display-phpunit-notices
 
 # Backend - PHPUnit local (without Docker)
 cd backend/breco
 vendor/bin/phpunit --testdox --display-phpunit-notices
 
-# Backend - PHPUnit specific test file with notices (local)
+# Backend - PHPUnit specific test file
 vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --display-phpunit-notices
 ```
 
@@ -284,11 +301,11 @@ vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --d
 
 ### Frontend cannot connect to backend
 
-The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts`
-based on `window.location.hostname`.
+The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts` based on `window.location.hostname`.
+
 In local development, it always points to `http://localhost:8081/api`.
 
-If the frontend cannot reach the backend, check that the backend container is running:
+If the frontend cannot reach the backend:
 
 ```bash
 docker logs breco_backend
@@ -303,41 +320,33 @@ docker ps | grep nginx
 docker logs breco_nginx
 
 # Restart nginx
-docker-compose restart nginx
+docker compose restart nginx
 ```
 
 ### Docker image errors (build or runtime)
 
-`local/breco-frontend` and `local/breco-backend` are built locally (via `DOCKER_USERNAME=local` in `.env`)
-and do not exist on Docker Hub - `docker-compose pull` will return an error for these, which is expected.
+`local/breco-frontend`, `local/breco-backend` and `local/breco-nginx` are built locally
+(via `DOCKER_USERNAME=local` in `.env`) and do not exist on Docker Hub, `docker compose pull`
+will return an error for these, which is expected.
 
-If you encounter errors related to these images, pull their base images then rebuild:
+If you encounter errors related to these images, rebuild with:
 
 ```bash
-# Pull base images from Docker Hub
-docker pull djrofr/breco-backend-builder:8.4
-docker pull oven/bun:1-alpine
-docker pull nginx:alpine
-
-# Rebuild local images
-docker build --no-cache -t local/breco-backend:latest -f backend/breco/Dockerfile-backend backend/breco
-docker build --no-cache -t local/breco-frontend:latest -f frontend/breco/Dockerfile-frontend frontend/breco
-
-docker-compose up -d
+docker compose up --build -d
 ```
 
-For third-party images (mysql, mailhog, nginx, sonarqube), a standard pull is sufficient:
+For third-party images (mysql, mailhog, sonarqube), a standard pull is sufficient:
 
 ```bash
-docker-compose pull
+docker compose pull mysql mailhog sonarqube
 ```
 
 ### Complete database reset
 
 ```bash
-docker-compose down -v
-docker-compose up -d
-docker exec -it breco_backend /app/bin/cake migrations migrate
+docker compose down -v
+docker compose up --build -d
+# Then run migrations and seeds (see Database section above)
 ```
 
 ### npm issues
@@ -349,9 +358,17 @@ npm cache clean --force
 npm install
 ```
 
+### fgetcsv deprecated warning (PHP 8.1+)
+
+Ensure the `$escape` parameter is explicitly provided in `TownsSeed.php` and `LocationsSeed.php`:
+
+```php
+fgetcsv($file, 0, ',', '"', '\\');
+```
+
 ---
 
-### Implemented features
+## Implemented Features
 
 - JWT authentication (custom `JwtAuthTrait` - Firebase JWT)
 - Email verification (Mailhog)
@@ -368,7 +385,7 @@ npm install
 - OWASP ZAP baseline scan (integrated in Jenkins pipeline)
 - Automatic Docker cleanup (image/cache pruning after each build)
 
-### TODO before production
+## TODO Before Production
 
 See [Production Checklist](docs/todo-prod.md) for complete list.
 
@@ -395,12 +412,12 @@ fix/*        # Bug fixes
 ### Commits
 
 ```text
-feat: new feature
-fix: bug fix
-docs: documentation
+feat:     new feature
+fix:      bug fix
+docs:     documentation
 refactor: refactoring
-test: add tests
-chore: maintenance tasks
+test:     add tests
+chore:    maintenance tasks
 ```
 
 ---
@@ -409,7 +426,7 @@ chore: maintenance tasks
 
 - [Complete documentation](docs/README.md)
 - [GitHub Issues](https://github.com/djro-fr/breco_v2.0.0/issues)
-- Contact: [syl.gi@laposte.net]
+- Contact: syl.gi@laposte.net
 
 ---
 
@@ -417,4 +434,4 @@ chore: maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-**Last updated**: April 2, 2026
+- **Last updated**: April 3, 2026

@@ -1,12 +1,13 @@
 # Breco, covoiturage breton
 
-Welcome in the demo version of Breco, the carpooling application for Brittany
+Welcome to the demo version of Breco, the carpooling application for Brittany.
 
 ---
 
 ## Quick Start
 
-**New developer?** Start here: [Getting Started Guide](getting-started.md)  
+**New developer?** Start here: [Getting Started Guide](getting-started.md)
+
 **Production deployment?** Check the [Production Checklist](todo-prod.md)
 
 ---
@@ -51,14 +52,11 @@ docs/
 └── tests/
     ├── breco - plan de test.odt
     └── breco - Test cases.xlsx
-
 jenkins/
 ├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
 └── JENKINS.md             # Jenkins update procedure
-
 monitoring/
 └── MONITORING.md          # Prometheus + Grafana monitoring setup
-
 ```
 
 ---
@@ -91,7 +89,7 @@ monitoring/
 | | SonarQube | Jenkins | Grafana |
 | --- | --- | --- | --- |
 | **Local** | http://localhost:9000 | - | - |
-| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel - see [MONITORING.md](MONITORING.md) |
+| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel — see [MONITORING.md](../monitoring/MONITORING.md) |
 
 ---
 
@@ -99,7 +97,7 @@ monitoring/
 
 ### Common Issues
 
-#### **Frontend won't start**
+#### Frontend won't start
 
 ```bash
 cd frontend/breco
@@ -108,19 +106,27 @@ bun install
 bun run dev
 ```
 
-#### **Docker "port already in use" error**
+#### Docker "port already in use" error
 
 ```bash
-docker-compose down
+docker compose down
 docker ps -a  # Check no container is using the port
-docker-compose up -d
+docker compose up --build -d
 ```
 
-**"CORS policy" error**  
-→ Check nginx configuration in `nginx/default.conf`
+#### "CORS policy" error
 
-**Empty database after restart**  
-→ MySQL volume persists. To reset: `docker-compose down -v`
+Check nginx configuration in `nginx/default.conf` — allowed origins must include your frontend URL.
+
+#### Empty database after restart
+
+MySQL volume persists. To reset:
+
+```bash
+docker compose down -v
+docker compose up --build -d
+# Then run migrations and seeds
+```
 
 ---
 
@@ -171,6 +177,4 @@ fix/*        # Bug fixes
 
 ---
 
-## Last Update
-
-**Date**: April 2, 2026
+**Last updated**: April 3, 2026

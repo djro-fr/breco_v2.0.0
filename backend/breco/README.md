@@ -15,13 +15,12 @@ CakePHP 5.x API backend for the Breco carpooling platform.
 
 ```bash
 # From project root
-docker-compose up -d backend mysql
-
+docker compose up --build -d backend mysql nginx
 # Run migrations
-docker exec -it breco_backend /app/bin/cake migrations migrate
+docker exec -it breco_backend //app/bin/cake migrations migrate
 ```
 
-Backend API available at: http://localhost:8765
+Backend API available at: http://localhost:8081/api
 
 ### Local Development (without Docker)
 
@@ -34,19 +33,23 @@ bin/cake server -p 8765
 
 ```text
 src/
-├── Controller/      # API controllers
-│   ├── AuthController.php
-│   ├── HealthController.php
-│   └── UsersController.php
-├── Model/           # Entities and Tables
-│   ├── Entity/
-│   └── Table/
-├── Service/         # Business logic services
-└── Middleware/      # Custom middleware
+├── Controller/
+│   └── Api/               # AuthController.php, TownsController.php, HealthController.php
+├── Model/
+│   ├── Entity/            # User.php, Town.php
+│   └── Table/             # UsersTable.php, TownsTable.php
+├── Service/               # Auth, Town, Location, User
+├── Repository/            # TownRepository.php
+├── Dto/                   # Auth, Town, Location
+└── Middleware/
 config/
-├── app.php          # Main configuration
-├── app_local.php    # Local environment config
-└── routes.php       # API routes
+├── app.php                # Main configuration
+├── app_local.php          # Local environment config
+├── routes.php             # API routes
+├── Migrations/            # Versioned tables
+├── Seeds/                 # TownsSeed.php, LocationsSeed.php
+├── swagger.yml
+└── swagger_bake.php
 ```
 
 ## Documentation
@@ -62,49 +65,57 @@ For complete documentation, see the main [docs folder](../../docs/):
 ### Run Migrations
 
 ```bash
-docker exec -it breco_backend /app/bin/cake migrations migrate
+docker exec -it breco_backend //app/bin/cake migrations migrate
+```
+
+### Run Seeds
+
+```bash
+docker exec -it breco_backend //app/bin/cake migrations seed --seed TownsSeed
+docker exec -it breco_backend //app/bin/cake migrations seed --seed LocationsSeed
 ```
 
 ### Create Migration
 
 ```bash
-docker exec -it breco_backend /app/bin/cake bake migration CreateUsersTable
+docker exec -it breco_backend //app/bin/cake bake migration CreateUsersTable
 ```
 
 ### Rollback
 
 ```bash
-docker exec -it breco_backend /app/bin/cake migrations rollback
+docker exec -it breco_backend //app/bin/cake migrations rollback
 ```
 
 ## Testing
 
-### Run Tests
+### Run All Tests
 
 ```bash
-docker exec -it breco_backend vendor/bin/phpunit
+docker exec -it breco_backend vendor/bin/phpunit --testdox --display-phpunit-notices
 ```
 
 ### Run Specific Test
 
 ```bash
-docker exec -it breco_backend vendor/bin/phpunit tests/TestCase/Controller/AuthControllerTest.php
+docker exec -it breco_backend vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --display-phpunit-notices
 ```
 
 ## Environment Variables
 
-Configuration in `config/app_local.php`:
+Set in `.env` at project root:
 
-- Database credentials
-- JWT secret
-- Email settings (SMTP)
+- `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DB`, `MYSQL_ROOT_PASSWORD`
+- `JWT_SECRET`
+- `FRONTEND_URL` - used in verification emails (e.g. `http://localhost:3001`)
+- `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_FROM`
 
 ## API Endpoints
 
 ### Health Check
 
 ```bash
-curl http://localhost:8765/health
+curl http://localhost:8081/api/health
 ```
 
 ### Authentication
@@ -116,19 +127,19 @@ See [API Documentation](../../docs/api.md) for complete endpoint list.
 ### Clear Cache
 
 ```bash
-docker exec -it breco_backend /app/bin/cake cache clear_all
+docker exec -it breco_backend //app/bin/cake cache clear_all
 ```
 
 ### Debug Routes
 
 ```bash
-docker exec -it breco_backend /app/bin/cake routes
+docker exec -it breco_backend //app/bin/cake routes
 ```
 
 ### Console Access
 
 ```bash
-docker exec -it breco_backend /app/bin/cake console
+docker exec -it breco_backend //app/bin/cake console
 ```
 
 ## Debugging
@@ -143,13 +154,14 @@ View logs:
 
 ```bash
 docker logs breco_backend
-tail -f logs/error.log
+docker exec -it breco_backend tail -f /app/logs/error.log
 ```
 
----
+> **Note**: On Windows/Git Bash, prefix `/app/...` paths with `//app/...` to prevent path conversion.
+> On Linux/VPS, use `/app/...` directly.
 
+---
 **Part of [Breco v2.0.0](../../README.md)**
 
 ---
-
-**Last updated**: March 30, 2026
+**Last updated**: April 3, 2026

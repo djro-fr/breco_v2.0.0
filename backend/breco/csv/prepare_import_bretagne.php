@@ -30,17 +30,17 @@ while (($row = fgetcsv($input, 0, $delimiter)) !== false) {
     $townName = trim($row[2] ?? '');
     $inseeCode = trim($row[3] ?? '');
     $postalCode = trim($row[4] ?? '');
-    $locationType = trim($row[5] ?? 'Parking');  
+    $locationType = trim($row[5] ?? 'Parking');
     $longitude = trim($row[6] ?? '');
     $latitude = trim($row[7] ?? '');
-    
+
     if (empty($name) || empty($townName) || empty($inseeCode)) {
         continue;
     }
-    
+
     $townName = mb_convert_case(mb_strtolower($townName, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
     $townKey = $inseeCode;
-    
+
     // Unique towns
     if (!isset($towns[$townKey])) {
         $towns[$townKey] = [
@@ -51,12 +51,12 @@ while (($row = fgetcsv($input, 0, $delimiter)) !== false) {
             'longitude' => $longitude,
         ];
     }
-    
+
     // Default type if empty
     if (empty($locationType)) {
         $locationType = 'Parking';
     }
-    
+
     // Locations
     $locations[] = [
         'name' => $name,
@@ -66,7 +66,7 @@ while (($row = fgetcsv($input, 0, $delimiter)) !== false) {
         'town_name' => $townName,
         'type' => $locationType,
     ];
-    
+
     echo "✓ $name ($townName - $locationType)\n";
 }
 

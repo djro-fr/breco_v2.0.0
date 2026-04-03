@@ -40,6 +40,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DB: ${MYSQL_DB}
+      FRONTEND_URL: ${FRONTEND_URL}
     ports:
       - "8765:9000"
     depends_on:
@@ -51,6 +52,9 @@ services:
   # Nginx (Reverse Proxy for Backend)
   nginx:
     image: ${DOCKER_USERNAME}/breco-nginx:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     container_name: breco_nginx
     ports:
       - "8081:80"    # Expose Nginx on host port 8081 instead of default 80    

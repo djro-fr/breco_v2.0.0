@@ -42,13 +42,13 @@ class LocationsSeed extends BaseSeed
             return;
         }
 
-        fgetcsv($file); // Skip header
+        fgetcsv($file, 0, ',', '"', '\\'); // Skip header
 
         $data = [];
         $count = 0;
         $errors = 0;
 
-        while (($row = fgetcsv($file)) !== false) {
+        while (($row = fgetcsv($file, 0, ',', '"', '\\')) !== false) {
             $townName = $row[4];
 
             if (!isset($towns[$townName])) {

@@ -24,7 +24,7 @@ class LoginAttempt extends Entity
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = [
+    protected array $accessible = [
         'email' => true,
         'ip_address' => true,
         'attempted_at' => true,

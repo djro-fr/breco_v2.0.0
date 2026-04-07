@@ -32,7 +32,7 @@ class Booking extends Entity
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = [
+    protected array $accessible = [
         'trip_id' => true,
         'user_id' => true,
         'trip_request_id' => true,

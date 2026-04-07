@@ -29,7 +29,7 @@ class Driver extends Entity
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = [
+    protected array $accessible = [
         'user_id' => true,
         'car_model' => true,
         'car_color' => true,

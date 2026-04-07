@@ -31,7 +31,7 @@ class Location extends Entity
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = [
+    protected array $accessible = [
         'town_id' => true,
         'name' => true,
         'address' => true,

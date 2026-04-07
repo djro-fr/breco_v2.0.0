@@ -33,7 +33,7 @@ class TripRequest extends Entity
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = [
+    protected array $accessible = [
         'user_id' => true,
         'departure_location_id' => true,
         'arrival_location_id' => true,

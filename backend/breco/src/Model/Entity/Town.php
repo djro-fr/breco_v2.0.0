@@ -25,7 +25,7 @@ class Town extends Entity
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = [
+    protected array $accessible = [
         'name' => true,
         'postal_code' => true,
         'insee_code' => true,

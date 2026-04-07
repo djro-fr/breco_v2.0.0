@@ -211,7 +211,7 @@ breco_v2_0_0/
 ├── Dockerfile.nginx
 ├── jenkins/
 │   ├── Dockerfile-jenkins
-│   └── JENKINS.md
+│   └── jenkins.md
 ├── docker-compose.yml
 ├── Jenkinsfile
 └── docs/
@@ -342,7 +342,7 @@ Checkout → Lint → Tests (Unit, Integration, UI, PHPUnit)
 → Swagger Bake → Build → Deploy → Verify
 → OWASP ZAP Security Scan → JMeter Performance → Cleanup Docker
 
-For Jenkins update procedure, see [jenkins/JENKINS.md](../jenkins/JENKINS.md).
+For Jenkins update procedure, see [jenkins/jenkins.md](../jenkins/jenkins.md).
 
 ---
 
@@ -546,7 +546,7 @@ docker compose up --build -d
 
 - [Architecture](architecture.md)
 - [API](api.md)
-- [Jenkins](../jenkins/JENKINS.md)
+- [Jenkins](../jenkins/jenkins.md)
 
 ---
 

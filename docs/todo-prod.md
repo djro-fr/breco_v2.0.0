@@ -177,7 +177,7 @@
 - [ ] Deployment guide
 - [ ] Rollback procedures
 - [ ] Incident runbook
-- [x] Monitoring documentation (MONITORING.md)
+- [x] Monitoring documentation (monitoring.md)
 - [x] Architecture diagram
 - [x] API documentation
 - [x] Endpoints documentation

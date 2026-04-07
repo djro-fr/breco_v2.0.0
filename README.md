@@ -291,7 +291,7 @@ vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --d
 | Mailhog | http://37.59.101.232:8025 |
 | Swagger UI | http://37.59.101.232:8081/swagger |
 | SonarQube | http://37.59.101.232:9000 |
-| Grafana | SSH tunnel only (port 3002) - see [MONITORING.md](monitoring/MONITORING.md) |
+| Grafana | SSH tunnel only (port 3002) - see [monitoring.md](monitoring/monitoring.md) |
 
 **SSH Access**: `ssh ubuntu@37.59.101.232 -p NUMERO_DE_PORT`
 

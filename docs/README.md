@@ -54,9 +54,14 @@ docs/
     └── breco - Test cases.xlsx
 jenkins/
 ├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
-└── JENKINS.md             # Jenkins update procedure
+└── jenkins.md             # Jenkins update procedure
 monitoring/
-└── MONITORING.md          # Prometheus + Grafana monitoring setup
+└── monitoring.md          # Prometheus + Grafana monitoring setup
+...
+frontend/
+└── README.md                  # Frontend setup and development guide
+backend/
+└── README.md                  # Backend setup and API reference
 ```
 
 ---
@@ -89,7 +94,7 @@ monitoring/
 | | SonarQube | Jenkins | Grafana |
 | --- | --- | --- | --- |
 | **Local** | http://localhost:9000 | - | - |
-| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel — see [MONITORING.md](../monitoring/MONITORING.md) |
+| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel — see [monitoring.md](../monitoring/monitoring.md) |
 
 ---
 

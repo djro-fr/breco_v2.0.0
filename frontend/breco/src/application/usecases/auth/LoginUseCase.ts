@@ -1,4 +1,4 @@
-// frontend/breco/src/domain/usecases/auth/LoginUseCase.ts
+// frontend\breco\src\application\usecases\auth\LoginUseCase.ts
 import type { IAuthRepository, LoginInput, AuthOutput } from '@/domain/repositories/IAuthRepository'
 import { LoginInputSchema } from '@/domain/repositories/IAuthRepository'
 import { AppException, ValidationException } from '@/domain/exceptions/AppException'

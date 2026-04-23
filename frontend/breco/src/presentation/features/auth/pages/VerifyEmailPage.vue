@@ -29,7 +29,6 @@
       })
 
       const data = await response.json()
-      console.log('status:', response.status, 'data:', data)
 
       if (response.ok) {
         success.value = true

@@ -279,6 +279,7 @@ pipeline {
                     docker build \
                       --no-cache \
                       --build-arg BUILD_NUMBER=${BUILD_NUMBER} \
+                      --build-arg VITE_API_URL=${VITE_API_URL} \
                       -t breco_v2_0_0_frontend:${BUILD_NUMBER} \
                       -t breco_v2_0_0_frontend:latest \
                       -f frontend/breco/Dockerfile-frontend \

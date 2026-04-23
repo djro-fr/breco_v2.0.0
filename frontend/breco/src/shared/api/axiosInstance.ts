@@ -4,17 +4,17 @@ import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
 const getApiUrl = () => {
-  const hostname = window.location.hostname
+  const hostname = globalThis.location.hostname
   const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
 
   if (isLocalhost) {
-    const port = window.location.port === '5173' ? '8081' : '8081'
+    const port = globalThis.location.port === '5173' ? '8081' : globalThis.location.port
     return `http://localhost:${port}/api`
   }
   return `http://${hostname}:8081/api`
 }
 const apiUrl = getApiUrl()
-console.log('✅ API URL:', apiUrl)
+//console.log('✅ API URL:', apiUrl)
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: apiUrl,
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && localStorage.getItem('token')) {
       // Token expired, disconnect
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      globalThis.location.href = '/login'
     }
     return Promise.reject(error)
   },

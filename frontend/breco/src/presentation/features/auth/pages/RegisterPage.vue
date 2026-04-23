@@ -308,6 +308,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
           <button
             v-if="password.valueOf().length > 0"
             type="button"
+            tabindex="-1"
             class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
             @click="togglePasswordVisibility"
             aria-label="Afficher/masquer le mot de passe"
@@ -332,6 +333,7 @@ const stepLabels = ['Contact', 'Identité', 'Véhicule', 'Confirmation', 'Email'
           <button
             v-if="passwordConfirm.valueOf().length > 0"
             type="button"
+            tabindex="-1"
             class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
             @click="togglePasswordConfirmVisibility"
             aria-label="Afficher/masquer la confirmation du mot de passe"

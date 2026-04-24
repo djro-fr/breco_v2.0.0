@@ -18,7 +18,7 @@ Welcome to the demo version of Breco, the carpooling application for Brittany.
 
 - Vue.js 3 + TypeScript
 - Tailwind CSS v4
-- Vite + Bun
+- Vite + Bun (dev) / Nginx (prod)
 
 ### Backend
 
@@ -94,7 +94,7 @@ backend/
 | | SonarQube | Jenkins | Grafana |
 | --- | --- | --- | --- |
 | **Local** | http://localhost:9000 | - | - |
-| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel — see [monitoring.md](../monitoring/monitoring.md) |
+| **VPS** | http://37.59.101.232:9000 | http://37.59.101.232:8080 | SSH tunnel: see [monitoring.md](../monitoring/monitoring.md) |
 
 ---
 
@@ -121,7 +121,7 @@ docker compose up --build -d
 
 #### "CORS policy" error
 
-Check nginx configuration in `nginx/default.conf` — allowed origins must include your frontend URL.
+Check nginx configuration in `nginx/default.conf`: allowed origins must include your frontend URL.
 
 #### Empty database after restart
 
@@ -175,11 +175,13 @@ fix/*        # Bug fixes
 ## Project Metrics
 
 - **Tests**: Unit, Integration, UI, E2E, PHPUnit
-- **CI/CD**: Jenkins pipeline (Lint → Tests → SonarQube → E2E → Build → Deploy → ZAP → JMeter → Cleanup Docker)
+- **CI/CD**: Jenkins pipeline (Checkout → Lint → Tests (parallel: Unit, Integration, UI, PHP Unit)
+→ SonarQube → Seed Test Data → E2E → Cleanup Test Data → Copy Test Results → SwaggerBake → Build → Deploy 
+→ Verify Deployment Version → Verify (health check) → OWASP ZAP → Seed JMeter User → JMeter → Cleanup Docker)
 - **Deployment**: Automatic to VPS on every push
 - **Security**: OWASP ZAP baseline scan after each deployment
 - **Security hardening**: SSH key auth only, Fail2ban IPS, custom SSH port
 
 ---
 
-**Last updated**: April 3, 2026
+**Last updated**: April 24, 2026

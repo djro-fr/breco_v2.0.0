@@ -63,7 +63,7 @@ USER jenkins
 RUN jenkins-plugin-cli --plugins ...
 ```
 
-Installs **Jenkins plugins** at image build time rather than at first startup — guarantees a reproducible image.
+Installs **Jenkins plugins** at image build time rather than at first startup, guarantees a reproducible image.
 
 ```dockerfile
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false \
@@ -163,7 +163,7 @@ In **Credentials → Global → Add Credentials**, recreate the following:
 In **Manage Jenkins → System → SonarQube servers**:
 
 - Name: `SonarQube`
-- URL: `http://172.18.0.5:9000`
+- URL: `http://sonarqube:9000` *(IP resolved dynamically at runtime via `docker inspect`)*
 - Token: select `sonarqube-token`
 
 In **Manage Jenkins → Tools → SonarQube Scanner**:
@@ -251,4 +251,4 @@ Defined in the Dockerfile via `jenkins-plugin-cli`:
 
 ---
 
-**Last updated**: April 3, 2026
+**Last updated**: April 24, 2026

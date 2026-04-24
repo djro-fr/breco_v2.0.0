@@ -16,7 +16,7 @@
 
 ### HTTPS & SSL
 
-- [ ] Buy a domain name
+- [ ] Buy a domain name on OVH (e.g., `breco.fr`)
 - [ ] Install Let's Encrypt (certbot)
 - [ ] Force HTTPS (HTTP → HTTPS redirect)
 - [ ] Verify SSL (A+ on SSL Labs)
@@ -56,28 +56,21 @@
 
 ### SMTP Service
 
-- [ ] **Disable Mailhog on VPS**
-- [ ] Choose a service:
-  - SendGrid (free 100/day)
-  - AWS SES (pay-as-you-go)
-  - Mailgun (free 5000/month)
-  - Brevo (free 300/day)
+- [ ] **Disable Mailhog on VPS** ⚠️ Required before public launch
+- [ ] Configure OVH SMTP (mail.ovh.net)
 - [ ] Configure credentials in `.env`
 - [ ] Test email sending
-- [ ] Configure professional templates
 
 ### Email DNS
 
-- [ ] Configure SPF record
-- [ ] Configure DKIM
-- [ ] Configure DMARC
-- [ ] Verify deliverability (mail-tester.com)
+- [ ] Configure SPF record (Sender Policy Framework)
+- [ ] Configure DKIM (DomainKeys Identified Mail)
+- [ ] Configure DMARC (Domain-based Message Authentication)
 
 ---
 
 ## Domain & DNS
 
-- [ ] Buy domain name (e.g., `breco.fr`)
 - [ ] Configure DNS:
 
   ```text
@@ -97,7 +90,7 @@
 
 - [ ] Configure daily automatic backups
 - [ ] Test backup restoration
-- [ ] Store backups off-VPS (S3, Cloud)
+- [ ] Store backups off-VPS (OVH Object Storage)
 - [ ] Retention: 7 days + 4 weeks + 12 months
 
 ### Optimization
@@ -105,90 +98,77 @@
 - [ ] Create necessary indexes
 - [ ] Analyze slow queries
 - [ ] Configure MySQL log rotation
+- [ ] Performance tuning (MySQL, Nginx, Docker), run pipeline to detect regressions
 
 ---
 
 ## Monitoring
 
-### Alerts
-
 - [x] Configure monitoring (Prometheus/Grafana)
 - [x] Alerts: CPU > 80%, RAM > 90%, Disk > 85%
-- [ ] Uptime monitoring (UptimeRobot, Pingdom)
-- [x] Notifications (Email OVH)
-
-### Logs
-
+- [x] Notifications (OVH SMTP)
+- [ ] Uptime monitoring (UptimeRobot) ⚠️ Required before public launch
 - [ ] Nginx log rotation
 - [ ] Application log rotation
-- [ ] Centralized logs (optional)
 - [ ] NEVER log passwords/tokens
 
 ---
 
 ## Performance
 
-### Cache
-
-- [ ] Implement Redis/Memcached
-- [ ] Cache frequent database queries
-- [ ] HTTP cache nginx
-- [ ] CDN for static assets
-
-### Frontend
-
-- [ ] Minify JS/CSS
-- [ ] Compress images (WebP)
-- [ ] Lazy loading
-- [ ] Code splitting
-
-### Backend
-
 - [ ] Enable PHP OPcache
 - [ ] Optimize N+1 queries
-- [ ] API pagination
 - [ ] Nginx gzip compression
+- [ ] Implement Redis/Memcached
+- [ ] Cache frequent database queries
 
 ---
 
 ## Tests
 
-- [ ] Complete E2E tests (Selenium)
-- [ ] Load tests (goal: 1000 simultaneous users)
 - [x] OWASP ZAP baseline scan - integrated in Jenkins pipeline (60 PASS, 7 WARN, 0 FAIL)
+- [ ] Complete E2E tests (Selenium)
+- [ ] Extend test plan to Stories 3–10 (controllers, repositories, exceptions)
+- [ ] UAT sessions with varied user profiles
+- [ ] Load tests (goal: 1000 simultaneous users)
 - [ ] Backend coverage > 80%
+
+---
+
+## Migration
+
+- [ ] Migrate to Bun (blocked: Zod v3 incompatibility)
 
 ---
 
 ## Legal (GDPR)
 
 - [ ] Privacy policy
-- [ ] Terms of service (ToS)
 - [ ] Legal notice
 - [ ] Cookie consent banner
+- [ ] Explicit consent at registration
 - [ ] Right to be forgotten (account deletion)
+- [ ] Right of access and rectification
 - [ ] User data export
+- [ ] CNIL compliance
 
 ---
 
 ## Documentation
 
-- [ ] User documentation
-- [ ] Deployment guide
-- [ ] Rollback procedures
-- [ ] Incident runbook
 - [x] Monitoring documentation (monitoring.md)
 - [x] Architecture diagram
 - [x] API documentation
 - [x] Endpoints documentation
 - [x] Getting started guide
+- [ ] Deployment guide
+- [ ] Rollback procedures
 
 ---
 
 ## Deployment
 
 - [ ] Zero-downtime deployment
-- [ ] Blue/Green deployment (optional)
 - [ ] Automatic rollback on error
 - [ ] Health checks before routing traffic
 
@@ -201,12 +181,14 @@
 - [ ] Security audit validated (ZAP 0 FAIL)
 - [ ] Backup tested and functional
 - [ ] Monitoring operational
+- [ ] Uptime monitoring active (UptimeRobot)
+- [ ] MailHog replaced by OVH SMTP
+- [ ] HTTPS active
+- [ ] GDPR/CNIL compliance validated
 - [ ] Complete documentation
-- [ ] Team trained on procedures
-- [ ] Communication plan launched
 
 **NEVER launch in production until all CRITICAL points are validated!**
 
 ---
 
-**Last updated**: April 2, 2026
+**Last updated**: April 24, 2026

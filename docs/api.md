@@ -9,7 +9,7 @@ REST API documentation for the Breco v2.0.0 carpooling application.
 **The complete, up-to-date API documentation is available via Swagger UI:**
 
 - **Local**: http://localhost:8081/swagger
-- **Production**: http://37.59.101.232:8081/swagger
+- **Staging (VPS OVH)**: http://37.59.101.232:8081/swagger
 
 > The `swagger.json` file is automatically regenerated at each Jenkins build
   via `bin/cake swagger bake`, ensuring the documentation stays in sync with the code.
@@ -34,8 +34,8 @@ Content-Type: application/json
 | Environment | URL |
 | --- | --- |
 | Local Development | `http://localhost:8081/api` |
-| VPS Production | `http://37.59.101.232:8081/api` |
+| VPS OVH (staging) | `http://37.59.101.232:8081/api` |
 
 ---
 
-**Last updated**: March 25, 2026
+**Last updated**: April 25, 2026

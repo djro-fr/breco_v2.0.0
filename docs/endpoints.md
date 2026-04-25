@@ -24,7 +24,7 @@
 - On **Windows**: Docker runs via WSL2, ports accessible on `localhost`
 - On **Ubuntu**: Native Docker, ports accessible on `localhost` or `127.0.0.1`
 
-### Production Environment (Ubuntu VPS)
+### Staging Environment (VPS OVH - Ubuntu)
 
 | Service | Port | URL | Description |
 | --- | --- | --- | --- |
@@ -48,7 +48,7 @@
 
 ### Mailhog in Production
 
-**WARNING**: Mailhog is currently active in production on the VPS.
+**WARNING**: Mailhog is currently active on the VPS OVH (staging)
 
 **Mailhog is a development tool only** and should **NOT** be used in real production.
 
@@ -86,4 +86,4 @@ Prometheus scrapes metrics every 15s from nginx-exporter and cAdvisor.
 
 ---
 
-**Last updated**: April 2, 2026
+**Last updated**: April 25, 2026

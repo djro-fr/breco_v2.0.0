@@ -18,7 +18,7 @@ Welcome to the demo version of Breco, the carpooling application for Brittany.
 
 - Vue.js 3 + TypeScript
 - Tailwind CSS v4
-- Vite + Bun (dev) / Nginx (prod)
+- Vite + Bun (dev) / Nginx (staging/production)
 
 ### Backend
 
@@ -152,7 +152,7 @@ chore:    maintenance tasks
 ### Branches
 
 ```text
-main         # Production
+main         # Stable / staging (production branch to be created at launch)
 develop      # Development
 feature/*    # New features
 fix/*        # Bug fixes
@@ -168,7 +168,7 @@ fix/*        # Bug fixes
 4. **Test**: Run tests (unit, integration, E2E)
 5. **Commit**: Follow commit conventions
 6. **Push**: Automatic Jenkins build triggered via GitHub webhook
-7. **Deploy**: Automatic deployment to VPS if tests pass
+7. **Deploy**: Automatic deployment to VPS OVH (staging) if tests pass
 
 ---
 
@@ -176,12 +176,12 @@ fix/*        # Bug fixes
 
 - **Tests**: Unit, Integration, UI, E2E, PHPUnit
 - **CI/CD**: Jenkins pipeline (Checkout → Lint → Tests (parallel: Unit, Integration, UI, PHP Unit)
-→ SonarQube → Seed Test Data → E2E → Cleanup Test Data → Copy Test Results → SwaggerBake → Build → Deploy 
+→ SonarQube → Seed Test Data → E2E → Cleanup Test Data → Copy Test Results → SwaggerBake → Build → Deploy
 → Verify Deployment Version → Verify (health check) → OWASP ZAP → Seed JMeter User → JMeter → Cleanup Docker)
-- **Deployment**: Automatic to VPS on every push
+- **Deployment**: Automatic to VPS OVH (staging) on every push
 - **Security**: OWASP ZAP baseline scan after each deployment
 - **Security hardening**: SSH key auth only, Fail2ban IPS, custom SSH port
 
 ---
 
-**Last updated**: April 24, 2026
+**Last updated**: April 25, 2026

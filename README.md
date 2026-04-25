@@ -69,7 +69,7 @@ bun run dev
 
 Frontend available at: http://localhost:5173 (Vite dev server)
 
-### Local production mode (testing)
+### Local staging mode (testing)
 
 ```bash
 docker compose up --build -d
@@ -403,7 +403,7 @@ Immediate priorities:
 ### Branches
 
 ```text
-main         # Production
+main         # Stable / staging (production branch to be created at launch)
 develop      # Development
 feature/*    # New features
 fix/*        # Bug fixes
@@ -434,4 +434,4 @@ chore:    maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: April 3, 2026
+- **Last updated**: April 25, 2026

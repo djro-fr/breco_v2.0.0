@@ -21,7 +21,7 @@ npm run dev
 
 Frontend will be available at: http://localhost:5173
 
-### Build for Production
+### Build for Staging/Production
 
 ```bash
 npm run build
@@ -86,8 +86,8 @@ Recommended:
 | Command | Description |
 | ------- | ----------- |
 | `npm run dev` | Start dev server (hot reload) |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
+| `npm run build` | Build for Staging/Production |
+| `npm run preview` | Preview Staging/Production build |
 | `npm run test:unit` | Run unit tests |
 | `npm run lint` | Lint code |
 | `npm run format` | Format code with Prettier |
@@ -95,3 +95,7 @@ Recommended:
 ---
 
 **Part of [Breco v2.0.0](../../README.md)**
+
+---
+
+**Last updated**: April 25, 2026

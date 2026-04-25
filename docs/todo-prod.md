@@ -137,7 +137,7 @@
 
 ## Migration
 
-- [ ] Migrate to Bun (blocked: Zod v3 incompatibility)
+- [ ] Migrate to Bun (blocked: Vitest/Zod v3 incompatibility)
 
 ---
 
@@ -168,15 +168,32 @@
 
 ## Deployment
 
+### Infrastructure
+
+- [ ] Set up dedicated production VPS (replicate staging infrastructure via Docker)
+- [ ] Add production environment in Jenkins pipeline
+      (deploy to staging/VPS OVH, run E2E tests,
+      then deploy to production if green)
 - [ ] Zero-downtime deployment
 - [ ] Automatic rollback on error
 - [ ] Health checks before routing traffic
+
+### Release Management
+
+- [ ] Semantic versioning (ex: 1.2.0)
+- [ ] Automatic changelog generation
+      (from Git commits, using Conventional Commits)
+
+### Mobile
+
+- [ ] Publish to Android Play Store (alpha version via Capacitor)
 
 ---
 
 ## Final Checklist Before Launch
 
 - [ ] All points above validated
+- [ ] Production VPS operational and infrastructure replicated from staging
 - [ ] Load tests successful
 - [ ] Security audit validated (ZAP 0 FAIL)
 - [ ] Backup tested and functional
@@ -185,10 +202,11 @@
 - [ ] MailHog replaced by OVH SMTP
 - [ ] HTTPS active
 - [ ] GDPR/CNIL compliance validated
+- [ ] Android Play Store alpha published and validated
 - [ ] Complete documentation
 
 **NEVER launch in production until all CRITICAL points are validated!**
 
 ---
 
-**Last updated**: April 24, 2026
+**Last updated**: April 25, 2026

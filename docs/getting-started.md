@@ -142,7 +142,7 @@ Frontend will be available at: http://localhost:5173 (Vite dev server)
 
 **Why 5173?** This is Vite's development server port with hot reload.
 
-**In production**: Frontend is on port 3001.
+**In staging/production**: Frontend is on port 3001.
 
 ---
 
@@ -480,7 +480,7 @@ fgetcsv($file, 0, ',', '"', '\\');
 
 | Service | Local Port | Description |
 | --- | --- | --- |
-| Frontend | 3001 | Vue.js (production build) |
+| Frontend | 3001 | Vue.js (staging/production build) |
 | Frontend Dev | 5173 | Vite dev server (hot reload) |
 | Backend | 8765 | API PHP-FPM (direct, bypass nginx) |
 | Nginx | 8081 | Reverse proxy, use this for API calls |
@@ -550,4 +550,4 @@ docker compose up --build -d
 
 ---
 
-**Last updated**: April 3, 2026
+**Last updated**: April 25, 2026

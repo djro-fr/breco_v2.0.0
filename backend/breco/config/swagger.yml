@@ -16,7 +16,7 @@ servers:
   - url: http://localhost:8081
     description: Local development - Nginx reverse proxy
   - url: http://37.59.101.232:8081
-    description: VPS production - Nginx reverse proxy
+    description: VPS OVH (staging) - Nginx reverse proxy
 
 tags:
   - name: Auth

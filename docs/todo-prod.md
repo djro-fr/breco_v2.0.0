@@ -175,8 +175,9 @@
       (deploy to staging/VPS OVH, run E2E tests,
       then deploy to production if green)
 - [ ] Zero-downtime deployment
-- [ ] Automatic rollback on error
 - [ ] Health checks before routing traffic
+- [ ] Add Docker healthchecks on critical containers (Nginx, PHP-FPM, MySQL)
+- [ ] Automate rollback in the Jenkins pipeline on healthcheck failure
 
 ### Release Management
 
@@ -209,4 +210,4 @@
 
 ---
 
-**Last updated**: April 25, 2026
+**Last updated**: April 27, 2026

@@ -11,6 +11,10 @@ use Firebase\JWT\Key;
  *
  * Methods to verify JWT tokens in CakePHP controllers.
  *
+ * @property \Cake\Http\ServerRequest $request
+ * @property \Cake\Http\Response $response
+ * @method \Cake\ORM\Table fetchTable(string $alias)
+ *
  */
 trait JwtAuthTrait
 {
@@ -27,6 +31,7 @@ trait JwtAuthTrait
      * Verify and decode the JWT token from the Authorization header
      *
      * @return object|null The decoded JWT payload or null if invalid
+     *
      */
     protected function verifyJwtToken()
     {

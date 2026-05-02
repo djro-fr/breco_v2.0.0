@@ -59,7 +59,7 @@ const completeTimeFormat = (value: string): string => {
   if (!value) return ''
 
   // Already correctly formatted
-  if (/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(value)) {
+  if (/^([0-1]\d|2[0-3]):[0-5]\d$/.test(value)) {
     return value
   }
 

@@ -88,74 +88,75 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div
-    class="flex self-center flex-col mx-auto px-4 pt-4 pb-7.5 w-full max-w-md bg-white rounded-md shadow-window"
-  >
-    <h1 class="pt-2 pb-6">Connexion</h1>
+    <h1 class="text-white">Covoiturez en Bretagne pour&nbsp;vos trajets quotidiens</h1>
+    <div
+      class="flex self-center flex-col mx-auto px-4 pt-4 pb-7.5 w-full max-w-md bg-white rounded-md shadow-window"
+    >
+      <h2 class="pt-2 pb-6">Connexion</h2>
 
-    <form @submit.prevent="handleLogin">
-      <div class="max-w-96 block mx-auto">
-        <FormInput
-          v-model="email"
-          type="email"
-          placeholder="E-mail"
-          label="E-mail"
-          aria-label="E-mail"
-          required
-          :hasError="Boolean(errors.email)"
-          @blur="handleBlur('email', email)"
-        />
-        <p v-if="errors.email" class="error-text mt-0 mb-4">{{ errors.email }}</p>
-      </div>
-
-      <div class="mb-2 max-w-96 block mx-auto relative">
-        <FormInput
-          v-model="password"
-          :type="passwordFieldType"
-          placeholder="Mot de passe"
-          label="Mot de passe"
-          aria-label="Mot de passe"
-          required
-          :hasError="Boolean(errors.password)"
-          @blur="handleBlur('password', password)"
-          class="h-full"
+      <form @submit.prevent="handleLogin">
+        <div class="max-w-96 block mx-auto">
+          <FormInput
+            v-model="email"
+            type="email"
+            placeholder="E-mail"
+            label="E-mail"
+            aria-label="E-mail"
+            required
+            :hasError="Boolean(errors.email)"
+            @blur="handleBlur('email', email)"
           />
-          <button
-            v-if="password.valueOf().length > 0"
-            type="button"
-            class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
-            @click="togglePasswordVisibility"
-            aria-label="Afficher/masquer la confirmation du mot de passe"
-          >
-            <i v-if="passwordFieldType === 'password'" class="mdi mdi-eye text-xl"></i>
-            <i v-else class="mdi mdi-eye-off text-xl"></i>
+          <p v-if="errors.email" class="error-text mt-0 mb-4">{{ errors.email }}</p>
+        </div>
+
+        <div class="mb-2 max-w-96 block mx-auto relative">
+          <FormInput
+            v-model="password"
+            :type="passwordFieldType"
+            placeholder="Mot de passe"
+            label="Mot de passe"
+            aria-label="Mot de passe"
+            required
+            :hasError="Boolean(errors.password)"
+            @blur="handleBlur('password', password)"
+            class="h-full"
+            />
+            <button
+              v-if="password.valueOf().length > 0"
+              type="button"
+              class="absolute right-1 top-10 transform -translate-y-1/2 text-primary-dark focus:outline-none text-xl"
+              @click="togglePasswordVisibility"
+              aria-label="Afficher/masquer la confirmation du mot de passe"
+            >
+              <i v-if="passwordFieldType === 'password'" class="mdi mdi-eye text-xl"></i>
+              <i v-else class="mdi mdi-eye-off text-xl"></i>
+            </button>
+          <p v-if="errors.password" class="error-text mt-0 mb-4">{{ errors.password }}</p>
+        </div>
+
+        <div class="text-center mb-4">
+          <a href="#">Mot de passe oublié ?</a>
+        </div>
+
+        <!-- Global error (server) -->
+        <p v-if="globalError" class="error-message mt-0 mb-4">{{ globalError }}</p>
+
+
+
+        <div class="text-center mt-4 mb-0">
+          <p><em>Les champs avec <span class="text-error"> *</span> sont obligatoires</em></p>
+        </div>
+
+        <div class="p-0 mx-auto my-6 text-center">
+          <button type="submit" :disabled="isLoading" class="btn-action">
+            {{ isLoading ? 'Connexion...' : 'Se connecter' }}
           </button>
-        <p v-if="errors.password" class="error-text mt-0 mb-4">{{ errors.password }}</p>
+        </div>
+      </form>
+
+      <p class="p-0 mx-auto my-0 text-center text-lg">Pas encore inscrit ?</p>
+      <div class="p-0 mx-auto my-0 text-center">
+        <button @click="$router.push('/register')" class="btn-secondary">S'inscrire</button>
       </div>
-
-      <div class="text-center mb-4">
-        <a href="#">Mot de passe oublié ?</a>
-      </div>
-
-      <!-- Global error (server) -->
-      <p v-if="globalError" class="error-message mt-0 mb-4">{{ globalError }}</p>
-
-
-
-      <div class="text-center mt-4 mb-0">
-        <p><em>Les champs avec <span class="text-error"> *</span> sont obligatoires</em></p>
-      </div>
-
-      <div class="p-0 mx-auto my-6 text-center">
-        <button type="submit" :disabled="isLoading" class="btn-action">
-          {{ isLoading ? 'Connexion...' : 'Se connecter' }}
-        </button>
-      </div>
-    </form>
-
-    <p class="p-0 mx-auto my-0 text-center text-lg">Pas encore inscrit ?</p>
-    <div class="p-0 mx-auto my-0 text-center">
-      <button @click="$router.push('/register')" class="btn-secondary">S'inscrire</button>
     </div>
-  </div>
 </template>

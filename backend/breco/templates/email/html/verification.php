@@ -1,16 +1,17 @@
 <!-- backend\breco\templates\email\html\verification.php -->
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breco - vérifiez votre compte</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4;">
     <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
 
         <!-- Header -->
         <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #4F46E5;">
-            <h1 style="color: #4F46E5; margin: 0; font-size: 28px;">🚗 Breco</h1>
+            <h1 style="color: #4F46E5; margin: 0; font-size: 28px;">Breco</h1>
         </div>
 
         <!-- Content -->

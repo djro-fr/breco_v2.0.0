@@ -58,7 +58,7 @@ const handleLogout = async (): Promise<void> => {
       </nav>
     </header>
 
-    <main class="box-border relative flex min-[769px]:w-full max-[768px]:w-[calc(100% - 32px)] max-[768px]:mx-4 my-0 px-0 py-6 flex-1">
+    <main class="box-border relative flex flex-col justify-center min-[769px]:w-full max-[768px]:w-[calc(100% - 32px)] max-[768px]:mx-4 my-0 px-0 py-6 flex-1">
       <router-view />
     </main>
 

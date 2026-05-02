@@ -95,6 +95,16 @@ docker exec -it breco_backend /app/bin/cake migrations seed --seed TownsSeed
 docker exec -it breco_backend /app/bin/cake migrations seed --seed LocationsSeed
 ```
 
+### 5. Fix cache permissions (Linux / VPS only)
+
+After the first `docker compose up`, cache files in `/app/tmp/` may be owned by `root`
+instead of `www-data`, causing silent errors (HTML responses instead of JSON from the backend).
+
+```bash
+docker exec breco_backend chown -R www-data:www-data /app/tmp/
+docker exec breco_backend chmod -R 775 /app/tmp/
+```
+
 ---
 
 ## Test Installation
@@ -474,6 +484,19 @@ explicitly provided in `TownsSeed.php` and `LocationsSeed.php`:
 fgetcsv($file, 0, ',', '"', '\\');
 ```
 
+### Backend returns HTML instead of JSON (Linux / VPS)
+
+**Symptoms:** API returns an HTML CakePHP error page instead of JSON, or E2E tests fail on form submission.
+
+**Cause:** Cache files in `/app/tmp/cache/` are owned by `root` instead of `www-data` after the first `docker compose up`.
+
+**Fix:**
+
+```bash
+docker exec breco_backend chown -R www-data:www-data /app/tmp/
+docker exec breco_backend chmod -R 775 /app/tmp/
+```
+
 ---
 
 ## Used Ports
@@ -550,4 +573,4 @@ docker compose up --build -d
 
 ---
 
-**Last updated**: April 25, 2026
+**Last updated**: May 2, 2026

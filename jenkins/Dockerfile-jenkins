@@ -1,5 +1,5 @@
 # jenkins/Dockerfile - for VPS
-FROM jenkins/jenkins:2.541.3-lts-jdk21
+FROM jenkins/jenkins:2.555.1-lts-jdk21
 USER root
 # Install Docker CLI
 RUN apt-get update && \

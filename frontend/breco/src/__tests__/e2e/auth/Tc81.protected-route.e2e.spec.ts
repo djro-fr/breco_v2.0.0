@@ -50,6 +50,8 @@ describe('TC-81 | E2E | Direct navigation to protected route without JWT token',
 
     // Assert login page is displayed
     const h1 = await driver.wait(until.elementLocated(By.css('h1')), TIMEOUT)
-    expect(await h1.getText()).toContain('Connexion')
+    expect(await h1.getText()).toContain('Covoiturez en Bretagne pour vos trajets quotidiens')
+    const h2 = await driver.wait(until.elementLocated(By.css('h2')), TIMEOUT)
+    expect(await h2.getText()).toContain('Connexion')
   }, TIMEOUT * 2)
 })

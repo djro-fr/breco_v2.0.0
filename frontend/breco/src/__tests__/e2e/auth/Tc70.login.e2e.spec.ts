@@ -92,7 +92,7 @@ describe('TC-70 | E2E | Login flow + redirection', () => {
 
     // Assert page title
     const h1 = await driver.wait(until.elementLocated(By.css('h1')), TIMEOUT)
-    expect(await h1.getText()).toContain('Connexion')
+    expect(await h1.getText()).toContain('Covoiturez en Bretagne pour vos trajets quotidiens')
 
     // Email
     await waitAndType(driver, By.css('input[type="email"]'), TEST_EMAIL)

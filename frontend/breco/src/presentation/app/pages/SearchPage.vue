@@ -143,124 +143,121 @@ const handleSubmit = (event: Event) => {
 </script>
 
 <template>
-  <div class="background"></div>
-  <div class="absolute top-0 block h-full w-full overflow-hidden">
-    <div class="flex flex-col h-[25%] items-center justify-center">
+  <div class="flex flex-col pt-5 pb-9 items-center justify-center flex-1">
       <h1 class="text-5xl pb-0 text-white leading-[1.3]">Breco</h1>
       <h2 class="m-0 p-0 text-2xl text-white leading-5 text-center font-normal">
         Covoiturage en&nbsp;Bretagne
       </h2>
-    </div>
-    <div
-      id="searchWindow"
-      class="absolute flex flex-col justify-center h-[75%] w-full bottom-0 bg-white rounded-t-md mx-auto"
-    >
-      <h3 class="pt-0 mb-5 mx-0 text-primary-dark text-3xl text-center font-medium ">Vous recherchez</h3>
-      <form @submit="handleSubmit" class="pt-0 px-5 py-3 pb-3 max-w-3xl mx-auto">
-        <div id="trajet" class="relative my-0 mx-auto p-0 w-full">
-          <div id="Depart" class="flex flex-row w-full pb-7">
-            <div class="relative w-full pr-[5vw] sm:pr-6 flex flex-col">
-              <label for="villeDepart" class="text-primary-dark text-md font-semibold"
-                >Depuis</label
-              >
-              <TownAutocomplete
-                id="villeDepart"
-                name="villeDepart"
-                v-model="villeDepart"
-                placeholder="Rechercher une ville..."
-                @select="handleDepartSelect"
-              />
-            </div>
-            <div class="relative w-20 flex flex-col">
-              <label for="heureDepart" class="text-primary-dark text-md font-semibold">À</label>
-              <input
-                type="text"
-                v-model="heureDepart"
-                id="heureDepart"
-                name="heureDepart"
-                autocomplete="off"
-                placeholder="00:00"
-                :class="{
-                  'focus:border-action': !errors.heureDepart,
-                  'border-error': errors.heureDepart
-                }"
-                @input="handleTimeInput('heureDepart', $event)"
-                @blur="handleBlur('heureDepart')"
-              />
-              <span v-if="errors.heureDepart" class="text-error text-xs mt-1">
-                {{ errors.heureDepart }}
-              </span>
-            </div>
+  </div>
+  <div
+    id="searchWindow"
+    class="flex flex-col justify-center w-full bottom-0 bg-white rounded-t-md mx-auto"
+  >
+    <h3 class="pt-5 mb-5 mx-0 text-primary-dark text-3xl text-center font-medium ">Vous recherchez</h3>
+    <form @submit="handleSubmit" class="pt-0 px-5 py-3 pb-3 max-w-3xl mx-auto">
+      <div id="trajet" class="relative my-0 mx-auto p-0 w-full">
+        <div id="Depart" class="flex flex-row w-full pb-7">
+          <div class="relative w-full pr-[5vw] sm:pr-6 flex flex-col">
+            <label for="villeDepart" class="text-primary-dark text-md font-semibold"
+              >Depuis</label
+            >
+            <TownAutocomplete
+              id="villeDepart"
+              name="villeDepart"
+              v-model="villeDepart"
+              placeholder="Rechercher une ville..."
+              @select="handleDepartSelect"
+            />
           </div>
-          <div id="Arrivee" class="flex flex-row w-full mb-10">
-            <div class="relative w-full pr-[5vw] sm:pr-6 flex flex-col">
-              <label for="villeArrivee" class="text-primary-dark text-md font-semibold">Vers</label>
-              <TownAutocomplete
-                id="villeArrivee"
-                name="villeArrivee"
-                v-model="villeArrivee"
-                placeholder="Rechercher une ville..."
-                @select="handleArriveeSelect"
-              />
-            </div>
-            <div class="relative w-20 flex flex-col">
-              <label for="heureArrivee" class="text-primary-dark text-md font-semibold">À</label>
-              <input
-                type="text"
-                v-model="heureArrivee"
-                id="heureArrivee"
-                name="heureArrivee"
-                autocomplete="off"
-                placeholder="00:00"
-                :class="{
-                  'focus:border-action': !errors.heureArrivee,
-                  'border-error': errors.heureArrivee
-                }"
-                @input="handleTimeInput('heureArrivee', $event)"
-                @blur="handleBlur('heureArrivee')"
-              />
-              <span v-if="errors.heureArrivee" class="text-error text-xs mt-1">
-                {{ errors.heureArrivee }}
-              </span>
-            </div>
+          <div class="relative w-20 flex flex-col">
+            <label for="heureDepart" class="text-primary-dark text-md font-semibold">À</label>
+            <input
+              type="text"
+              v-model="heureDepart"
+              id="heureDepart"
+              name="heureDepart"
+              autocomplete="off"
+              placeholder="00:00"
+              :class="{
+                'focus:border-action': !errors.heureDepart,
+                'border-error': errors.heureDepart
+              }"
+              @input="handleTimeInput('heureDepart', $event)"
+              @blur="handleBlur('heureDepart')"
+            />
+            <span v-if="errors.heureDepart" class="text-error text-xs mt-1">
+              {{ errors.heureDepart }}
+            </span>
           </div>
         </div>
-        <div id="jours" class="mt-5 flex justify-center gap-1 flex-wrap">
-          <input type="checkbox" class="hidden" id="J1" name="J1" /><label
-            for="J1"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-l-4xl rounded-r-lg font-bold transition-transform duration-100 active:scale-90"
-            >Lu</label>
-          <input type="checkbox" class="hidden" id="J2" name="J2" /><label
-            for="J2"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
-            >Ma</label>
-          <input type="checkbox" class="hidden" id="J3" name="J3" /><label
-            for="J3"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20   rounded-lg font-bold transition-transform duration-100 active:scale-90"
-            >Me</label>
-          <input type="checkbox" class="hidden" id="J4" name="J4" /><label
-            for="J4"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
-            >Je</label>
-          <input type="checkbox" class="hidden" id="J5" name="J5" /><label
-            for="J5"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
-            >Ve</label>
-          <input type="checkbox" class="hidden" id="J6" name="J6" /><label
-            for="J6"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
-            >Sa</label>
-          <input type="checkbox" class="hidden" id="J7" name="J7" /><label
-            for="J7"
-            class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-l-lg rounded-4xl font-bold transition-transform duration-100 active:scale-90"
-            >Di</label>
+        <div id="Arrivee" class="flex flex-row w-full mb-10">
+          <div class="relative w-full pr-[5vw] sm:pr-6 flex flex-col">
+            <label for="villeArrivee" class="text-primary-dark text-md font-semibold">Vers</label>
+            <TownAutocomplete
+              id="villeArrivee"
+              name="villeArrivee"
+              v-model="villeArrivee"
+              placeholder="Rechercher une ville..."
+              @select="handleArriveeSelect"
+            />
+          </div>
+          <div class="relative w-20 flex flex-col">
+            <label for="heureArrivee" class="text-primary-dark text-md font-semibold">À</label>
+            <input
+              type="text"
+              v-model="heureArrivee"
+              id="heureArrivee"
+              name="heureArrivee"
+              autocomplete="off"
+              placeholder="00:00"
+              :class="{
+                'focus:border-action': !errors.heureArrivee,
+                'border-error': errors.heureArrivee
+              }"
+              @input="handleTimeInput('heureArrivee', $event)"
+              @blur="handleBlur('heureArrivee')"
+            />
+            <span v-if="errors.heureArrivee" class="text-error text-xs mt-1">
+              {{ errors.heureArrivee }}
+            </span>
+          </div>
         </div>
-        <div v-if="errors.form" class="text-error text-center mb-4">
-          {{ errors.form }}
-        </div>
-        <button type="submit" class="btn-action mt-12 mb-4">Rechercher</button>
-      </form>
-    </div>
+      </div>
+      <div id="jours" class="mt-5 flex justify-center gap-1 flex-wrap">
+        <input type="checkbox" class="hidden" id="J1" name="J1" /><label
+          for="J1"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-l-4xl rounded-r-lg font-bold transition-transform duration-100 active:scale-90"
+          >Lu</label>
+        <input type="checkbox" class="hidden" id="J2" name="J2" /><label
+          for="J2"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+          >Ma</label>
+        <input type="checkbox" class="hidden" id="J3" name="J3" /><label
+          for="J3"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20   rounded-lg font-bold transition-transform duration-100 active:scale-90"
+          >Me</label>
+        <input type="checkbox" class="hidden" id="J4" name="J4" /><label
+          for="J4"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+          >Je</label>
+        <input type="checkbox" class="hidden" id="J5" name="J5" /><label
+          for="J5"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+          >Ve</label>
+        <input type="checkbox" class="hidden" id="J6" name="J6" /><label
+          for="J6"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-lg font-bold transition-transform duration-100 active:scale-90"
+          >Sa</label>
+        <input type="checkbox" class="hidden" id="J7" name="J7" /><label
+          for="J7"
+          class="px-5 py-3 cursor-pointer text-primary-dark bg-primary-lightest20 rounded-l-lg rounded-4xl font-bold transition-transform duration-100 active:scale-90"
+          >Di</label>
+      </div>
+      <div v-if="errors.form" class="text-error text-center mb-4">
+        {{ errors.form }}
+      </div>
+      <button type="submit" class="btn-action mt-12 mb-4">Rechercher</button>
+    </form>
   </div>
 </template>
 

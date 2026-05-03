@@ -1,10 +1,12 @@
 <!-- frontend\breco\src\presentation\app\App.vue -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/presentation/features/auth/stores/authStore'
 
+const route = useRoute()
 const router = useRouter()
+
 const authStore = useAuthStore()
 const isMenuOpen = ref(false)
 
@@ -58,7 +60,9 @@ const handleLogout = async (): Promise<void> => {
       </nav>
     </header>
 
-    <main class="box-border relative flex flex-col justify-center min-[769px]:w-full max-[768px]:w-[calc(100% - 32px)] max-[768px]:mx-4 my-0 px-0 py-6 flex-1">
+    <main :class="[
+  'box-border relative flex flex-col min-[769px]:w-full max-[768px]:w-[calc(100% - 32px)] max-[768px]:mx-4 my-0 px-0 flex-1',
+  route.meta.fullHeight ? '' : 'justify-center py-6']">
       <router-view />
     </main>
 

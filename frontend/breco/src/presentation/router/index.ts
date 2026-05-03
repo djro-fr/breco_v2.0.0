@@ -22,7 +22,7 @@ const publicRoutes: RouteRecordRaw[] = [
       path: '/search',
       name: 'Search',
       component: () => import('@/presentation/app/pages/SearchPage.vue'),
-      meta: { requiresAuth: true, title: 'Rechercher un trajet' },
+      meta: { requiresAuth: true,  title: 'Rechercher un trajet', fullHeight: true },
   },
 ]
 

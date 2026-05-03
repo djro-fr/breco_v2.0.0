@@ -20,7 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const DEBOUNCE_DELAY_MS = 200
-const BLUR_DELAY_MS = 200
+const BLUR_DELAY_MS = 300
 
 const { towns, isLoading, searchTowns, clearSearch } = useTownSearch()
 
@@ -59,10 +59,15 @@ watch(inputValue, (newValue) => {
 
   // Debounced search
   clearTimeout(debounceTimeout)
+
+  // showResults anticipated
+  if (isSearchable.value) {
+    showResults.value = true
+  }
+
   debounceTimeout = setTimeout(async () => {
     if (isSearchable.value) {
       await searchTowns(newValue)
-      showResults.value = true
     } else {
       resetSearch()
     }
@@ -148,6 +153,8 @@ const handleKeydown = (event: KeyboardEvent) => {
       <li
         v-for="(town, index) in towns"
         :key="town.id"
+        @mousedown.prevent="selectTown(town)"
+        @touchstart.prevent="selectTown(town)"
         :class="[
           'px-4 py-2 cursor-pointer transition-colors',
           index === selectedIndex ? 'bg-primary-lightest40' : 'hover:bg-primary-lightest20'

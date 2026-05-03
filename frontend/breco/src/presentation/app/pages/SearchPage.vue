@@ -9,6 +9,8 @@ import type { Town } from '@/domain/entities/Town'
 
 type SearchFormField = 'heureDepart' | 'heureArrivee'
 
+// TODO: Handle forgotten e-mail link
+
 const villeDepart = ref('')
 const villeArrivee = ref('')
 const townDepartId = ref<number | null>(null)
@@ -95,6 +97,7 @@ const handleTimeInput = (field: SearchFormField, event: Event) => {
   } else {
     heureArrivee.value = formatted
   }
+  input.value = formatted
 }
 
 const handleBlur = (field: SearchFormField) => {
@@ -173,7 +176,7 @@ const handleSubmit = (event: Event) => {
             <label for="heureDepart" class="text-primary-dark text-md font-semibold">À</label>
             <input
               type="text"
-              v-model="heureDepart"
+              :value="heureDepart"
               id="heureDepart"
               name="heureDepart"
               autocomplete="off"
@@ -205,7 +208,7 @@ const handleSubmit = (event: Event) => {
             <label for="heureArrivee" class="text-primary-dark text-md font-semibold">À</label>
             <input
               type="text"
-              v-model="heureArrivee"
+              :value="heureArrivee"
               id="heureArrivee"
               name="heureArrivee"
               autocomplete="off"

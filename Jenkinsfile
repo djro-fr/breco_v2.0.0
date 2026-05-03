@@ -368,7 +368,7 @@ pipeline {
                 echo 'Deployment verification...'
                 sh '''
                     sleep 10
-                    curl -f http://37.59.101.232:8081/api/health || exit 1
+                    curl -f http://breco_nginx/api/health || exit 1
                     echo "✅ Health check OK !"
                 '''
             }

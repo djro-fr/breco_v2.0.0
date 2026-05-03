@@ -133,6 +133,23 @@ docker compose up --build -d
 # Then run migrations and seeds
 ```
 
+#### Lost Jenkins admin access after reinstall
+
+If Jenkins has no users after a reinstall (volume wiped), disable security temporarily:
+
+```bash
+ssh -p YOUR_SSH_PORT ubuntu@YOUR_VPS_IP "docker exec -u root breco-jenkins bash -c \"sed -i 's|<useSecurity>true</useSecurity>|<useSecurity>false</useSecurity>|' /var/jenkins_home/config.xml\""
+
+ssh -p YOUR_SSH_PORT ubuntu@YOUR_VPS_IP "docker restart breco-jenkins"
+```
+
+Then go to `http://YOUR_VPS_IP:8080/securityRealm/addUser` and create your admin account.
+
+Re-enable security in **Manage Jenkins → Security** and set:
+
+- **Security Realm**: Jenkins' own user database
+- **Authorization**: Logged-in users can do anything
+
 ---
 
 ## Code Conventions
@@ -184,4 +201,4 @@ fix/*        # Bug fixes
 
 ---
 
-**Last updated**: April 25, 2026
+**Last updated**: May 3, 2026

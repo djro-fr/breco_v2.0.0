@@ -151,7 +151,7 @@ const handleSubmit = (event: Event) => {
   </div>
   <div
     id="searchWindow"
-    class="flex flex-col justify-center w-full bottom-0 bg-white rounded-t-md mx-auto"
+    class="flex flex-col justify-center w-full bottom-0 bg-white rounded-t-md mx-auto pt-2"
   >
     <h3 class="pt-5 mb-5 mx-0 text-primary-dark text-3xl text-center font-medium ">Vous recherchez</h3>
     <form @submit="handleSubmit" class="pt-0 px-5 py-3 pb-3 max-w-3xl mx-auto">

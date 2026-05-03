@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useTownSearch } from '../composables/useTownSearch'
 import type { Town } from '@/domain/entities/Town'
 
@@ -48,31 +48,27 @@ const resetSearch = () => {
   clearSearch()
 }
 
-watch(inputValue, (newValue) => {
-  emit('update:modelValue', newValue)
+const handleInput = (event: Event) => {
+  const value = (event.target as HTMLInputElement).value
+  inputValue.value = value
+  emit('update:modelValue', value)
 
-  // Don't search if complete town
-  if (isCompleteTown.value) {
-    resetSearch()
-    return
-  }
+  if (isCompleteTown.value) { resetSearch(); return }
 
-  // Debounced search
   clearTimeout(debounceTimeout)
 
-  // showResults anticipated
   if (isSearchable.value) {
     showResults.value = true
   }
 
   debounceTimeout = setTimeout(async () => {
     if (isSearchable.value) {
-      await searchTowns(newValue)
+      await searchTowns(value)
     } else {
       resetSearch()
     }
   }, DEBOUNCE_DELAY_MS)
-})
+}
 
 const selectTown = (town: Town) => {
   clearTimeout(debounceTimeout)
@@ -132,11 +128,12 @@ const handleKeydown = (event: KeyboardEvent) => {
     <input
       :id="id"
       :name="name"
-      v-model="inputValue"
+      :value="inputValue"
       type="text"
       autocomplete="off"
       :placeholder="placeholder"
       class="focus:border-action"
+      @input="handleInput"
       @blur="handleBlur"
       @focus="handleFocus"
       @keydown="handleKeydown"

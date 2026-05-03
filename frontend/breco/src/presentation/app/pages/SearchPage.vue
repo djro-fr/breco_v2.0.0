@@ -59,9 +59,13 @@ const formatTimeInput = (value: string): string => {
 
   const hoursPart = limited.slice(0, 2)
   const minPart = limited.slice(2)
-  const clampedHours = Math.min(Number.parseInt(hoursPart), 23).toString().padStart(2, '0')
 
-  return `${clampedHours}:${minPart}`
+  if (Number.parseInt(hoursPart) > 23) {
+    return `${hoursPart[0]}:${hoursPart[1]}${minPart}`
+  }
+
+
+  return `${hoursPart}:${minPart}`
 }
 
 // Complete time with leading zero if needed (on blur)

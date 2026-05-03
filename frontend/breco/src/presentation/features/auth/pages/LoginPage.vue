@@ -88,7 +88,7 @@ const handleLogin = async () => {
 </script>
 
 <template>
-    <h1 class="text-white">Covoiturez en Bretagne pour&nbsp;vos trajets quotidiens</h1>
+    <h1 class="text-white h-20">Covoiturez en Bretagne pour&nbsp;vos trajets quotidiens</h1>
     <div
       class="flex self-center flex-col mx-auto px-4 pt-4 pb-7.5 w-full max-w-md bg-white rounded-md shadow-window"
     >

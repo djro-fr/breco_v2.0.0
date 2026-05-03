@@ -145,17 +145,17 @@ const handleSubmit = (event: Event) => {
 <template>
   <div class="background"></div>
   <div class="absolute top-0 block h-full w-full overflow-hidden">
-    <div class="flex flex-col h-[35%] items-center justify-center">
-      <h1 class="text-6xl pb-6 text-white leading-10">Breco</h1>
-      <h2 class="m-0 p-0 text-3xl text-white leading-5 text-center font-normal">
+    <div class="flex flex-col h-[25%] items-center justify-center">
+      <h1 class="text-5xl pb-0 text-white leading-[1.3]">Breco</h1>
+      <h2 class="m-0 p-0 text-2xl text-white leading-5 text-center font-normal">
         Covoiturage en&nbsp;Bretagne
       </h2>
     </div>
     <div
       id="searchWindow"
-      class="absolute flex flex-col justify-center h-[65%] w-full bottom-0 bg-white rounded-t-5xl mx-auto"
+      class="absolute flex flex-col justify-center h-[75%] w-full bottom-0 bg-white rounded-t-md mx-auto"
     >
-      <h3 class="pt-0 mb-4 mx-0 text-primary-dark text-3xl text-center font-medium">Vous recherchez</h3>
+      <h3 class="pt-0 mb-5 mx-0 text-primary-dark text-3xl text-center font-medium ">Vous recherchez</h3>
       <form @submit="handleSubmit" class="pt-0 px-5 py-3 pb-3 max-w-3xl mx-auto">
         <div id="trajet" class="relative my-0 mx-auto p-0 w-full">
           <div id="Depart" class="flex flex-row w-full pb-7">

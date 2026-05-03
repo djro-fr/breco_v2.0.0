@@ -53,7 +53,7 @@
   </script>
 
   <template>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div class="min-h-screen flex items-center justify-center px-4">
       <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <!-- Loading state -->
         <div v-if="loading" class="text-center">

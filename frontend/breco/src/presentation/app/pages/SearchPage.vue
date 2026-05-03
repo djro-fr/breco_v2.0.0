@@ -32,6 +32,13 @@ const handleArriveeSelect = (town: Town) => {
   console.log('Ville d\'arrivée sélectionnée:', town.name, town.id)
 }
 
+let isDeleting = false
+
+const handleTimeKeydown = (field: SearchFormField, event: KeyboardEvent) => {
+  if (event.key !== 'Backspace') return
+  isDeleting = true
+}
+
 // Auto-format time as user types (HH:MM)
 const formatTimeInput = (value: string): string => {
   // if user types "1:12", we want to allow it and format to "01:12"
@@ -101,6 +108,19 @@ const completeTimeFormat = (value: string): string => {
 // Handle input event (real-time masking)
 const handleTimeInput = (field: SearchFormField, event: Event) => {
   const input = event.target as HTMLInputElement
+
+  if (isDeleting) {
+    isDeleting = false
+    const value = input.value
+    if (field === 'heureDepart') {
+      heureDepart.value = value
+    } else {
+      heureArrivee.value = value
+    }
+    return  // no format during deleting
+  }
+
+
   // Format the value
   const formatted = formatTimeInput(input.value)
   // Update the model
@@ -199,6 +219,7 @@ const handleSubmit = (event: Event) => {
               }"
               @input="handleTimeInput('heureDepart', $event)"
               @blur="handleBlur('heureDepart')"
+              @keydown="handleTimeKeydown('heureDepart', $event as KeyboardEvent)"
             />
             <span v-if="errors.heureDepart" class="text-error text-xs mt-1">
               {{ errors.heureDepart }}
@@ -231,6 +252,7 @@ const handleSubmit = (event: Event) => {
               }"
               @input="handleTimeInput('heureArrivee', $event)"
               @blur="handleBlur('heureArrivee')"
+              @keydown="handleTimeKeydown('heureArrivee', $event as KeyboardEvent)"
             />
             <span v-if="errors.heureArrivee" class="text-error text-xs mt-1">
               {{ errors.heureArrivee }}

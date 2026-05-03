@@ -27,7 +27,7 @@
 - [x] SSH key-only authentication (password auth disabled)
 - [x] Custom SSH port (default port 22 disabled)
 - [ ] Implement JWT refresh tokens
-- [ ] Add rate limiting (login, register)
+- [x] Add rate limiting (login, register)
 - [ ] Enable Fail2ban for nginx
 
 ### OWASP ZAP Security Audit
@@ -58,6 +58,7 @@
 
 - [ ] **Disable Mailhog on VPS** ⚠️ Required before public launch
 - [ ] Configure OVH SMTP (mail.ovh.net)
+- [ ] Implement "Forgot password" feature (reset via email)
 - [ ] Configure credentials in `.env`
 - [ ] Test email sending
 
@@ -210,4 +211,4 @@
 
 ---
 
-**Last updated**: April 27, 2026
+**Last updated**: May 3, 2026

@@ -3,6 +3,7 @@ pipeline {
     options {
         // Keep only the last 5 builds to save disk space on VPS
         buildDiscarder(logRotator(numToKeepStr: '5'))
+        disableConcurrentBuilds()
     }
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'

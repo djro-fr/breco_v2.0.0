@@ -116,6 +116,27 @@ pipeline {
                         }
                     }
                 }
+                stage('Frontend Coverage') {
+                    agent {
+                        docker {
+                            image 'djrofr/breco-vitest:latest'
+                            args '-u root'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            cd frontend/breco
+                            npm run test:coverage
+                            chmod -R 755 coverage/
+                        '''
+                    }
+                    post {
+                        always {
+                            stash name: 'vitest-coverage', includes: 'frontend/breco/coverage/lcov.info'
+                        }
+                    }
+                }
                 stage('PHP Unit Tests') {
                     agent {
                         docker {
@@ -149,6 +170,9 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     unstash 'phpunit-coverage'
                 }
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    unstash 'vitest-coverage'
+                }                
                 withSonarQubeEnv('SonarQube') {
                     script {
                         def scannerHome = tool 'SonarQube Scanner'
@@ -156,6 +180,7 @@ pipeline {
                         echo "SonarQube IP: ${sonarIp}"
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.php.coverage.reportPaths=backend/breco/test-results/coverage.xml \
+                            -Dsonar.javascript.lcov.reportPaths=frontend/breco/coverage/lcov.info \
                             -Dsonar.projectKey=breco \
                             -Dsonar.sources=frontend/breco/src,backend/breco/src \
                             -Dsonar.exclusions=**/node_modules/**,**/vendor/**,**/__tests__/**,**/dist/**,**/Model/Entity/** \

@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import FormInput from '@/presentation/shared/components/FormInput.vue'
-import { emailSchema, passwordSchema } from '@/utils/validationSchemas'
+import { emailSchema, passwordSchema } from '@/domain/schemas/validationSchemas'
 import { ZodError } from 'zod'
 
 const router = useRouter()

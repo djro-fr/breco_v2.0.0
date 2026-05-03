@@ -1,7 +1,7 @@
 // frontend/breco/src/domain/entities/User.ts
 
 import { z } from 'zod'
-import { emailSchema, phoneSchema, nameSchema } from '@/utils/validationSchemas'
+import { emailSchema, phoneSchema, nameSchema } from '@/domain/schemas/validationSchemas'
 
 // Zod schema for User validation
 export const UserSchema = z.object({

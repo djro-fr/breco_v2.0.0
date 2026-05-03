@@ -1,6 +1,6 @@
 // frontend/breco/src/domain/repositories/IAuthRepository.ts
 import { z } from 'zod'
-import { emailSchema, phoneSchema, nameSchema, passwordSchema } from '@/utils/validationSchemas'
+import { emailSchema, phoneSchema, nameSchema, passwordSchema } from '@/domain/schemas/validationSchemas'
 import type { User } from '../entities/User'
 
 // Validation schemas

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // frontend\breco\src\presentation\app\pages\SearchPage.vue
 
-import { hourSchema } from '@/utils/validationSchemas'
+import { hourSchema } from '@/domain/schemas/validationSchemas'
 import { ref } from 'vue'
 import { ZodError } from 'zod'
 import TownAutocomplete from '@/presentation/features/search/components/TownAutocomplete.vue'

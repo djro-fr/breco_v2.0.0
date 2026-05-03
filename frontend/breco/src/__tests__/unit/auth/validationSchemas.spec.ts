@@ -1,7 +1,7 @@
 // src/__tests__/unit/auth/validationSchemas.spec.ts
 
 import { describe, it, expect } from 'vitest'
-import { emailSchema, passwordSchema, phoneSchema, nameSchema } from '@/utils/validationSchemas'
+import { emailSchema, passwordSchema, phoneSchema, nameSchema } from '@/domain/schemas/validationSchemas'
 
 describe('passwordSchema - S1: Register', () => {
 

@@ -1,4 +1,4 @@
-// frontend/breco/src/utils/validationSchemas.ts
+// frontend/breco/src/domain/schemas/validationSchemas.ts
 
 import { z } from 'zod'
 

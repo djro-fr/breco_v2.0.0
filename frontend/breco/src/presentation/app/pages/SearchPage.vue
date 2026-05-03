@@ -37,23 +37,31 @@ const formatTimeInput = (value: string): string => {
   // if user types "1:12", we want to allow it and format to "01:12"
   if (value.includes(':')) {
     const parts = value.split(':')
-    const hours = parts[0]?.replace(/\D/g, '').slice(0, 2)
+    let hours = parts[0]?.replace(/\D/g, '').slice(0, 2) ?? ''
     const minutes = parts[1] ? parts[1].replace(/\D/g, '').slice(0, 2) : ''
+
+    if (hours.length === 2) {
+      hours = Math.min(Number.parseInt(hours), 23).toString().padStart(2, '0')
+    }
+
     if (minutes) {
-      return `${hours}:${minutes}`
+      const clampedMin = Math.min(Number.parseInt(minutes), 59).toString().padStart(2, '0')
+      return `${hours}:${clampedMin}`
     }
     return `${hours}:`
   }
 
-  // Else, remove all non-digits
   const digits = value.replace(/\D/g, '')
-  // Limit to 4 digits max
   const limited = digits.slice(0, 4)
 
-  // Format as HH:MM
   if (limited.length === 0) return ''
   if (limited.length <= 2) return limited
-  return `${limited.slice(0, 2)}:${limited.slice(2)}`
+
+  const hoursPart = limited.slice(0, 2)
+  const minPart = limited.slice(2)
+  const clampedHours = Math.min(Number.parseInt(hoursPart), 23).toString().padStart(2, '0')
+
+  return `${clampedHours}:${minPart}`
 }
 
 // Complete time with leading zero if needed (on blur)

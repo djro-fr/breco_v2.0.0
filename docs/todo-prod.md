@@ -138,7 +138,7 @@
 
 ## Migration
 
-- [ ] Migrate to Bun (blocked: Vitest/Zod v3 incompatibility)
+- [ ] Migrate to Bun (blocked: Vitest incompatibility)
 
 ---
 

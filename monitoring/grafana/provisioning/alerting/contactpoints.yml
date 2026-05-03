@@ -1,0 +1,11 @@
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: Email OVH
+    receivers:
+      - uid: email-ovh-receiver
+        type: email
+        settings:
+          addresses: syl@djro.fr
+          singleEmail: false
+        disableResolveMessage: false

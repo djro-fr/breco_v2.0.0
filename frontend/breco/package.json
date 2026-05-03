@@ -17,7 +17,7 @@
     "test:e2e": "vitest run src/__tests__/e2e --reporter=junit --outputFile=test-results/e2e-results.xml",
     "test:watch": "vitest watch",
     "test:all": "npm run test:unit && npm run test:ui && npm run test:integration",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage src/__tests__/unit src/__tests__/integration src/__tests__/ui",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",

@@ -52,6 +52,7 @@ docs/
 └── tests/
     ├── breco - plan de test.odt
     └── breco - Test cases.xlsx
+    └── testing.md
 jenkins/
 ├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
 └── jenkins.md             # Jenkins update procedure
@@ -201,4 +202,4 @@ fix/*        # Bug fixes
 
 ---
 
-**Last updated**: May 3, 2026
+**Last updated**: May 4, 2026

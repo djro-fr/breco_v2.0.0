@@ -41,7 +41,7 @@ describe('S2: Pre-registered locations', () => {
     vi.clearAllMocks()
   })
 
-  it('TC-85: une lettre, autocomplétion non déclenchée, liste vide', async () => {
+  it('TC-85: a character, autocomplete not triggered, empty list', async () => {
     const { searchTowns, towns, error } = useTownSearch()
     const ds = getDataSourceMock()
 
@@ -52,7 +52,7 @@ describe('S2: Pre-registered locations', () => {
     expect(ds.searchTowns).not.toHaveBeenCalled()
   })
 
-  it('TC-86: "ra" -> une ville retournée (Rannée)', async () => {
+  it('TC-86: "ra" -> returns one town (Rannée)', async () => {
     const { searchTowns, towns, error } = useTownSearch()
     const ds = getDataSourceMock()
 
@@ -71,7 +71,7 @@ describe('S2: Pre-registered locations', () => {
     expect(ds.searchTowns).toHaveBeenCalledOnce()
   })
 
-  it('TC-87: "re" -> plusieurs villes retournées', async () => {
+  it('TC-87: "re" -> returns several towns', async () => {
     const { searchTowns, towns, error } = useTownSearch()
     const ds = getDataSourceMock()
 
@@ -95,7 +95,7 @@ describe('S2: Pre-registered locations', () => {
   })
 
 
-  it('TC-88: "rz" -> aucune ville retournée', async () => {
+  it('TC-88: "rz" -> returns no town', async () => {
     const { searchTowns, towns, error } = useTownSearch()
     const ds = getDataSourceMock()
 
@@ -113,7 +113,7 @@ describe('S2: Pre-registered locations', () => {
     expect(ds.searchTowns).toHaveBeenCalledOnce()
   })
 
-  it('TC-89: "rannée" -> ville avec accents retournée', async () => {
+  it('TC-89: "rannée" -> vreturns a town with accents', async () => {
     const { searchTowns, towns, error } = useTownSearch()
     const ds = getDataSourceMock()
 

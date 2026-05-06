@@ -53,7 +53,7 @@ describe('S1: Login - Router guard', () => {
     return router
   }
 
-  it('TC-79: Expiration du token JWT en session active', async () => {
+  it('TC-79: Expiration of the JWT token in active session', async () => {
     // ARRANGE: token expired, checkAuth clears the session
     localStorage.setItem('token', 'expired-token')  // token exists in localStorage
     mockToken.value = null                          // but not yet in store
@@ -67,7 +67,7 @@ describe('S1: Login - Router guard', () => {
     expect(router.currentRoute.value.name).toBe('Login')
   })
 
-  it('TC-80: Rafraîchissement de page en session authentifiée', async () => {
+  it('TC-80: Authenticated in-session page refresh', async () => {
     // ARRANGE: token valid, checkAuth restores the session
     localStorage.setItem('token', 'valid-token')    // token exists in localStorage
     mockToken.value = null                          // but not yet in store, the page has just reloaded

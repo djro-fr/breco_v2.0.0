@@ -54,11 +54,9 @@ docs/
     └── breco - Test cases.xlsx
     └── testing.md
 jenkins/
-├── Dockerfile-jenkins     # Custom Jenkins image (VPS)
 └── jenkins.md             # Jenkins update procedure
 monitoring/
 └── monitoring.md          # Prometheus + Grafana monitoring setup
-...
 frontend/
 └── README.md                  # Frontend setup and development guide
 backend/

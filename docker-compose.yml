@@ -60,7 +60,7 @@ services:
       - "8081:80"    # Expose Nginx on host port 8081 instead of default 80    
     volumes:
       - ./backend/breco/webroot:/app/webroot 
-      - ./backend/nginx:/etc/nginx/conf.d
+      # - ./backend/nginx:/etc/nginx/conf.d
     networks:
       - breco_network
     depends_on:

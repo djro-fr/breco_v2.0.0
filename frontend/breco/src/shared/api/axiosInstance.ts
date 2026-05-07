@@ -4,14 +4,7 @@ import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
 const getApiUrl = () => {
-  const hostname = globalThis.location.hostname
-  const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
-
-  if (isLocalhost) {
-    const port = globalThis.location.port === '5173' ? '8081' : globalThis.location.port
-    return `http://localhost:${port}/api`
-  }
-  return `http://${hostname}:8081/api`
+  return import.meta.env.VITE_API_URL || 'http://localhost:8081/api'
 }
 const apiUrl = getApiUrl()
 //console.log('✅ API URL:', apiUrl)

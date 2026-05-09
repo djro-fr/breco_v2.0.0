@@ -1,6 +1,6 @@
 // frontend/breco/src/domain/repositories/IUserRepository.ts
-import type { User } from '../entities/User'
-import type { CreateUserData, UpdateUserData } from '../entities/User'
+
+import type { CreateUserData, UpdateUserData, User } from '../entities/User'
 
 export interface IUserRepository {
   getById(id: number): Promise<User>

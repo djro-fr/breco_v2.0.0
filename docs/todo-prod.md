@@ -93,6 +93,8 @@
 - [ ] Test backup restoration
 - [ ] Store backups off-VPS (OVH Object Storage)
 - [ ] Retention: 7 days + 4 weeks + 12 months
+- [ ] for staging, set up  backup cron (mysqldump + rclone to OVH Object Storage ?)
+- [ ] Document restore procedure (RTO < 2h target)
 
 ### Optimization
 
@@ -211,4 +213,4 @@
 
 ---
 
-**Last updated**: May 3, 2026
+**Last updated**: May 9, 2026

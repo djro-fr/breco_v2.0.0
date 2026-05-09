@@ -301,7 +301,7 @@ vendor/bin/phpunit tests/TestCase/Service/Auth/AuthServiceTest.php --testdox --d
 
 ### Frontend cannot connect to backend
 
-The API URL is resolved dynamically in `frontend/breco/src/shared/api/axiosInstance.ts` based on `window.location.hostname`.
+The API URL is resolved dynamically in `frontend/breco/src/data/http/axiosInstance.ts` based on `window.location.hostname`.
 
 In local development, it always points to `http://localhost:8081/api`.
 
@@ -434,4 +434,4 @@ chore:    maintenance tasks
 
 - **Version**: 2.0.0
 - **Status**: In development
-- **Last updated**: April 25, 2026
+- **Last updated**: May 9, 2026

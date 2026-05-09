@@ -163,7 +163,7 @@ breco_v2_0_0/
 ├── frontend/
 │   └── breco/
 │       ├── src/
-│       │   ├── main.ts                    # Entry point
+│       │   ├── main.ts
 │       │   ├── domain/
 │       │   │   ├── entities/              # User.ts, Town.ts
 │       │   │   ├── repositories/          # IAuthRepository.ts, ITownRepository.ts, IUserRepository.ts
@@ -176,6 +176,7 @@ breco_v2_0_0/
 │       │   │       ├── profile/
 │       │   │       └── trip/
 │       │   ├── data/
+│       │   │   ├── http/                  # axiosInstance.ts
 │       │   │   ├── datasources/remote/    # AuthRemoteDataSource.ts, TownRemoteDataSource.ts
 │       │   │   ├── models/                # UserModel.ts, TownModel.ts
 │       │   │   └── repositories/          # AuthRepositoryImpl.ts, TownRepositoryImpl.ts
@@ -192,8 +193,7 @@ breco_v2_0_0/
 │       │   │       ├── carTrip/
 │       │   │       ├── reservation/
 │       │   │       └── search/
-│       │   └── shared/
-│       │       └── api/                   # axiosInstance.ts
+│       │   └── shared/                    # utils 
 │       ├── package.json
 │       └── vite.config.ts
 │
@@ -208,7 +208,7 @@ breco_v2_0_0/
 │       │       ├── Entity/                # User.php, Town.php
 │       │       └── Table/                 # UsersTable.php, TownsTable.php
 │       ├── config/
-│       │   ├── Migrations/                # Versioned tables
+│       │   ├── Migrations/
 │       │   ├── Seeds/                     # TownsSeed.php, LocationsSeed.php
 │       │   ├── routes.php
 │       │   ├── swagger.yml
@@ -573,4 +573,4 @@ docker compose up --build -d
 
 ---
 
-**Last updated**: May 2, 2026
+**Last updated**: May 9, 2026

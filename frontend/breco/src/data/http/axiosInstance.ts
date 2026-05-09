@@ -1,4 +1,4 @@
-// frontend/breco/src/shared/api/axiosInstance.ts
+// frontend/breco/src/data/http/axiosInstance.ts
 
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'

@@ -1,5 +1,5 @@
 // frontend/breco/src/data/datasources/remote/AuthRemoteDataSource.ts
-import axiosInstance from '@/shared/api/axiosInstance'
+import axiosInstance from '@/data/http/axiosInstance'
 import { UserModel, type UserDTO } from '@/data/models/UserModel'
 import type { User } from '@/domain/entities/User'
 import type { RegisterInput } from '@/domain/repositories/IAuthRepository'

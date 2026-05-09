@@ -1,4 +1,4 @@
-import axiosInstance from '@/shared/api/axiosInstance'
+import axiosInstance from '@/data/http/axiosInstance'
 import {
   AppException,
   ValidationException,

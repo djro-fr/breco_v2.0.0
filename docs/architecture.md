@@ -16,9 +16,9 @@ Component > Composable > UseCase > Repository > DataSource > API
 src/
 ├── domain/         # Entities (Zod schemas) + Repository interfaces
 ├── application/    # UseCases (business logic)
-├── data/           # DataSources + Models (DTO <> Entity) + Repository impl
+├── data/           # DataSources + Models (DTO <> Entity) + Repository impl + http (axiosInstance)
 ├── presentation/   # Composables (state) + Components (UI)
-└── shared/         # axiosInstance, utils
+└── shared/         # utils
 ```
 
 ---
@@ -97,4 +97,4 @@ VPS Ubuntu 37.59.101.232
 
 ---
 
-**Last updated**: April 2, 2026
+**Last updated**: May 9, 2026
